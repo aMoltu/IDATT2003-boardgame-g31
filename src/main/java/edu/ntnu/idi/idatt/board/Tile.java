@@ -15,7 +15,7 @@ public class Tile {
   }
 
   public void landPlayer(Player player) {
-    landAction = new LadderAction();
+    landAction = new LadderAction(this);
     landAction.perform(player);
   }
 
