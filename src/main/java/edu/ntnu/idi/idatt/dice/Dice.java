@@ -12,4 +12,16 @@ public class Dice {
     }
   }
 
+  public int roll() {
+    int result = 0;
+    for (Die die : dice) {
+      result += die.roll();
+    }
+    return result;
+  }
+
+  public int getDie(int dieNumber) {
+    return dice.get(dieNumber).getValue();
+  }
+
 }

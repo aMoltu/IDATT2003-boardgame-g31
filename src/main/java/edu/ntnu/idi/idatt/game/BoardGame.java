@@ -26,7 +26,13 @@ public class BoardGame {
     dice = new Dice(2);
   }
 
-  void play() {}
+  void play() {
+    for (Player player : players) {
+      currentPlayer = player;
+      int steps = dice.roll();
+      currentPlayer.move(steps);
+    }
+  }
 
   void getWinner() {}
 
