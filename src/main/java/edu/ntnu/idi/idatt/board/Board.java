@@ -7,7 +7,7 @@ public class Board {
 
   private final Map<Integer, Tile> tiles;
 
-  Board() {
+  public Board() {
     tiles = new HashMap<>();
   }
 

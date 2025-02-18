@@ -14,8 +14,11 @@ public class Tile {
     this.tileId = tileId;
   }
 
+  public void setLandAction(TileAction landAction) {
+    this.landAction = landAction;
+  }
+
   public void landPlayer(Player player) {
-    landAction = new LadderAction(this);
     landAction.perform(player);
   }
 

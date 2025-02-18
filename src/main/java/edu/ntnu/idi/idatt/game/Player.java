@@ -34,8 +34,9 @@ public class Player {
    */
   public void move(int steps) {
     for (int i = 0; i < steps; i++) {
-      currentTile = currentTile.getNextTile();
+      currentTile.leavePlayer(this);
     }
+    currentTile.landPlayer(this);
   }
 
   public String getName() {

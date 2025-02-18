@@ -9,24 +9,24 @@ import java.util.ArrayList;
  *
  */
 public class BoardGame {
-  Board board;
-  Player currentPlayer;
-  ArrayList<Player> players;
-  Dice dice;
+  private Board board;
+  private Player currentPlayer;
+  private ArrayList<Player> players;
+  private Dice dice;
 
-  void addPlayer(Player player) {
+  public void addPlayer(Player player) {
     players.add(player);
   }
 
-  void createBoard() {
+  public void createBoard() {
     board = new Board();
   }
 
-  void createDice() {
+  public void createDice() {
     dice = new Dice(2);
   }
 
-  void play() {
+  public void play() {
     for (Player player : players) {
       currentPlayer = player;
       int steps = dice.roll();
@@ -34,6 +34,6 @@ public class BoardGame {
     }
   }
 
-  void getWinner() {}
+ public void getWinner() {}
 
 }
