@@ -23,7 +23,9 @@ public class Tile {
   }
 
   public void leavePlayer(Player player) {
-    player.placeOnTile(nextTile);
+    if (nextTile != null) {
+      player.placeOnTile(nextTile);
+    }
   }
 
   public void setNextTile(Tile nextTile) {
