@@ -12,16 +12,18 @@ import java.util.ArrayList;
 public class BoardGame {
 
   private Board board;
-  private Player currentPlayer;
-  private ArrayList<Player> players;
+  private final ArrayList<Player> players;
   private Dice dice;
-  private Tile startTile;
+  private final Tile startTile;
   private Player winner;
-  private static int tileAmount = 90;
+  private final int tileAmount = 90;
 
   public BoardGame() {
     startTile = new Tile(0);
+    players = new ArrayList<>();
     winner = null;
+    createBoard();
+    createDice();
   }
 
   public void addPlayer(Player player) {
@@ -29,28 +31,29 @@ public class BoardGame {
     player.placeOnTile(startTile);
   }
 
-  public void createBoard() {
+  private void createBoard() {
     board = new Board();
     board.addTile(startTile);
 
     for (int i = 1; i <= tileAmount; i++) {
       Tile tile = new Tile(i);
       Tile previousTile = board.getTile(i - 1);
-      tile.setNextTile(previousTile);
+      previousTile.setNextTile(tile);
       //TODO add actions to some tiles
       board.addTile(tile);
     }
   }
 
-  public void createDice() {
+  private void createDice() {
     dice = new Dice(2);
   }
 
   public void play() {
     for (Player player : players) {
-      currentPlayer = player;
       int steps = dice.roll();
-      currentPlayer.move(steps);
+      player.move(steps);
+      System.out.println(
+          "player " + player.getName() + " moves to " + player.getCurrentTile().getTileId());
 
       // check if player has won the game
       if (winner == null && player.getCurrentTile().getTileId() == tileAmount) {
