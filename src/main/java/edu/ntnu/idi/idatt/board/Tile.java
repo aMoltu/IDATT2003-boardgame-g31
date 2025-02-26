@@ -19,7 +19,9 @@ public class Tile {
   }
 
   public void landPlayer(Player player) {
-    landAction.perform(player);
+    if (landAction != null) {
+      landAction.perform(player);
+    }
   }
 
   public void leavePlayer(Player player) {
