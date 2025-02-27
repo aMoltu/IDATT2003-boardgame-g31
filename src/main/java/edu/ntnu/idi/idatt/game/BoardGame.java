@@ -9,9 +9,9 @@ import java.util.Scanner;
 
 /**
  * This class is responsible for initiating the game and running through the game logics.
- *
  */
 public class BoardGame {
+
   private final Scanner scanner = new Scanner(System.in);
   private Board board;
   private ArrayList<Player> players;
@@ -21,9 +21,7 @@ public class BoardGame {
   private final int tileAmount;
 
   /**
-   * Constructs the game.
-   *  Creates a Board, and a set of dice
-   *  Declares the start tile
+   * Constructs the game. Creates a Board, and a set of dice Declares the start tile
    */
   public BoardGame() {
     startTile = new Tile(0);
@@ -108,8 +106,8 @@ public class BoardGame {
   }
 
   /**
-   * This is the game cycle of the game. Here every player in the game does their turn in a round
-   * in this case a turn consists of a player rolling dice and moving that amount of steps
+   * This is the game cycle of the game. Here every player in the game does their turn in a round in
+   * this case a turn consists of a player rolling dice and moving that amount of steps
    */
   public void play() {
     for (Player player : players) {
@@ -129,5 +127,9 @@ public class BoardGame {
 
   public Board getBoard() {
     return board;
+  }
+
+  public ArrayList<Player> getPlayers() {
+    return players;
   }
 }
