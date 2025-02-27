@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.game;
 
+import edu.ntnu.idi.idatt.actions.LadderAction;
 import edu.ntnu.idi.idatt.board.Board;
 import edu.ntnu.idi.idatt.board.Tile;
 import edu.ntnu.idi.idatt.dice.Dice;
@@ -39,8 +40,14 @@ public class BoardGame {
       Tile tile = new Tile(i);
       Tile previousTile = board.getTile(i - 1);
       previousTile.setNextTile(tile);
-      //TODO add actions to some tiles
       board.addTile(tile);
+    }
+
+    int[] ladderStart = new int[]{5, 9, 39, 60, 29, 80};
+    int[] ladderEnd = new int[]{19, 30, 20, 34, 48, 69};
+    for (int i = 0; i < ladderStart.length; i++) {
+      LadderAction ladderAction = new LadderAction(board.getTile(ladderEnd[i]));
+      board.getTile(ladderStart[i]).setLandAction(ladderAction);
     }
   }
 
