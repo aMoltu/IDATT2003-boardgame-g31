@@ -7,7 +7,7 @@ public class LadderAction implements TileAction {
 
   public Tile destinationTile;
 
-  public LadderAction(Tile destinationTileId) {
+  public LadderAction(Tile destinationTile) {
     this.destinationTile = destinationTile;
   }
 

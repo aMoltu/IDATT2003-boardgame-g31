@@ -7,7 +7,7 @@ import edu.ntnu.idi.idatt.game.Player;
 public class Tile {
 
   private Tile nextTile;
-  private int tileId;
+  private final int tileId;
   private TileAction landAction;
 
   public Tile(int tileId) {
