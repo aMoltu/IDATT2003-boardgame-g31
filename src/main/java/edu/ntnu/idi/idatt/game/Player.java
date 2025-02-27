@@ -19,7 +19,17 @@ public class Player {
    * @param game BoardGame
    */
   public Player(String name, BoardGame game) {
-    this.name = name; this.game = game;
+    this.name = name;
+    this.game = game;
+  }
+
+  /**
+   * Simpler constructor for the Player class used for testing. Only assigns name.
+   *
+   * @param name String representing the player's name.
+   */
+  public Player(String name) {
+    this.name = name;
   }
 
   /**
