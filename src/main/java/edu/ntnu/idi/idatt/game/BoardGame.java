@@ -13,20 +13,31 @@ import java.util.ArrayList;
 public class BoardGame {
 
   private Board board;
-  private final ArrayList<Player> players;
+  private ArrayList<Player> players;
   private Dice dice;
   private final Tile startTile;
   private Player winner;
-  private final int tileAmount = 90;
+  private final int tileAmount;
 
+  /**
+   * Initiates the game.
+   *  Creates a Board, and a set of dice
+   *  Declares the start tile
+   */
   public BoardGame() {
     startTile = new Tile(0);
+    tileAmount = 90;
     players = new ArrayList<>();
     winner = null;
     createBoard();
     createDice();
   }
 
+  /**
+   * method to add a new player to the game and places them on the start.
+   *
+   * @param player the player to be added.
+   */
   public void addPlayer(Player player) {
     players.add(player);
     player.placeOnTile(startTile);
@@ -55,6 +66,10 @@ public class BoardGame {
     dice = new Dice(2);
   }
 
+  /**
+   * this is the game cycle of the game. Here every player in the game does their turn in a round
+   * in this case a turn consists of a player rolling dice and moving that amount of steps
+   */
   public void play() {
     for (Player player : players) {
       int steps = dice.roll();
@@ -71,4 +86,7 @@ public class BoardGame {
     return winner;
   }
 
+  public Board getBoard() {
+    return board;
+  }
 }
