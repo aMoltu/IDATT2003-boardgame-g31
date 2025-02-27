@@ -5,13 +5,14 @@ import edu.ntnu.idi.idatt.board.Board;
 import edu.ntnu.idi.idatt.board.Tile;
 import edu.ntnu.idi.idatt.dice.Dice;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
- * This class is responsible for initiating the game and performing the methods required for the
- * main game loop.
+ * This class is responsible for initiating the game and running through the game logics.
+ *
  */
 public class BoardGame {
-
+  private final Scanner scanner = new Scanner(System.in);
   private Board board;
   private ArrayList<Player> players;
   private Dice dice;
@@ -20,7 +21,7 @@ public class BoardGame {
   private final int tileAmount;
 
   /**
-   * Initiates the game.
+   * Constructs the game.
    *  Creates a Board, and a set of dice
    *  Declares the start tile
    */
@@ -31,6 +32,46 @@ public class BoardGame {
     winner = null;
     createBoard();
     createDice();
+  }
+
+  /**
+   * Here the game gets initiated and by temporary text based ui the user adds the players.
+   */
+  public void init() {
+    int playerCount = 1;
+    boolean addMorePlayers = true;
+    while (playerCount < 5 && addMorePlayers) {
+      System.out.print("Type the name of player " + playerCount + ": ");
+      String name = scanner.nextLine();
+      this.addPlayer(new Player(name, this));
+      playerCount++;
+
+      if (playerCount < 5) {
+        String command = "";
+        while (!command.equals("y") && !command.equals("n")) {
+          System.out.print("Do you want to add more players? y/n: ");
+          command = scanner.nextLine();
+        }
+        if (command.equals("n")) {
+          addMorePlayers = false;
+        }
+      }
+    }
+
+    System.out.println("\nAnd the game begins!\n");
+    this.loop();
+  }
+
+  /**
+   * This method runs a new round until a winner is decided and the game is concluded.
+   */
+  public void loop() {
+    while (this.getWinner() == null) {
+      this.play();
+      scanner.nextLine();
+    }
+
+    System.out.println("And the winner is " + this.getWinner().getName());
   }
 
   /**
@@ -67,7 +108,7 @@ public class BoardGame {
   }
 
   /**
-   * this is the game cycle of the game. Here every player in the game does their turn in a round
+   * This is the game cycle of the game. Here every player in the game does their turn in a round
    * in this case a turn consists of a player rolling dice and moving that amount of steps
    */
   public void play() {
