@@ -14,7 +14,7 @@ public class Dice {
    *
    * @param numberOfDice an integer given to specify how many dice to have in the set
    */
-  public Dice (int numberOfDice) {
+  public Dice(int numberOfDice) {
     diceSet = new ArrayList<>();
     for (int i = 0; i < numberOfDice; i++) {
       diceSet.add(new Die());

@@ -4,7 +4,7 @@ import edu.ntnu.idi.idatt.dice.Dice;
 import edu.ntnu.idi.idatt.game.Player;
 
 /**
- * This class is a tile action that will make the player roll 2 dice and move that amount of spaces.
+ * This class is a tile action that will let the player roll again and keep moving.
  */
 public class RollAgain implements TileAction {
 
