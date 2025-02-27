@@ -10,7 +10,7 @@ public class Player {
 
   private final String name;
   private Tile currentTile;
-  private BoardGame game;
+  private final BoardGame game;
 
   /**
    * Constructor for the Player class. Assigns name and game.
@@ -42,7 +42,7 @@ public class Player {
   }
 
   /**
-   * moves the player a given amount of tiles.
+   * Moves the player a given amount of tiles.
    *
    * @param steps int number of tiles the player moves.
    */
