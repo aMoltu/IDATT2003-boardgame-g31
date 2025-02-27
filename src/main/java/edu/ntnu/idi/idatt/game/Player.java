@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.game;
 
+import edu.ntnu.idi.idatt.board.Board;
 import edu.ntnu.idi.idatt.board.Tile;
 
 /**
@@ -9,6 +10,7 @@ public class Player {
 
   private final String name;
   private Tile currentTile;
+  private BoardGame game;
 
   /**
    * Constructor for the Player class. Assigns name and game.
@@ -17,7 +19,7 @@ public class Player {
    * @param game BoardGame
    */
   public Player(String name, BoardGame game) {
-    this.name = name;
+    this.name = name; this.game = game;
   }
 
   /**
@@ -47,5 +49,9 @@ public class Player {
 
   public String getName() {
     return name;
+  }
+
+  public BoardGame getGame() {
+    return game;
   }
 }
