@@ -3,6 +3,9 @@ package edu.ntnu.idi.idatt.board;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is a set of Tiles making up a gameboard.
+ */
 public class Board {
 
   private final Map<Integer, Tile> tiles;
