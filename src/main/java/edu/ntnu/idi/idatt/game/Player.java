@@ -10,7 +10,7 @@ public class Player {
 
   private final String name;
   private Tile currentTile;
-  private final BoardGame game;
+  private BoardGame game;
 
   /**
    * Constructor for the Player class. Assigns name and game.
