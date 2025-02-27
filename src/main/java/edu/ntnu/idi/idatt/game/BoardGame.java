@@ -59,8 +59,6 @@ public class BoardGame {
     for (Player player : players) {
       int steps = dice.roll();
       player.move(steps);
-      System.out.println(
-          "player " + player.getName() + " moves to " + player.getCurrentTile().getTileId());
 
       // check if player has won the game
       if (winner == null && player.getCurrentTile().getTileId() == tileAmount) {

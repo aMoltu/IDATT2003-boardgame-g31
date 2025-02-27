@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.board;
 
-import edu.ntnu.idi.idatt.actions.LadderAction;
 import edu.ntnu.idi.idatt.actions.TileAction;
 import edu.ntnu.idi.idatt.game.Player;
 
@@ -19,6 +18,8 @@ public class Tile {
   }
 
   public void landPlayer(Player player) {
+    System.out.println(
+        "player " + player.getName() + " moves to " + player.getCurrentTile().getTileId());
     if (landAction != null) {
       landAction.perform(player);
     }
