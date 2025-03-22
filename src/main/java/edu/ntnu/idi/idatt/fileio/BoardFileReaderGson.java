@@ -19,12 +19,13 @@ import java.util.HashMap;
 
 public class BoardFileReaderGson implements BoardFileReader {
 
-  BoardFileReaderGson() {
+  public BoardFileReaderGson() {
 
   }
 
   public Board readBoard(Path path) {
 
+    // read json string
     StringBuilder jsonString = new StringBuilder();
     File file = new File(path.toString());
     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
@@ -42,28 +43,34 @@ public class BoardFileReaderGson implements BoardFileReader {
     if (rootNode.isJsonObject()) {
       JsonObject details = rootNode.getAsJsonObject();
 
-      JsonArray tiles = details.getAsJsonArray("tiles");
       Board board = new Board();
+      // add tiles to board
+      JsonArray tiles = details.getAsJsonArray("tiles");
       for (JsonElement tileElement : tiles) {
         JsonObject tileObject = tileElement.getAsJsonObject();
         int id = tileObject.get("id").getAsInt();
         Tile tile = new Tile(id);
         board.addTile(tile);
       }
+      // add more information to tiles
       for (JsonElement tileElement : tiles) {
         JsonObject tileObject = tileElement.getAsJsonObject();
         int id = tileObject.get("id").getAsInt();
         if (tileObject.has("nextTile")) {
+          // set nextTile
           int nextTile = tileObject.get("nextTile").getAsInt();
           Tile tile = board.getTile(id);
           tile.setNextTile(board.getTile(nextTile));
         }
         if (tileObject.has("action")) {
+          // set action
           JsonObject actionObject = tileObject.get("action").getAsJsonObject();
-          Gson gson = new GsonBuilder().setPrettyPrinting().create();
+          if (actionObject.get("type").getAsString().equals("LadderAction")) {
+            Tile destinationTile = board.getTile(actionObject.get("destinationTile").getAsInt());
+            LadderAction action = new LadderAction(destinationTile);
+            board.getTile(id).setLandAction(action);
+          }
           //TODO add support for more actions
-          LadderAction action = gson.fromJson(actionObject, LadderAction.class);
-          board.getTile(id).setLandAction(action);
         }
       }
       return board;
