@@ -4,6 +4,9 @@ import edu.ntnu.idi.idatt.actions.LadderAction;
 import edu.ntnu.idi.idatt.board.Board;
 import edu.ntnu.idi.idatt.board.Tile;
 import edu.ntnu.idi.idatt.dice.Dice;
+import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -29,6 +32,20 @@ public class BoardGame {
     players = new ArrayList<>();
     winner = null;
     createBoard();
+    createDice();
+  }
+
+  /**
+   * Initialize board game with a custom board imported from json file.
+   */
+  public BoardGame(String boardName) {
+    tileAmount = 90;
+    players = new ArrayList<>();
+    winner = null;
+    BoardFileReaderGson reader = new BoardFileReaderGson();
+    Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
+    board = reader.readBoard(path);
+    startTile = board.getTile(1);
     createDice();
   }
 
