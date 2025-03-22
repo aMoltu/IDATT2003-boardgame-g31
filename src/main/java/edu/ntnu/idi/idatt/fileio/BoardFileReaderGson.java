@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.ntnu.idi.idatt.actions.LadderAction;
 import edu.ntnu.idi.idatt.actions.TileAction;
 import edu.ntnu.idi.idatt.board.Board;
 import edu.ntnu.idi.idatt.board.Tile;
@@ -13,16 +12,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import java.util.HashMap;
 
+/**
+ * File reader that uses Gson to create a board from a json file.
+ */
 public class BoardFileReaderGson implements BoardFileReader {
 
+  /**
+   * Constructor for the Gson board file reader.
+   */
   public BoardFileReaderGson() {
-
   }
 
+  /**
+   * Create a Board instance using a JSON file and Gson.
+   *
+   * @param path the path pointing to the JSON file
+   * @return a Board instance corresponding to the JSON file
+   */
   public Board readBoard(Path path) {
 
     // read json string
@@ -34,7 +41,7 @@ public class BoardFileReaderGson implements BoardFileReader {
         jsonString.append(line);
       }
     } catch (IOException e) {
-      System.out.println("Error reading file: " + e.getMessage());
+      System.err.println("Error reading file: " + e.getMessage());
       return null;
     }
 
@@ -65,12 +72,12 @@ public class BoardFileReaderGson implements BoardFileReader {
         if (tileObject.has("action")) {
           // set action
           JsonObject actionObject = tileObject.get("action").getAsJsonObject();
-          if (actionObject.get("type").getAsString().equals("LadderAction")) {
-            Tile destinationTile = board.getTile(actionObject.get("destinationTile").getAsInt());
-            LadderAction action = new LadderAction(destinationTile);
+          try {
+            TileAction action = TileActionFactory.get(actionObject, board);
             board.getTile(id).setLandAction(action);
+          } catch (UnknownTileActionException e) {
+            System.err.println(e.getMessage());
           }
-          //TODO add support for more actions
         }
       }
       return board;
