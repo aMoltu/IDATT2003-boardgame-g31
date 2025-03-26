@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.fileio;
 
-import edu.ntnu.idi.idatt.board.Board;
+import edu.ntnu.idi.idatt.model.Board;
 import java.nio.file.Path;
 
 public interface BoardFileReader {

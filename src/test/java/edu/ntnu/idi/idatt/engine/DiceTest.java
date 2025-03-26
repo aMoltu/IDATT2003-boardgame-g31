@@ -1,9 +1,8 @@
-package edu.ntnu.idi.idatt.dice;
+package edu.ntnu.idi.idatt.engine;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.ntnu.idi.idatt.game.Player;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -1,7 +1,4 @@
-package edu.ntnu.idi.idatt.actions;
-
-import edu.ntnu.idi.idatt.board.Tile;
-import edu.ntnu.idi.idatt.game.Player;
+package edu.ntnu.idi.idatt.model;
 
 /**
  * performs an action on a player by moving them to some predefined destination tile.

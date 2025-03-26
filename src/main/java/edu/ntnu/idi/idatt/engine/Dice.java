@@ -1,12 +1,13 @@
-package edu.ntnu.idi.idatt.dice;
+package edu.ntnu.idi.idatt.engine;
 
 import java.util.ArrayList;
 
 /**
- * This is a class representing a set of dice, has methods for rolling them,
- * and counting the number on any die.
+ * This is a class representing a set of dice, has methods for rolling them, and counting the number
+ * on any die.
  */
 public class Dice {
+
   private final ArrayList<Die> diceSet;
 
   /**

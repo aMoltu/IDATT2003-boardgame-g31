@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.dice;
+package edu.ntnu.idi.idatt.engine;
 
 import java.util.Random;
 
@@ -6,6 +6,7 @@ import java.util.Random;
  * This class represents a single six sided die, and contains method to roll and read the value.
  */
 public class Die {
+
   private int lastRolledValue;
   private final Random rand = new Random();
 

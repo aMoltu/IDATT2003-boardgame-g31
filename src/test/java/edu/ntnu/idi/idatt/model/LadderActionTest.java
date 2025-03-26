@@ -1,10 +1,7 @@
-package edu.ntnu.idi.idatt.actions;
+package edu.ntnu.idi.idatt.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.ntnu.idi.idatt.board.Board;
-import edu.ntnu.idi.idatt.board.Tile;
-import edu.ntnu.idi.idatt.game.Player;
 import org.junit.jupiter.api.Test;
 
 /**

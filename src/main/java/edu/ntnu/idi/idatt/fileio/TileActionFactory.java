@@ -1,10 +1,10 @@
 package edu.ntnu.idi.idatt.fileio;
 
 import com.google.gson.JsonObject;
-import edu.ntnu.idi.idatt.actions.LadderAction;
-import edu.ntnu.idi.idatt.actions.RollAgain;
-import edu.ntnu.idi.idatt.actions.TileAction;
-import edu.ntnu.idi.idatt.board.Board;
+import edu.ntnu.idi.idatt.model.LadderAction;
+import edu.ntnu.idi.idatt.model.RollAgain;
+import edu.ntnu.idi.idatt.model.TileAction;
+import edu.ntnu.idi.idatt.model.Board;
 
 /**
  * Factory class for creating tile actions.

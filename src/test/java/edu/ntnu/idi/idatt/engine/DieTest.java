@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.dice;
+package edu.ntnu.idi.idatt.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

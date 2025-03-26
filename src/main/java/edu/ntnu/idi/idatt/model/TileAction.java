@@ -1,6 +1,4 @@
-package edu.ntnu.idi.idatt.actions;
-
-import edu.ntnu.idi.idatt.game.Player;
+package edu.ntnu.idi.idatt.model;
 
 /**
  * Defines some action that should be done to a player when they land on a tile.

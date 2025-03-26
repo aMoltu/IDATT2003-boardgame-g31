@@ -1,9 +1,9 @@
-package edu.ntnu.idi.idatt.game;
+package edu.ntnu.idi.idatt.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import edu.ntnu.idi.idatt.board.Tile;
+import edu.ntnu.idi.idatt.model.Player;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

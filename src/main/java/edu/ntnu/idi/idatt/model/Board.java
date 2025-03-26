@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.board;
+package edu.ntnu.idi.idatt.model;
 
 import java.util.HashMap;
 import java.util.Map;

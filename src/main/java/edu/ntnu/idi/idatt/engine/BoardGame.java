@@ -1,10 +1,10 @@
-package edu.ntnu.idi.idatt.game;
+package edu.ntnu.idi.idatt.engine;
 
-import edu.ntnu.idi.idatt.actions.LadderAction;
-import edu.ntnu.idi.idatt.board.Board;
-import edu.ntnu.idi.idatt.board.Tile;
-import edu.ntnu.idi.idatt.dice.Dice;
+import edu.ntnu.idi.idatt.model.LadderAction;
+import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
+import edu.ntnu.idi.idatt.model.Player;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;

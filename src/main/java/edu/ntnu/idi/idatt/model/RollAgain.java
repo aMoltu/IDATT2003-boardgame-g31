@@ -1,7 +1,6 @@
-package edu.ntnu.idi.idatt.actions;
+package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.dice.Dice;
-import edu.ntnu.idi.idatt.game.Player;
+import edu.ntnu.idi.idatt.engine.Dice;
 
 /**
  * This class is a tile action that will let the player roll again and keep moving.

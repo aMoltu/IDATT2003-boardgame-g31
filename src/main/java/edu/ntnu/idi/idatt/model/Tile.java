@@ -1,21 +1,15 @@
-package edu.ntnu.idi.idatt.board;
-
-import edu.ntnu.idi.idatt.actions.TileAction;
-import edu.ntnu.idi.idatt.game.Player;
+package edu.ntnu.idi.idatt.model;
 
 /**
  * This class is used to represent a single tile on a game board, and contains methods for when a
  * player lands on the space, and when they leave. As well as having a pointer to the next tile.
- *
- *
  */
 public class Tile {
+
   /**
-   * Attributes that the Tile uses:
-   * nextTile - that points to the upcoming tile on a board
-   * tileId - unique integer, used to see where the tile is
-   * landAction - an optional tile action that does something when a player lands on the tile.
-   *
+   * Attributes that the Tile uses: nextTile - that points to the upcoming tile on a board tileId -
+   * unique integer, used to see where the tile is landAction - an optional tile action that does
+   * something when a player lands on the tile.
    */
   private Tile nextTile;
   private final int tileId;
@@ -35,8 +29,8 @@ public class Tile {
   }
 
   /**
-   * method for when a player is done moving and lands on the tile.
-   * if the tile has a land action we perform said action.
+   * method for when a player is done moving and lands on the tile. if the tile has a land action we
+   * perform said action.
    *
    * @param player the player that has landed on this tile.
    */

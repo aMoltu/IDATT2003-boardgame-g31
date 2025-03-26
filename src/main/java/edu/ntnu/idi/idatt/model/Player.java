@@ -1,7 +1,6 @@
-package edu.ntnu.idi.idatt.game;
+package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.board.Board;
-import edu.ntnu.idi.idatt.board.Tile;
+import edu.ntnu.idi.idatt.engine.BoardGame;
 
 /**
  * Class representing a player of the game.
