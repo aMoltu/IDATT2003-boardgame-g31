@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
 import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.ui.BoardGameObserver;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class BoardGame {
   private final Tile startTile;
   private Player winner;
   private final int tileAmount;
+  private ArrayList<BoardGameObserver> observers;
 
   /**
    * Constructs the game. Creates a Board, and a set of dice Declares the start tile
@@ -31,6 +33,7 @@ public class BoardGame {
     tileAmount = 90;
     players = new ArrayList<>();
     winner = null;
+    observers = new ArrayList<>();
     createBoard();
     createDice();
   }
@@ -135,6 +138,20 @@ public class BoardGame {
       if (winner == null && player.getCurrentTile().getTileId() == tileAmount) {
         winner = player;
       }
+    }
+  }
+
+  public void addObserver(BoardGameObserver observer) {
+    observers.add(observer);
+  }
+
+  public void removeObserver(BoardGameObserver observer) {
+    observers.remove(observer);
+  }
+
+  public void notifyObservers() {
+    for (BoardGameObserver observer : observers) {
+      observer.update();
     }
   }
 
