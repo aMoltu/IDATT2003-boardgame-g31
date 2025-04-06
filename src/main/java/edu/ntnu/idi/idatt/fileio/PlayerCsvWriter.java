@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.fileio;
 
-import edu.ntnu.idi.idatt.game.Player;
+import edu.ntnu.idi.idatt.model.Player;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
