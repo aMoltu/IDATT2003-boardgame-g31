@@ -54,8 +54,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <!-- TODO: Replace with your own main-class -->
-          <mainClass>org.openjfx.App</mainClass>
+          <mainClass>edu.ntnu.idi.idatt.Main</mainClass>
         </configuration>
       </plugin>
     </plugins>
