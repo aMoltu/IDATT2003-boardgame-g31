@@ -1,9 +1,15 @@
 package edu.ntnu.idi.idatt.ui;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
+
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.model.LadderAction;
+import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.model.TileAction;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,6 +25,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 public class BoardView {
 
@@ -29,6 +36,18 @@ public class BoardView {
     root = new StackPane();
     this.controller = controller;
     root.getChildren().add(snakesAndLadders());
+  }
+
+  private BorderPane startMenu() {
+    BorderPane pane = new BorderPane();
+    pane.setStyle("-fx-background-color: #eee");
+    Button btn = new Button("Start game");
+    btn.setOnAction(event -> {
+      root.getChildren().clear();
+      root.getChildren().add(snakesAndLadders());
+    });
+    pane.setCenter(btn);
+    return pane;
   }
 
   private BorderPane snakesAndLadders() {
@@ -68,34 +87,55 @@ public class BoardView {
     infoSection.getChildren().add(infoBox1);
 
     BoardGame game = controller.getGame();
+
     int tileWidth = 30;
     int tileHeight = 30;
+    Color[] color = new Color[91];
+    ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
     for (int i = 1; i <= 90; i++) {
       Tile tile = game.getBoard().getTile(i);
-      int x = ((i - 1) % 10) * tileWidth;
-      int y = tileHeight * 9 - (((i - 1) / 10) * tileHeight);
+      switch (tile.getLandAction()) {
+        case LadderAction a -> {
+          int destinationId = a.destinationTile.getTileId();
+          Color otherColor = color[destinationId];
+          boolean shouldChangeOppositeLadderColor =
+              otherColor == null || otherColor.equals(Color.WHITE);
+          ladderStartEnd.add(new Pair<>(i, destinationId));
 
-      GraphicsContext gc = canvas.getGraphicsContext2D();
-
-      if (tile.getLandAction() != null) {
-        TileAction action = tile.getLandAction();
-        if (action instanceof LadderAction) {
-          int nextId = tile.getNextTile().getTileId();
-          if (nextId > tile.getTileId()) {
-            gc.setFill(Color.GREEN);
+          if (destinationId > i) {
+            color[i] = Color.GREEN;
+            if (shouldChangeOppositeLadderColor) {
+              color[destinationId] = Color.LIME;
+            }
           } else {
-            gc.setFill(Color.RED);
+            color[i] = Color.RED;
+            if (shouldChangeOppositeLadderColor) {
+              color[destinationId] = Color.INDIANRED;
+            }
           }
-        } else {
-          gc.setFill(Color.BLUE);
         }
-      } else {
-        gc.setFill(Color.WHITE);
+        case RollAgain a -> color[i] = Color.BLUE;
+        case null, default -> {
+          if (color[i] == null) {
+            color[i] = Color.WHITE;
+          }
+        }
       }
+    }
 
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+    for (int i = 1; i <= 90; i++) {
+      int x = calculateX(i, tileWidth);
+      int y = calculateY(i, tileHeight);
+
+      gc.setFill(color[i]);
       gc.fillRect(x, y, tileWidth, tileHeight);
       gc.setFill(Color.BLACK);
       gc.fillText(String.valueOf(i), x, y + tileHeight);
+    }
+    for (Pair<Integer, Integer> startEnd : ladderStartEnd) {
+      drawLadder(gc, startEnd.getKey(), startEnd.getValue(), tileWidth, tileHeight);
+
     }
 
     topCenter.getChildren().add(new Text("The ladder game"));
@@ -103,6 +143,48 @@ public class BoardView {
     bottomCenter.getChildren().add(new Button("throw dice"));
 
     return container;
+  }
+
+  private int calculateX(int i, int tileWidth) {
+    return ((i - 1) % 10) * tileWidth;
+  }
+
+  private int calculateY(int i, int tileHeight) {
+    return tileHeight * 9 - (((i - 1) / 10) * tileHeight);
+  }
+
+  private void drawLadder(GraphicsContext gc, int start, int end, int tileWidth, int tileHeight) {
+    // find center of startTile (x1, y1) and center of end tile (x2, y2)
+    double x1 = calculateX(start, tileWidth) + (double) tileWidth / 2;
+    double y1 = calculateY(start, tileHeight) + (double) tileWidth / 2;
+    double x2 = calculateX(end, tileWidth) + (double) tileWidth / 2;
+    double y2 = calculateY(end, tileHeight) + (double) tileWidth / 2;
+    // calculate the ladder vector (dx, dy)
+    double dx = (x2 - x1);
+    double dy = (y2 - y1);
+    double length = sqrt(dx * dx + dy * dy);
+    // find vector orthogonal to ladder vector and scaled
+    double scaledOrthogonalX = dy / length * tileWidth / 3;
+    double scaledOrthogonalY = (-dx) / length * tileHeight / 3;
+
+    // draw main ladder lines
+    gc.strokeLine(x1 + scaledOrthogonalX, y1 + scaledOrthogonalY, x2 + scaledOrthogonalX,
+        y2 + scaledOrthogonalY);
+    gc.strokeLine(x1 - scaledOrthogonalX, y1 - scaledOrthogonalY, x2 - scaledOrthogonalX,
+        y2 - scaledOrthogonalY);
+
+    // normalize ladder vector using manhattan distance so it becomes symmetrical
+    double manhattanDist = abs(y2 - y1) + abs(x2 - x1);
+    dy = (((y2 - y1) / manhattanDist) * tileWidth) / 2;
+    dx = (((x2 - x1) / manhattanDist) * tileHeight) / 2;
+
+    // draw ladder steps
+    while (abs(y2 - y1 - dy) + abs(x2 - x1 - dx) > 0.1) {
+      x1 += dx;
+      y1 += dy;
+      gc.strokeLine(x1 + scaledOrthogonalX, y1 + scaledOrthogonalY, x1 - scaledOrthogonalX,
+          y1 - scaledOrthogonalY);
+    }
   }
 
   private VBox createProfileBox(String name, String shape) {
