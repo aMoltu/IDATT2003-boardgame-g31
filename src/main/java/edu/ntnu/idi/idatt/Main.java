@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt;
 
-import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.ui.BoardGameApp;
+import javafx.application.Application;
 
 
 /**
@@ -14,7 +15,6 @@ public class Main {
    * @param args defaults Java for main method.
    */
   public static void main(String[] args) {
-    BoardGame game = new BoardGame("firstBoard.json");
-    game.init();
+    Application.launch(BoardGameApp.class, args);
   }
 }

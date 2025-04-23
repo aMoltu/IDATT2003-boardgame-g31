@@ -60,4 +60,12 @@ public class Tile {
   public int getTileId() {
     return tileId;
   }
+
+  public TileAction getLandAction() {
+    return landAction;
+  }
+
+  public Tile getNextTile() {
+    return nextTile;
+  }
 }
