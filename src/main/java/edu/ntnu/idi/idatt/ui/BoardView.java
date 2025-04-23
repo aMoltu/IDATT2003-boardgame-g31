@@ -5,11 +5,10 @@ import static java.lang.Math.sqrt;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.model.LadderAction;
+import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.Tile;
-import edu.ntnu.idi.idatt.model.TileAction;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,14 +19,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
-public class BoardView {
+public class BoardView implements BoardGameObserver {
 
   private final StackPane root;
   private final BoardController controller;
@@ -84,7 +82,10 @@ public class BoardView {
     playerSection.getChildren().addAll(playerBox1, playerBox2);
 
     HBox infoBox1 = createInfoBox(Color.RED, "go down ladder");
-    infoSection.getChildren().add(infoBox1);
+    HBox infoBox2 = createInfoBox(Color.INDIANRED, "bottom of bad ladder");
+    HBox infoBox3 = createInfoBox(Color.GREEN, "go up ladder");
+    HBox infoBox4 = createInfoBox(Color.LIME, "top of good ladder");
+    infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
 
     BoardGame game = controller.getGame();
 
@@ -123,6 +124,7 @@ public class BoardView {
       }
     }
 
+    // draw the game
     GraphicsContext gc = canvas.getGraphicsContext2D();
     for (int i = 1; i <= 90; i++) {
       int x = calculateX(i, tileWidth);
@@ -135,12 +137,18 @@ public class BoardView {
     }
     for (Pair<Integer, Integer> startEnd : ladderStartEnd) {
       drawLadder(gc, startEnd.getKey(), startEnd.getValue(), tileWidth, tileHeight);
-
+    }
+    gc.setFill(Color.BLUE);
+    for (Player player : game.getPlayers()) {
+      int position = player.getCurrentTile().getTileId();
+      gc.fillOval(calculateX(position, tileWidth), calculateY(position, tileHeight), 25, 25);
     }
 
     topCenter.getChildren().add(new Text("The ladder game"));
 
-    bottomCenter.getChildren().add(new Button("throw dice"));
+    Button btn = new Button("throw dice");
+    btn.setOnAction(e -> controller.throwDice());
+    bottomCenter.getChildren().add(btn);
 
     return container;
   }
@@ -221,5 +229,12 @@ public class BoardView {
 
   public StackPane getRoot() {
     return root;
+  }
+
+  @Override
+  public void update() {
+    //TODO improve
+    root.getChildren().clear();
+    root.getChildren().add(snakesAndLadders());
   }
 }
