@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.engine;
 
+import edu.ntnu.idi.idatt.model.GameState;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Tile;
@@ -24,6 +25,7 @@ public class BoardGame {
   private Player winner;
   private final int tileAmount;
   private ArrayList<BoardGameObserver> observers;
+  private int activePlayer;
 
   /**
    * Constructs the game. Creates a Board, and a set of dice Declares the start tile
@@ -34,8 +36,20 @@ public class BoardGame {
     players = new ArrayList<>();
     winner = null;
     observers = new ArrayList<>();
+    activePlayer = 0;
     createBoard();
     createDice();
+
+    //TODO remove
+    addTestPlayers();
+  }
+
+  /**
+   * temporary method for creating test players.
+   */
+  private void addTestPlayers() {
+    addPlayer(new Player("John", this));
+    addPlayer(new Player("Lisa", this));
   }
 
   /**
@@ -139,6 +153,19 @@ public class BoardGame {
         winner = player;
       }
     }
+  }
+
+  public void throwDice() {
+    Player player = players.get(activePlayer);
+    int steps = dice.roll();
+    player.move(steps);
+
+    if (player.getCurrentTile().getTileId() == tileAmount) {
+      winner = player;
+    }
+    activePlayer++;
+    activePlayer %= players.size();
+    notifyObservers();
   }
 
   public void addObserver(BoardGameObserver observer) {

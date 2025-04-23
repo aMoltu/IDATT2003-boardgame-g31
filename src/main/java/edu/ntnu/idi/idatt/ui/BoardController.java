@@ -17,6 +17,10 @@ public class BoardController {
     game = new BoardGame();
   }
 
+  public void throwDice() {
+    game.throwDice();
+  }
+
   public BoardGame getGame() {
     return game;
   }
