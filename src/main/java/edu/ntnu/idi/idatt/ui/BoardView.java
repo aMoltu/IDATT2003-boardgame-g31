@@ -1,7 +1,9 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Tile;
+import edu.ntnu.idi.idatt.model.TileAction;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -86,9 +88,25 @@ public class BoardView {
       int y = tileHeight * 9 - (((i - 1) / 10) * tileHeight);
 
       GraphicsContext gc = canvas.getGraphicsContext2D();
-      gc.setFill(Color.rgb(i * 2, i * 2, i * 2));
+
+      if (tile.getLandAction() != null) {
+        TileAction action = tile.getLandAction();
+        if (action instanceof LadderAction) {
+          int nextId = tile.getNextTile().getTileId();
+          if (nextId > tile.getTileId()) {
+            gc.setFill(Color.GREEN);
+          } else {
+            gc.setFill(Color.RED);
+          }
+        } else {
+          gc.setFill(Color.BLUE);
+        }
+      } else {
+        gc.setFill(Color.WHITE);
+      }
+
       gc.fillRect(x, y, tileWidth, tileHeight);
-      gc.setFill(Color.RED);
+      gc.setFill(Color.BLACK);
       gc.fillText(String.valueOf(i), x, y + tileHeight);
     }
 
