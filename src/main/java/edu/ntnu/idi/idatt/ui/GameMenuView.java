@@ -110,7 +110,7 @@ public class GameMenuView {
 
     //Start game Button
     Button startGameButton = new Button("Start Game");
-    startGameButton.setStyle("-fx-background-color: #4VAF50;");
+    startGameButton.setStyle("-fx-background-color: #4caf50;");
     startGameButton.setPrefWidth(200);
     startGameButton.setPrefHeight(40);
     startGameButton.setFont(Font.font("System", FontWeight.BOLD, 14));
