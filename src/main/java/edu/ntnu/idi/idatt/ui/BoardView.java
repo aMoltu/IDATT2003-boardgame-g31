@@ -36,18 +36,6 @@ public class BoardView implements BoardGameObserver {
     root.getChildren().add(snakesAndLadders());
   }
 
-  private BorderPane startMenu() {
-    BorderPane pane = new BorderPane();
-    pane.setStyle("-fx-background-color: #eee");
-    Button btn = new Button("Start game");
-    btn.setOnAction(event -> {
-      root.getChildren().clear();
-      root.getChildren().add(snakesAndLadders());
-    });
-    pane.setCenter(btn);
-    return pane;
-  }
-
   private BorderPane snakesAndLadders() {
     // set up layout
     BorderPane container = new BorderPane();
