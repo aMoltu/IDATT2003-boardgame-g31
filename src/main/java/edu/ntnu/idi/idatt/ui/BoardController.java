@@ -18,7 +18,9 @@ public class BoardController {
   }
 
   public void throwDice() {
-    game.throwDice();
+    if (game.getWinner() == null) {
+      game.throwDice();
+    }
   }
 
   public BoardGame getGame() {
