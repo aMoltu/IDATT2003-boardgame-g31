@@ -9,6 +9,10 @@ public class BoardController {
   public BoardController() {
   }
 
+  public BoardController(BoardGame game) {
+    this.game = game;
+  }
+
   public void startGame() {
     game = new BoardGame();
   }
