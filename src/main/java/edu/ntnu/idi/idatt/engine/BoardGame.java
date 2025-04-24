@@ -61,6 +61,7 @@ public class BoardGame {
     BoardFileReaderGson reader = new BoardFileReaderGson();
     Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
     board = reader.readBoard(path);
+    observers = new ArrayList<>();
     startTile = board.getTile(1);
     createDice();
   }
