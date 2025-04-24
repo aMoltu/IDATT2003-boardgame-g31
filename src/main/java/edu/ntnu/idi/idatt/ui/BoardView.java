@@ -29,10 +29,14 @@ public class BoardView implements BoardGameObserver {
 
   private final StackPane root;
   private final BoardController controller;
+  private final Color[] PLAYER_COLORS = {Color.BLUE, Color.PURPLE, Color.BROWN, Color.ORANGE};
+  private final String[] PLAYER_SHAPES = {"Circle", "Square", "Triangle", "Diamond"};
+  private final ArrayList<VBox> playerBoxes = new ArrayList<>();
 
   public BoardView(BoardController controller) {
     root = new StackPane();
     this.controller = controller;
+    controller.getGame().addObserver(this);
     root.getChildren().add(snakesAndLadders());
   }
 
@@ -65,9 +69,9 @@ public class BoardView implements BoardGameObserver {
     bottomCenter.minHeightProperty().bind(topCenter.heightProperty());
 
     // add content
-    VBox playerBox1 = createProfileBox("Player1", "cube");
-    VBox playerBox2 = createProfileBox("Player2", "triangle");
-    playerSection.getChildren().addAll(playerBox1, playerBox2);
+    //VBox playerBox1 = createProfileBox("Player1", "cube");
+    //VBox playerBox2 = createProfileBox("Player2", "triangle");
+    //playerSection.getChildren().addAll(playerBox1, playerBox2);
 
     HBox infoBox1 = createInfoBox(Color.RED, "go down ladder");
     HBox infoBox2 = createInfoBox(Color.INDIANRED, "bottom of bad ladder");
@@ -112,6 +116,19 @@ public class BoardView implements BoardGameObserver {
       }
     }
 
+
+    //Create player boxes based on actual players
+    playerSection.getChildren().clear();
+    for (int i = 0; i < game.getPlayers().size(); i++) {
+      Player player = game.getPlayers().get(i);
+      Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
+      String playerShape = PLAYER_SHAPES[i % PLAYER_SHAPES.length];
+
+      VBox playerBox = createPlayerBox(player.getName(), playerShape, playerColor,
+          player.getCurrentTile().getTileId());
+      playerSection.getChildren().add(playerBox);
+    }
+
     // draw the game
     GraphicsContext gc = canvas.getGraphicsContext2D();
     for (int i = 1; i <= 90; i++) {
@@ -126,17 +143,56 @@ public class BoardView implements BoardGameObserver {
     for (Pair<Integer, Integer> startEnd : ladderStartEnd) {
       drawLadder(gc, startEnd.getKey(), startEnd.getValue(), tileWidth, tileHeight);
     }
-    gc.setFill(Color.BLUE);
-    for (Player player : game.getPlayers()) {
+
+
+    //draw player pieces
+    for (int i = 0; i < game.getPlayers().size(); i++) {
+      Player player = game.getPlayers().get(i);
       int position = player.getCurrentTile().getTileId();
-      gc.fillOval(calculateX(position, tileWidth), calculateY(position, tileHeight), 25, 25);
+      Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
+
+      gc.setFill(playerColor);
+
+      // Drawing the different shapes
+      int x = (calculateX(position, tileWidth) + tileWidth / 2);
+      int y = (calculateY(position, tileHeight) + tileHeight / 2);
+
+      switch (i % PLAYER_SHAPES.length) {
+        case 0 -> { // Circle
+          gc.fillOval(x - 12, y - 12, 25, 25);
+        }
+        case 1 -> { //Square
+          gc.fillRect(x - 10, y - 10, 20, 20);
+        }
+        case 2 -> { // Triangle
+          double[] xTriPoints = {x - 10, x, x + 10};
+          double[] yTriPoints = {y - 10, y + 10, y - 10};
+          gc.fillPolygon(xTriPoints, yTriPoints, 3);
+        }
+        case 3 -> { //Diamond
+          double[] xDiaPoints = {x, x - 10, x, x + 10};
+          double[] yDiaPoints = {y - 10, y, y + 10, y};
+          gc.fillPolygon(xDiaPoints, yDiaPoints, 4);
+        }
+      }
     }
 
     topCenter.getChildren().add(new Text("The ladder game"));
 
-    Button btn = new Button("throw dice");
+    // Add dice throw button with active player indicator
+    Button btn = new Button("Throw dice for "
+        + game.getPlayers().get(game.getActivePlayer()).getName());
     btn.setOnAction(e -> controller.throwDice());
     bottomCenter.getChildren().add(btn);
+
+    // Add game status label
+    Label statusLabel = new Label("Game in progress");
+    if (game.getWinner() != null) {
+      statusLabel.setText("Winner: " + game.getWinner().getName() + "!");
+      statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
+      btn.setDisable(true);
+    }
+    bottomCenter.getChildren().add(statusLabel);
 
     return container;
   }
@@ -183,19 +239,27 @@ public class BoardView implements BoardGameObserver {
     }
   }
 
-  private VBox createProfileBox(String name, String shape) {
+  // New method to create player boxes with position information
+  private VBox createPlayerBox(String name, String shape, Color color, int position) {
     Label nameLabel = new Label(name);
     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-    nameLabel.setTextFill(Color.BLACK);
+    nameLabel.setTextFill(color);
 
     Label shapeLabel = new Label(shape);
     shapeLabel.setFont(Font.font("System", 12));
     shapeLabel.setTextFill(Color.DARKGRAY);
 
-    VBox box = new VBox(2);
-    box.getChildren().addAll(nameLabel, shapeLabel);
-    box.setStyle(
-        "-fx-background-color: #eee; -fx-border-color: #ccc;");
+    Label positionLabel = new Label("Position: " + position);
+    positionLabel.setFont(Font.font("System", 12));
+
+    Rectangle colorRect = new Rectangle(20, 20, color);
+
+    HBox infoBox = new HBox(5, colorRect, nameLabel);
+    infoBox.setAlignment(Pos.CENTER_LEFT);
+
+    VBox box = new VBox(5);
+    box.getChildren().addAll(infoBox, shapeLabel, positionLabel);
+    box.setStyle("-fx-background-color: #eee; -fx-border-color: #ccc; -fx-padding: 5px;");
     box.setMinWidth(150);
 
     return box;
@@ -221,8 +285,24 @@ public class BoardView implements BoardGameObserver {
 
   @Override
   public void update() {
-    //TODO improve
+    // Update player position information
+    BoardGame game = controller.getGame();
+    for (int i = 0; i < game.getPlayers().size() && i < playerBoxes.size(); i++) {
+      Player player = game.getPlayers().get(i);
+      VBox playerBox = playerBoxes.get(i);
+
+      // Find and update the position label
+      for (javafx.scene.Node node : playerBox.getChildren()) {
+        if (node instanceof Label && ((Label) node).getText().startsWith("Position:")) {
+          ((Label) node).setText("Position: " + player.getCurrentTile().getTileId());
+          break;
+        }
+      }
+    }
+
+    // Redraw the entire board
     root.getChildren().clear();
     root.getChildren().add(snakesAndLadders());
+
   }
 }

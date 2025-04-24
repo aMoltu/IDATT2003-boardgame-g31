@@ -63,7 +63,6 @@ public class GameMenuController {
   }
 
   private void initializeGame() {
-    BoardGame game;
     if (selctedBoard.equals("Default")) {
       this.game = new BoardGame();
     } else {
@@ -72,10 +71,10 @@ public class GameMenuController {
 
     //Add players to the game
     for (String playerName : playerNames) {
-      this.game.addPlayer(new Player(playerName, this.game));
+      game.addPlayer(new Player(playerName, game));
     }
 
-    BoardView boardView = new BoardView(new BoardController(this.game));
+    BoardView boardView = new BoardView(new BoardController(game));
     if (startObserver != null) {
       startObserver.updateBoardView(boardView);
     }

@@ -40,7 +40,7 @@ public class BoardGame {
     createDice();
 
     //TODO remove
-    addTestPlayers();
+    //addTestPlayers();
   }
 
   /**
@@ -191,5 +191,9 @@ public class BoardGame {
 
   public ArrayList<Player> getPlayers() {
     return players;
+  }
+
+  public int getActivePlayer() {
+    return activePlayer;
   }
 }
