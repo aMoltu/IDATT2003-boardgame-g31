@@ -11,13 +11,9 @@ public class BoardGameApp extends Application implements NewGameObserver {
 
   @Override
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
-    primaryStage.setTitle("Board Game");
-
-    GameMenuController controller = new GameMenuController();
-    controller.setStartObserver(this);
-
-    GameMenuView view = new GameMenuView(controller);
+    BoardController controller = new BoardController();
+    controller.startGame();
+    BoardView view = new BoardView(controller);
 
     Scene scene = new Scene(view.getRoot(), 640, 480);
     primaryStage.setScene(scene);
