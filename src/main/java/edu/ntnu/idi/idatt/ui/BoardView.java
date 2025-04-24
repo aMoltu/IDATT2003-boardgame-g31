@@ -28,9 +28,9 @@ public class BoardView {
   public BoardView(BoardController controller) {
     root = new StackPane();
     this.controller = controller;
-    root.getChildren().add(startMenu());
+    root.getChildren().add(snakesAndLadders());
   }
-
+/**
   private BorderPane startMenu() {
     BorderPane pane = new BorderPane();
     pane.setStyle("-fx-background-color: #eee");
@@ -42,7 +42,7 @@ public class BoardView {
     pane.setCenter(btn);
     return pane;
   }
-
+*/
   private BorderPane snakesAndLadders() {
     // set up layout
     BorderPane container = new BorderPane();
