@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.engine;
 
-import edu.ntnu.idi.idatt.model.GameState;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Tile;
