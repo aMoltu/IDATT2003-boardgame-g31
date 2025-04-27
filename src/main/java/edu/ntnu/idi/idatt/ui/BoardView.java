@@ -40,9 +40,7 @@ public class BoardView implements BoardGameObserver {
     root.getChildren().add(snakesAndLadders());
   }
 
-  private BorderPane snakesAndLadders() {
-    // set up layout
-    BorderPane container = new BorderPane();
+  private void setupLayout(BorderPane container) {
     VBox playerSection = new VBox();
     VBox gameSection = new VBox();
     VBox infoSection = new VBox();
@@ -67,24 +65,38 @@ public class BoardView implements BoardGameObserver {
     // ensure that top and bottom sections have the same size
     topCenter.minHeightProperty().bind(bottomCenter.heightProperty());
     bottomCenter.minHeightProperty().bind(topCenter.heightProperty());
+  }
 
-    // add content
-    //VBox playerBox1 = createProfileBox("Player1", "cube");
-    //VBox playerBox2 = createProfileBox("Player2", "triangle");
-    //playerSection.getChildren().addAll(playerBox1, playerBox2);
+  private void setupInfoSection(BorderPane container) {
+    VBox infoSection = (VBox) container.getRight();
 
     HBox infoBox1 = createInfoBox(Color.RED, "go down ladder");
     HBox infoBox2 = createInfoBox(Color.INDIANRED, "bottom of bad ladder");
     HBox infoBox3 = createInfoBox(Color.GREEN, "go up ladder");
     HBox infoBox4 = createInfoBox(Color.LIME, "top of good ladder");
     infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
+  }
 
+  private void setupGameBoard(BorderPane container) {
     BoardGame game = controller.getGame();
+    VBox gameSection = (VBox) container.getCenter();
+    Canvas canvas = (Canvas) gameSection.getChildren().get(1);
 
     int tileWidth = 30;
     int tileHeight = 30;
     Color[] color = new Color[91];
     ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
+
+    // Setup tile colors and ladder connections
+    setupTileColors(color, ladderStartEnd);
+
+    // Draw the board
+    drawGameBoard(canvas, color, ladderStartEnd, tileWidth, tileHeight);
+  }
+
+  private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
+    BoardGame game = controller.getGame();
+
     for (int i = 1; i <= 90; i++) {
       Tile tile = game.getBoard().getTile(i);
       switch (tile.getLandAction()) {
@@ -115,22 +127,14 @@ public class BoardView implements BoardGameObserver {
         }
       }
     }
+  }
 
-
-    //Create player boxes based on actual players
-    playerSection.getChildren().clear();
-    for (int i = 0; i < game.getPlayers().size(); i++) {
-      Player player = game.getPlayers().get(i);
-      Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
-      String playerShape = PLAYER_SHAPES[i % PLAYER_SHAPES.length];
-
-      VBox playerBox = createPlayerBox(player.getName(), playerShape, playerColor,
-          player.getCurrentTile().getTileId());
-      playerSection.getChildren().add(playerBox);
-    }
-
-    // draw the game
+  private void drawGameBoard(Canvas canvas, Color[] color,
+                             ArrayList<Pair<Integer, Integer>> ladderStartEnd,
+                             int tileWidth, int tileHeight) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
+
+    // Draw tiles
     for (int i = 1; i <= 90; i++) {
       int x = calculateX(i, tileWidth);
       int y = calculateY(i, tileHeight);
@@ -140,42 +144,76 @@ public class BoardView implements BoardGameObserver {
       gc.setFill(Color.BLACK);
       gc.fillText(String.valueOf(i), x, y + tileHeight);
     }
+
+    // Draw ladders
     for (Pair<Integer, Integer> startEnd : ladderStartEnd) {
       drawLadder(gc, startEnd.getKey(), startEnd.getValue(), tileWidth, tileHeight);
     }
+  }
 
+  private void setupPlayerSection(BorderPane container) {
+    BoardGame game = controller.getGame();
+    VBox playerSection = (VBox) container.getLeft();
 
-    //draw player pieces
+    playerSection.getChildren().clear();
+    playerBoxes.clear(); // Clear the existing player boxes
+
+    for (int i = 0; i < game.getPlayers().size(); i++) {
+      Player player = game.getPlayers().get(i);
+      Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
+      String playerShape = PLAYER_SHAPES[i % PLAYER_SHAPES.length];
+
+      VBox playerBox = createPlayerBox(player.getName(), playerShape, playerColor,
+          player.getCurrentTile().getTileId());
+      playerSection.getChildren().add(playerBox);
+      playerBoxes.add(playerBox); // Store reference to player box
+    }
+  }
+
+  private void drawPlayerPieces(Canvas canvas) {
+    BoardGame game = controller.getGame();
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+    int tileWidth = 30;
+    int tileHeight = 30;
     for (int i = 0; i < game.getPlayers().size(); i++) {
       Player player = game.getPlayers().get(i);
       int position = player.getCurrentTile().getTileId();
       Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
 
       gc.setFill(playerColor);
-
-      // Drawing the different shapes
       int x = (calculateX(position, tileWidth) + tileWidth / 2);
       int y = (calculateY(position, tileHeight) + tileHeight / 2);
 
-      switch (i % PLAYER_SHAPES.length) {
-        case 0 -> { // Circle
-          gc.fillOval(x - 12, y - 12, 25, 25);
-        }
-        case 1 -> { //Square
-          gc.fillRect(x - 10, y - 10, 20, 20);
-        }
-        case 2 -> { // Triangle
-          double[] xTriPoints = {x - 10, x, x + 10};
-          double[] yTriPoints = {y - 10, y + 10, y - 10};
-          gc.fillPolygon(xTriPoints, yTriPoints, 3);
-        }
-        case 3 -> { //Diamond
-          double[] xDiaPoints = {x, x - 10, x, x + 10};
-          double[] yDiaPoints = {y - 10, y, y + 10, y};
-          gc.fillPolygon(xDiaPoints, yDiaPoints, 4);
-        }
+      drawPlayerShape(gc, i, x, y);
+    }
+  }
+
+  private void drawPlayerShape(GraphicsContext gc, int playerIndex, int x, int y) {
+    switch (playerIndex % PLAYER_SHAPES.length) {
+      case 0 -> { // Circle
+        gc.fillOval(x - 12, y - 12, 25, 25);
+      }
+      case 1 -> { //Square
+        gc.fillRect(x - 10, y - 10, 20, 20);
+      }
+      case 2 -> { // Triangle
+        double[] xTriPoints = {x - 10, x, x + 10};
+        double[] yTriPoints = {y - 10, y + 10, y - 10};
+        gc.fillPolygon(xTriPoints, yTriPoints, 3);
+      }
+      case 3 -> { //Diamond
+        double[] xDiaPoints = {x, x - 10, x, x + 10};
+        double[] yDiaPoints = {y - 10, y, y + 10, y};
+        gc.fillPolygon(xDiaPoints, yDiaPoints, 4);
       }
     }
+  }
+
+  private void setupGameControls(BorderPane container) {
+    BoardGame game = controller.getGame();
+    VBox gameSection = (VBox) container.getCenter();
+    HBox topCenter = (HBox) gameSection.getChildren().get(0);
+    HBox bottomCenter = (HBox) gameSection.getChildren().get(2);
 
     topCenter.getChildren().add(new Text("The ladder game"));
 
@@ -193,6 +231,18 @@ public class BoardView implements BoardGameObserver {
       btn.setDisable(true);
     }
     bottomCenter.getChildren().add(statusLabel);
+  }
+
+
+  private BorderPane snakesAndLadders() {
+    // set up layout
+    BorderPane container = new BorderPane();
+
+    setupLayout(container);
+    setupInfoSection(container);
+    setupGameBoard(container);
+    setupPlayerSection(container);
+    setupGameControls(container);
 
     return container;
   }
@@ -285,24 +335,9 @@ public class BoardView implements BoardGameObserver {
 
   @Override
   public void update() {
-    // Update player position information
     BoardGame game = controller.getGame();
-    for (int i = 0; i < game.getPlayers().size() && i < playerBoxes.size(); i++) {
-      Player player = game.getPlayers().get(i);
-      VBox playerBox = playerBoxes.get(i);
 
-      // Find and update the position label
-      for (javafx.scene.Node node : playerBox.getChildren()) {
-        if (node instanceof Label && ((Label) node).getText().startsWith("Position:")) {
-          ((Label) node).setText("Position: " + player.getCurrentTile().getTileId());
-          break;
-        }
-      }
-    }
-
-    // Redraw the entire board
-    root.getChildren().clear();
-    root.getChildren().add(snakesAndLadders());
+    //TODO make better update method
 
   }
 }
