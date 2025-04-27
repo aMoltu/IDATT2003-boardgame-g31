@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class BoardGameApp extends Application implements NewGameObserver {
+public class BoardGameApp extends Application implements BoardGameObserver {
 
   private Stage primaryStage;
 
@@ -15,7 +15,7 @@ public class BoardGameApp extends Application implements NewGameObserver {
     primaryStage.setTitle("Board Game");
 
     GameMenuController controller = new GameMenuController();
-    controller.setStartObserver(this);
+    controller.setObserver(this);
 
     GameMenuView view = new GameMenuView(controller);
     Scene scene = new Scene(view.getRoot(), 640, 480);
@@ -24,7 +24,8 @@ public class BoardGameApp extends Application implements NewGameObserver {
   }
 
   @Override
-  public void updateBoardView(BoardView boardView) {
+  public void update() {
+    BoardView boardView = new BoardView(new BoardController(GameMenuController.getGame()));
     Scene gameScene = new Scene(boardView.getRoot(), 640, 480);
     primaryStage.setScene(gameScene);
   }

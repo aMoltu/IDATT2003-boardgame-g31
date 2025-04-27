@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Player;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,25 +12,25 @@ import javafx.scene.control.TextField;
 
 public class GameMenuController {
   private final List<String> playerNames = new ArrayList<>();
-  private String selctedBoard = "Default";
-  private BoardGame game;
-  private NewGameObserver startObserver;
+  private String selectedBoard = "Default";
+  private static BoardGame game;
+  private BoardGameObserver observer;
 
   public GameMenuController() {}
 
   public void setSelectedBoard(String selectedBoard) {
-    this.selctedBoard = selectedBoard;
+    this.selectedBoard = selectedBoard;
   }
 
-  public void setStartObserver(NewGameObserver startObserver) {
-    this.startObserver = startObserver;
+  public void setObserver(BoardGameObserver observer) {
+    this.observer = observer;
   }
 
   public void setGame(BoardGame game) {
     this.game = game;
   }
 
-  public BoardGame getGame() {
+  public static BoardGame getGame() {
     return game;
   }
 
@@ -63,10 +64,10 @@ public class GameMenuController {
   }
 
   private void initializeGame() {
-    if (selctedBoard.equals("Default")) {
+    if (selectedBoard.equals("Default")) {
       this.game = new BoardGame();
     } else {
-      this.game = new BoardGame(selctedBoard);
+      this.game = new BoardGame(selectedBoard);
     }
 
     //Add players to the game
@@ -75,8 +76,8 @@ public class GameMenuController {
     }
 
     BoardView boardView = new BoardView(new BoardController(game));
-    if (startObserver != null) {
-      startObserver.updateBoardView(boardView);
+    if (observer != null) {
+      observer.update();
     }
   }
 

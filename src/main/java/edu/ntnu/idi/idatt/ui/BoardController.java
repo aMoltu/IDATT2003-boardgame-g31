@@ -1,10 +1,12 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import java.util.List;
+import javafx.util.Pair;
 
 public class BoardController {
 
-  BoardGame game;
+  private BoardGame game;
 
   public BoardController() {
   }
