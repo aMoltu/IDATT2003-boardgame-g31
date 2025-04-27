@@ -54,9 +54,12 @@ public class BoardView implements BoardGameObserver {
     infoSection.minWidthProperty().bind(playerSection.widthProperty());
 
     HBox topCenter = new HBox();
-    Canvas canvas = new Canvas(300, 300);
+    StackPane canvasContainer = new StackPane();
+    Canvas boardCanvas = new Canvas(300, 300);
+    Canvas playerCanvas = new Canvas(300, 300);
+    canvasContainer.getChildren().addAll(boardCanvas, playerCanvas);
     HBox bottomCenter = new HBox();
-    gameSection.getChildren().addAll(topCenter, canvas, bottomCenter);
+    gameSection.getChildren().addAll(topCenter, canvasContainer, bottomCenter);
 
     gameSection.alignmentProperty().set(Pos.CENTER);
     topCenter.alignmentProperty().set(Pos.CENTER);
@@ -78,9 +81,9 @@ public class BoardView implements BoardGameObserver {
   }
 
   private void setupGameBoard(BorderPane container) {
-    BoardGame game = controller.getGame();
     VBox gameSection = (VBox) container.getCenter();
-    Canvas canvas = (Canvas) gameSection.getChildren().get(1);
+    StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
+    Canvas boardCanvas = (Canvas) canvasContainer.getChildren().getFirst();
 
     int tileWidth = 30;
     int tileHeight = 30;
@@ -91,7 +94,7 @@ public class BoardView implements BoardGameObserver {
     setupTileColors(color, ladderStartEnd);
 
     // Draw the board
-    drawGameBoard(canvas, color, ladderStartEnd, tileWidth, tileHeight);
+    drawGameBoard(boardCanvas, color, ladderStartEnd, tileWidth, tileHeight);
   }
 
   private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
@@ -244,6 +247,12 @@ public class BoardView implements BoardGameObserver {
     setupPlayerSection(container);
     setupGameControls(container);
 
+    //initial drawing of player pieces (just in case)
+    VBox gameSection = (VBox) container.getCenter();
+    StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
+    Canvas playerCanvas = (Canvas) canvasContainer.getChildren().get(1);
+    drawPlayerPieces(playerCanvas);
+
     return container;
   }
 
@@ -337,7 +346,61 @@ public class BoardView implements BoardGameObserver {
   public void update() {
     BoardGame game = controller.getGame();
 
-    //TODO make better update method
+    VBox gameSection = (VBox) ((BorderPane) root.getChildren().getFirst()).getCenter();
+    StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
+    Canvas playerCanvas = (Canvas) canvasContainer.getChildren().get(1);
 
+    //clear the player canvas
+    playerCanvas.getGraphicsContext2D().clearRect(0, 0, playerCanvas.getWidth(), playerCanvas.getHeight());
+
+    drawPlayerPieces(playerCanvas);
+
+    updatePlayerBoxes(game);
+
+    updateGameControls(game);
+  }
+
+
+  private void updatePlayerBoxes(BoardGame game) {
+    // Update player position information in the player boxes
+    for (int i = 0; i < game.getPlayers().size() && i < playerBoxes.size(); i++) {
+      Player player = game.getPlayers().get(i);
+      VBox playerBox = playerBoxes.get(i);
+
+      // Find and update the position label
+      for (javafx.scene.Node node : playerBox.getChildren()) {
+        if (node instanceof Label && ((Label) node).getText().startsWith("Position:")) {
+          ((Label) node).setText("Position: " + player.getCurrentTile().getTileId());
+          break;
+        }
+      }
+    }
+  }
+
+  private void updateGameControls(BoardGame game) {
+    // Update game controls (button text and status)
+    VBox gameSection = (VBox) ((BorderPane) root.getChildren().getFirst()).getCenter();
+    HBox bottomCenter = (HBox) gameSection.getChildren().get(2);
+
+    // Update button text
+    for (javafx.scene.Node node : bottomCenter.getChildren()) {
+      if (node instanceof Button) {
+        Button btn = (Button) node;
+        btn.setText("Throw dice for " + game.getPlayers().get(game.getActivePlayer()).getName());
+
+        // Disable button if game is over
+        if (game.getWinner() != null) {
+          btn.setDisable(true);
+        }
+      } else if (node instanceof Label) {
+        Label statusLabel = (Label) node;
+        if (game.getWinner() != null) {
+          statusLabel.setText("Winner: " + game.getWinner().getName() + "!");
+          statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
+        } else {
+          statusLabel.setText("Game in progress");
+        }
+      }
+    }
   }
 }
