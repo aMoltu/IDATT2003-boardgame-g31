@@ -3,16 +3,20 @@ package edu.ntnu.idi.idatt.ui;
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
-public class BoardGameApp extends Application implements BoardGameObserver {
+public class BoardGameApp extends Application {
 
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Board Game");
 
-    SceneController sceneController = new SceneController(primaryStage);
+    // used for preventing resizing when launching application
+    Scene emptyScene = new Scene(new VBox(), 640, 480);
+
+    SceneController sceneController = new SceneController(primaryStage, emptyScene);
     BoardGame game = new BoardGame(); // consider making a game factory
 
     GameMenuController gameMenuController = new GameMenuController(game, sceneController);
@@ -23,21 +27,6 @@ public class BoardGameApp extends Application implements BoardGameObserver {
 
     sceneController.addScene("main", new Scene(gameMenuView.getRoot(), 640, 480));
     sceneController.addScene("game1", new Scene(boardView.getRoot(), 640, 480));
-
-//    GameMenuController controller = new GameMenuController();
-//    controller.setObserver(this);
-//
-//    GameMenuView view = new GameMenuView(controller);
-//    Scene scene = new Scene(view.getRoot(), 640, 480);
-//    primaryStage.setScene(scene);
-//    primaryStage.show();
     sceneController.setScene("main");
-  }
-
-  @Override
-  public void update() {
-//    BoardView boardView = new BoardView(new BoardController(GameMenuController.getGame()));
-//    Scene gameScene = new Scene(boardView.getRoot(), 640, 480);
-//    primaryStage.setScene(gameScene);
   }
 }

@@ -20,7 +20,7 @@ public class BoardGame {
   private Board board;
   private ArrayList<Player> players;
   private Dice dice;
-  private final Tile startTile;
+  private Tile startTile;
   private Player winner;
   private final int tileAmount;
   private ArrayList<BoardGameObserver> observers;
@@ -30,7 +30,7 @@ public class BoardGame {
    * Constructs the game. Creates a Board, and a set of dice Declares the start tile
    */
   public BoardGame() {
-    startTile = new Tile(0);
+    startTile = new Tile(1);
     tileAmount = 90;
     players = new ArrayList<>();
     winner = null;
@@ -109,7 +109,7 @@ public class BoardGame {
     board = new Board();
     board.addTile(startTile);
 
-    for (int i = 1; i <= tileAmount; i++) {
+    for (int i = 2; i <= tileAmount; i++) {
       Tile tile = new Tile(i);
       Tile previousTile = board.getTile(i - 1);
       previousTile.setNextTile(tile);
@@ -191,5 +191,6 @@ public class BoardGame {
     BoardFileReaderGson reader = new BoardFileReaderGson();
     Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
     board = reader.readBoard(path);
+    startTile = board.getTile(1);
   }
 }

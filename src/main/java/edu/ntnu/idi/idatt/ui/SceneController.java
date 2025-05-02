@@ -10,9 +10,10 @@ public class SceneController {
   Stage stage;
   HashMap<String, Scene> scenes;
 
-  public SceneController(Stage stage) {
+  public SceneController(Stage stage, Scene initialScene) {
     scenes = new HashMap<>();
     this.stage = stage;
+    this.stage.setScene(initialScene);
     stage.show();
   }
 

@@ -32,12 +32,12 @@ public class BoardView implements BoardGameObserver {
   private final Color[] PLAYER_COLORS = {Color.BLUE, Color.PURPLE, Color.BROWN, Color.ORANGE};
   private final String[] PLAYER_SHAPES = {"Circle", "Square", "Triangle", "Diamond"};
   private final ArrayList<VBox> playerBoxes = new ArrayList<>();
+  private BorderPane mainContainer;
 
   public BoardView(BoardController controller) {
     root = new StackPane();
     this.controller = controller;
     controller.getGame().addObserver(this);
-//    root.getChildren().add(snakesAndLadders());
   }
 
   private void setupLayout(BorderPane container) {
@@ -237,7 +237,7 @@ public class BoardView implements BoardGameObserver {
   }
 
 
-  private BorderPane snakesAndLadders() {
+  private BorderPane initScene() {
     // set up layout
     BorderPane container = new BorderPane();
 
@@ -347,10 +347,11 @@ public class BoardView implements BoardGameObserver {
     BoardGame game = controller.getGame();
 
     if (root.getChildren().isEmpty()) {
-      root.getChildren().add(snakesAndLadders());
+      mainContainer = initScene();
+      root.getChildren().add(mainContainer);
     }
 
-    VBox gameSection = (VBox) ((BorderPane) root.getChildren().getFirst()).getCenter();
+    VBox gameSection = (VBox) mainContainer.getCenter();
     StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
     Canvas playerCanvas = (Canvas) canvasContainer.getChildren().get(1);
 
