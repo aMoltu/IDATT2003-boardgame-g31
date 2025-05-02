@@ -38,17 +38,6 @@ public class BoardGame {
     activePlayer = 0;
     createBoard();
     createDice();
-
-    //TODO remove
-    //addTestPlayers();
-  }
-
-  /**
-   * temporary method for creating test players.
-   */
-  private void addTestPlayers() {
-    addPlayer(new Player("John", this));
-    addPlayer(new Player("Lisa", this));
   }
 
   /**
@@ -196,5 +185,11 @@ public class BoardGame {
 
   public int getActivePlayer() {
     return activePlayer;
+  }
+
+  public void setBoard(String boardName) {
+    BoardFileReaderGson reader = new BoardFileReaderGson();
+    Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
+    board = reader.readBoard(path);
   }
 }

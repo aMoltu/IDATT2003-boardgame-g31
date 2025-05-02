@@ -37,7 +37,7 @@ public class BoardView implements BoardGameObserver {
     root = new StackPane();
     this.controller = controller;
     controller.getGame().addObserver(this);
-    root.getChildren().add(snakesAndLadders());
+//    root.getChildren().add(snakesAndLadders());
   }
 
   private void setupLayout(BorderPane container) {
@@ -133,8 +133,8 @@ public class BoardView implements BoardGameObserver {
   }
 
   private void drawGameBoard(Canvas canvas, Color[] color,
-                             ArrayList<Pair<Integer, Integer>> ladderStartEnd,
-                             int tileWidth, int tileHeight) {
+      ArrayList<Pair<Integer, Integer>> ladderStartEnd,
+      int tileWidth, int tileHeight) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
     // Draw tiles
@@ -346,12 +346,17 @@ public class BoardView implements BoardGameObserver {
   public void update() {
     BoardGame game = controller.getGame();
 
+    if (root.getChildren().isEmpty()) {
+      root.getChildren().add(snakesAndLadders());
+    }
+
     VBox gameSection = (VBox) ((BorderPane) root.getChildren().getFirst()).getCenter();
     StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
     Canvas playerCanvas = (Canvas) canvasContainer.getChildren().get(1);
 
     //clear the player canvas
-    playerCanvas.getGraphicsContext2D().clearRect(0, 0, playerCanvas.getWidth(), playerCanvas.getHeight());
+    playerCanvas.getGraphicsContext2D()
+        .clearRect(0, 0, playerCanvas.getWidth(), playerCanvas.getHeight());
 
     drawPlayerPieces(playerCanvas);
 

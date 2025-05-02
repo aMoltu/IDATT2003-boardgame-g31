@@ -7,12 +7,14 @@ import javafx.util.Pair;
 public class BoardController {
 
   private BoardGame game;
+  private SceneController sceneController;
 
   public BoardController() {
   }
 
-  public BoardController(BoardGame game) {
+  public BoardController(BoardGame game, SceneController sceneController) {
     this.game = game;
+    this.sceneController = sceneController;
   }
 
   public void startGame() {

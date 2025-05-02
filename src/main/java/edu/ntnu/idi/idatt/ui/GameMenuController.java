@@ -11,12 +11,17 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
 public class GameMenuController {
+
   private final List<String> playerNames = new ArrayList<>();
   private String selectedBoard = "Default";
-  private static BoardGame game;
   private BoardGameObserver observer;
+  private BoardGame game;
+  private SceneController sceneController;
 
-  public GameMenuController() {}
+  public GameMenuController(BoardGame game, SceneController sceneController) {
+    this.game = game;
+    this.sceneController = sceneController;
+  }
 
   public void setSelectedBoard(String selectedBoard) {
     this.selectedBoard = selectedBoard;
@@ -30,7 +35,7 @@ public class GameMenuController {
     this.game = game;
   }
 
-  public static BoardGame getGame() {
+  public BoardGame getGame() {
     return game;
   }
 
@@ -47,7 +52,8 @@ public class GameMenuController {
     }
   }
 
-  public void removePlayer(ListView<String> playerListView, ObservableList<String> observablePlayerList) {
+  public void removePlayer(ListView<String> playerListView,
+      ObservableList<String> observablePlayerList) {
     String selectedPlayer = playerListView.getSelectionModel().getSelectedItem();
     if (selectedPlayer != null) {
       playerNames.remove(selectedPlayer);
@@ -64,10 +70,8 @@ public class GameMenuController {
   }
 
   private void initializeGame() {
-    if (selectedBoard.equals("Default")) {
-      this.game = new BoardGame();
-    } else {
-      this.game = new BoardGame(selectedBoard);
+    if (!selectedBoard.equals("Default")) {
+      game.setBoard(selectedBoard);
     }
 
     //Add players to the game
@@ -75,10 +79,8 @@ public class GameMenuController {
       game.addPlayer(new Player(playerName, game));
     }
 
-    BoardView boardView = new BoardView(new BoardController(game));
-    if (observer != null) {
-      observer.update();
-    }
+    game.notifyObservers();
+    sceneController.setScene("game1");
   }
 
   private void showAlert(String title, String message) {
