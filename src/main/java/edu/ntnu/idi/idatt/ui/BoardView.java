@@ -33,6 +33,8 @@ public class BoardView implements BoardGameObserver {
   private final String[] PLAYER_SHAPES = {"Circle", "Square", "Triangle", "Diamond"};
   private final ArrayList<VBox> playerBoxes = new ArrayList<>();
   private BorderPane mainContainer;
+  private final int tileWidth = 30;
+  private final int tileHeight = 30;
 
   public BoardView(BoardController controller) {
     root = new StackPane();
@@ -85,8 +87,6 @@ public class BoardView implements BoardGameObserver {
     StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
     Canvas boardCanvas = (Canvas) canvasContainer.getChildren().getFirst();
 
-    int tileWidth = 30;
-    int tileHeight = 30;
     Color[] color = new Color[91];
     ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
 
@@ -94,7 +94,7 @@ public class BoardView implements BoardGameObserver {
     setupTileColors(color, ladderStartEnd);
 
     // Draw the board
-    drawGameBoard(boardCanvas, color, ladderStartEnd, tileWidth, tileHeight);
+    drawGameBoard(boardCanvas, color, ladderStartEnd);
   }
 
   private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
@@ -133,14 +133,13 @@ public class BoardView implements BoardGameObserver {
   }
 
   private void drawGameBoard(Canvas canvas, Color[] color,
-      ArrayList<Pair<Integer, Integer>> ladderStartEnd,
-      int tileWidth, int tileHeight) {
+      ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
     // Draw tiles
     for (int i = 1; i <= 90; i++) {
-      int x = calculateX(i, tileWidth);
-      int y = calculateY(i, tileHeight);
+      int x = calculateCornerX(i);
+      int y = calculateCornerY(i);
 
       gc.setFill(color[i]);
       gc.fillRect(x, y, tileWidth, tileHeight);
@@ -150,7 +149,7 @@ public class BoardView implements BoardGameObserver {
 
     // Draw ladders
     for (Pair<Integer, Integer> startEnd : ladderStartEnd) {
-      drawLadder(gc, startEnd.getKey(), startEnd.getValue(), tileWidth, tileHeight);
+      drawLadder(gc, startEnd.getKey(), startEnd.getValue());
     }
   }
 
@@ -176,16 +175,14 @@ public class BoardView implements BoardGameObserver {
   private void drawPlayerPieces(Canvas canvas) {
     BoardGame game = controller.getGame();
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    int tileWidth = 30;
-    int tileHeight = 30;
     for (int i = 0; i < game.getPlayers().size(); i++) {
       Player player = game.getPlayers().get(i);
       int position = player.getCurrentTile().getTileId();
       Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
 
       gc.setFill(playerColor);
-      int x = (calculateX(position, tileWidth) + tileWidth / 2);
-      int y = (calculateY(position, tileHeight) + tileHeight / 2);
+      int x = calculateCenterX(position);
+      int y = calculateCenterY(position);
 
       drawPlayerShape(gc, i, x, y);
     }
@@ -256,20 +253,28 @@ public class BoardView implements BoardGameObserver {
     return container;
   }
 
-  private int calculateX(int i, int tileWidth) {
+  private int calculateCornerX(int i) {
     return ((i - 1) % 10) * tileWidth;
   }
 
-  private int calculateY(int i, int tileHeight) {
+  private int calculateCenterX(int i) {
+    return ((i - 1) % 10) * tileWidth + tileWidth / 2;
+  }
+
+  private int calculateCornerY(int i) {
     return tileHeight * 9 - (((i - 1) / 10) * tileHeight);
   }
 
-  private void drawLadder(GraphicsContext gc, int start, int end, int tileWidth, int tileHeight) {
+  private int calculateCenterY(int i) {
+    return tileHeight * 9 - (((i - 1) / 10) * tileHeight) + tileHeight / 2;
+  }
+
+  private void drawLadder(GraphicsContext gc, int start, int end) {
     // find center of startTile (x1, y1) and center of end tile (x2, y2)
-    double x1 = calculateX(start, tileWidth) + (double) tileWidth / 2;
-    double y1 = calculateY(start, tileHeight) + (double) tileWidth / 2;
-    double x2 = calculateX(end, tileWidth) + (double) tileWidth / 2;
-    double y2 = calculateY(end, tileHeight) + (double) tileWidth / 2;
+    double x1 = calculateCenterX(start);
+    double y1 = calculateCenterY(start);
+    double x2 = calculateCenterX(end);
+    double y2 = calculateCenterY(end);
     // calculate the ladder vector (dx, dy)
     double dx = (x2 - x1);
     double dy = (y2 - y1);
