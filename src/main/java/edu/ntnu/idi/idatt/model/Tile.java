@@ -14,14 +14,31 @@ public class Tile {
   private Tile nextTile;
   private final int tileId;
   private TileAction landAction;
+  private int x;
+  private int y;
 
   /**
-   * Constructor for Tile.
+   * Constructor for Tile. Used for testing where x and y position does not matter.
    *
    * @param tileId is a unique integer used to reference to the tile.
    */
   public Tile(int tileId) {
     this.tileId = tileId;
+  }
+
+  /**
+   * Primary constructor for Tile.
+   *
+   * @param tileId is a unique integer used to reference to the tile.
+   * @param x      the x position of a tile relative to other tiles. As x increases, tiles move
+   *               rightwards.
+   * @param y      the y position of a tile relative to other tiles. As y increases, tiles move
+   *               downwards.
+   */
+  public Tile(int tileId, int x, int y) {
+    this.tileId = tileId;
+    this.x = x;
+    this.y = y;
   }
 
   public void setLandAction(TileAction landAction) {
@@ -67,5 +84,13 @@ public class Tile {
 
   public Tile getNextTile() {
     return nextTile;
+  }
+
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
   }
 }

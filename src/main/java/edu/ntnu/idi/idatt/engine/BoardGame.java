@@ -30,8 +30,8 @@ public class BoardGame {
    * Constructs the game. Creates a Board, and a set of dice Declares the start tile
    */
   public BoardGame() {
-    startTile = new Tile(1);
     tileAmount = 90;
+    startTile = new Tile(1, 0, 8);
     players = new ArrayList<>();
     winner = null;
     observers = new ArrayList<>();
@@ -110,7 +110,7 @@ public class BoardGame {
     board.addTile(startTile);
 
     for (int i = 2; i <= tileAmount; i++) {
-      Tile tile = new Tile(i);
+      Tile tile = new Tile(i, (i - 1) % 10, (tileAmount - i) / 10);
       Tile previousTile = board.getTile(i - 1);
       previousTile.setNextTile(tile);
       board.addTile(tile);
