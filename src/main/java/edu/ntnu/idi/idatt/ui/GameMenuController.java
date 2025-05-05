@@ -9,10 +9,13 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 
 public class GameMenuController {
 
   private final List<String> playerNames = new ArrayList<>();
+  private final List<String> playerShapes = new ArrayList<>();
+  private final List<Color> playerColors = new ArrayList<>();
   private String selectedBoard = "Default";
   private BoardGameObserver observer;
   private BoardGame game;
@@ -39,16 +42,19 @@ public class GameMenuController {
     return game;
   }
 
-  public void addPlayer(TextField playerNameField, ObservableList<String> observablePlayerList) {
+  public void addPlayer(TextField playerNameField, String playerShape, Color playerColor,
+      ObservableList<String> observablePlayerList) {
     String playerName = playerNameField.getText().trim();
-    if (!playerName.isEmpty() && !playerNames.contains(playerName) && playerNames.size() < 4) {
+    if (!playerName.isEmpty() && !playerNames.contains(playerName) && playerNames.size() < 5) {
       playerNames.add(playerName);
+      playerShapes.add(playerShape);
+      playerColors.add(playerColor);
       observablePlayerList.add(playerName);
       playerNameField.clear();
     } else if (playerNames.contains(playerName)) {
       showAlert("Duplicate name", "A player with this name is already added");
-    } else if (playerNames.size() >= 4) {
-      showAlert("Max players", "The player count can not exceed 4");
+    } else if (playerNames.size() >= 5) {
+      showAlert("Max players", "The player count can not exceed 5");
     }
   }
 
@@ -56,8 +62,11 @@ public class GameMenuController {
       ObservableList<String> observablePlayerList) {
     String selectedPlayer = playerListView.getSelectionModel().getSelectedItem();
     if (selectedPlayer != null) {
-      playerNames.remove(selectedPlayer);
-      observablePlayerList.remove(selectedPlayer);
+      int i = playerNames.indexOf(selectedPlayer);
+      playerNames.remove(i);
+      playerShapes.remove(i);
+      playerColors.remove(i);
+      observablePlayerList.remove(i);
     }
   }
 
@@ -75,8 +84,9 @@ public class GameMenuController {
     }
 
     //Add players to the game
-    for (String playerName : playerNames) {
-      game.addPlayer(new Player(playerName, game));
+    for (int i = 0; i < playerNames.size(); i++) {
+      game.addPlayer(
+          new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i), game));
     }
 
     game.notifyObservers();

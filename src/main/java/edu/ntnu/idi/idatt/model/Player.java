@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.model;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import javafx.scene.paint.Color;
 
 /**
  * Class representing a player of the game.
@@ -8,6 +9,8 @@ import edu.ntnu.idi.idatt.engine.BoardGame;
 public class Player {
 
   private final String name;
+  private String shape;
+  private Color color;
   private Tile currentTile;
   private BoardGame game;
 
@@ -19,6 +22,13 @@ public class Player {
    */
   public Player(String name, BoardGame game) {
     this.name = name;
+    this.game = game;
+  }
+
+  public Player(String name, String shape, Color color, BoardGame game) {
+    this.name = name;
+    this.shape = shape;
+    this.color = color;
     this.game = game;
   }
 
@@ -58,6 +68,14 @@ public class Player {
 
   public String getName() {
     return name;
+  }
+
+  public String getShape() {
+    return shape;
+  }
+
+  public Color getColor() {
+    return color;
   }
 
   public BoardGame getGame() {

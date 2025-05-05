@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
@@ -133,16 +134,23 @@ public class GameMenuView {
     Text playerSectionTitle = new Text("Add players");
     playerSectionTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
 
-    HBox playerInputBox = new HBox(10);
     TextField playerNameField = new TextField();
     playerNameField.setPromptText("Enter player Name");
-    playerNameField.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.ENTER) {
-        controller.addPlayer(playerNameField, observablePlayerList);
-      }
-    });
+    playerNameField.setMaxWidth(200);
+
+    ComboBox<String> playerShapeSelector = new ComboBox<>();
+    playerShapeSelector.getItems().addAll("Circle", "Triangle", "Square", "Diamond");
+    playerShapeSelector.setValue("Circle");
+    playerShapeSelector.setPrefWidth(200);
+
+    ColorPicker playerColorPicker = new ColorPicker();
+    playerColorPicker.setPrefWidth(200);
+
     Button addPlayerButton = new Button("Add Player");
-    playerInputBox.getChildren().addAll(playerNameField, addPlayerButton);
+
+    VBox playerInputBox = new VBox(10);
+    playerInputBox.getChildren()
+        .addAll(playerNameField, playerShapeSelector, playerColorPicker, addPlayerButton);
     playerInputBox.setAlignment(Pos.CENTER);
 
     playerListView.setItems(observablePlayerList);
@@ -157,7 +165,8 @@ public class GameMenuView {
         (observable, oldValue, newValue) -> removePlayerButton.setDisable(newValue == null));
 
     addPlayerButton.setOnAction(
-        event -> controller.addPlayer(playerNameField, observablePlayerList));
+        event -> controller.addPlayer(playerNameField, playerShapeSelector.getValue(),
+            playerColorPicker.getValue(), observablePlayerList));
 
     removePlayerButton.setOnAction(
         event -> controller.removePlayer(playerListView, observablePlayerList));
