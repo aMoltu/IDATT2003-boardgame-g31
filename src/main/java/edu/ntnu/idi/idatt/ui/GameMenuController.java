@@ -1,8 +1,10 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Player;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
@@ -67,6 +69,20 @@ public class GameMenuController {
       playerShapes.remove(i);
       playerColors.remove(i);
       observablePlayerList.remove(i);
+    }
+  }
+
+  public void addPlayers(Path path, ObservableList<String> observablePlayerList) {
+    playerNames.clear();
+    playerShapes.clear();
+    playerColors.clear();
+    observablePlayerList.clear();
+    List<Player> players = PlayerCsvReader.read(path);
+    for (Player player : players) {
+      playerNames.add(player.getName());
+      playerShapes.add(player.getShape());
+      playerColors.add(player.getColor());
+      observablePlayerList.add(player.getName());
     }
   }
 

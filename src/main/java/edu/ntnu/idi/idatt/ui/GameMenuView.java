@@ -148,9 +148,32 @@ public class GameMenuView {
 
     Button addPlayerButton = new Button("Add Player");
 
+    //Import player from file
+    Text separator = new Text("Or");
+    separator.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+    ComboBox<String> fileSelector = new ComboBox<>();
+    Path playerPath = FileSystems.getDefault().getPath("src", "main", "resources", "players");
+    File playerDir = new File(playerPath.toString());
+    if (playerDir.isDirectory() && playerDir.exists()) {
+      File[] playerFiles = playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
+      if (playerFiles != null) {
+        for (File file : playerFiles) {
+          fileSelector.getItems().add(file.getName());
+          fileSelector.setValue(file.getName());
+        }
+      }
+    }
+
+    Button importButton = new Button("Import players from file");
+    importButton.setOnAction(
+        event -> controller.addPlayers(
+            playerPath.resolve(fileSelector.getValue()), observablePlayerList));
+
     VBox playerInputBox = new VBox(10);
     playerInputBox.getChildren()
-        .addAll(playerNameField, playerShapeSelector, playerColorPicker, addPlayerButton);
+        .addAll(playerNameField, playerShapeSelector, playerColorPicker, addPlayerButton,
+            separator, fileSelector, importButton);
     playerInputBox.setAlignment(Pos.CENTER);
 
     playerListView.setItems(observablePlayerList);

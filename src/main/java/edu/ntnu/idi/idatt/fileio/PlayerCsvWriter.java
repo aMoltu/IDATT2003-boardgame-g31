@@ -16,12 +16,14 @@ public class PlayerCsvWriter {
    * Write player names on separate lines.
    *
    * @param path    path to the output file
-   * @param players list of players with a name
+   * @param players list of players with a name, shape and color
    */
   public static void write(Path path, List<Player> players) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()))) {
       for (Player player : players) {
         writer.write(player.getName());
+        writer.write(player.getShape());
+        writer.write(player.getColor().toString());
         writer.newLine();
       }
     } catch (IOException e) {

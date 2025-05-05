@@ -32,6 +32,12 @@ public class Player {
     this.game = game;
   }
 
+  public Player(String name, String shape, Color color) {
+    this.name = name;
+    this.shape = shape;
+    this.color = color;
+  }
+
   /**
    * Simpler constructor for the Player class used for testing. Only assigns name.
    *
