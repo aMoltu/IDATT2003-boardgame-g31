@@ -57,6 +57,10 @@ public class GameMenuController {
       showAlert("Duplicate name", "A player with this name is already added");
     } else if (playerNames.size() >= 5) {
       showAlert("Max players", "The player count can not exceed 5");
+    } else if (playerName.isEmpty()) {
+      showAlert("Empty name", "PLayer name cannot be empty");
+    } else {
+      showAlert("Unknown error", "Could not add player");
     }
   }
 
