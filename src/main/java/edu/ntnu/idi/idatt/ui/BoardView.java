@@ -9,13 +9,16 @@ import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.Tile;
 import java.util.ArrayList;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -53,12 +56,18 @@ public class BoardView implements BoardGameObserver {
 
   private GridPane setupLayout() {
     GridPane container = new GridPane();
+    container.setGridLinesVisible(true); //temporary
+    container.setHgap(10);
+    container.setVgap(10);
 
+    ColumnConstraints outsideColumn = new ColumnConstraints();
     ColumnConstraints sideColumn = new ColumnConstraints();
     ColumnConstraints middleColumn = new ColumnConstraints();
+    outsideColumn.setPercentWidth(5);
     sideColumn.setPercentWidth(25);
-    middleColumn.setPercentWidth(50);
-    container.getColumnConstraints().addAll(sideColumn, middleColumn, sideColumn);
+    middleColumn.setPercentWidth(40);
+    container.getColumnConstraints()
+        .addAll(outsideColumn, sideColumn, middleColumn, sideColumn, outsideColumn);
 
     RowConstraints outsideRow = new RowConstraints();
     RowConstraints middleRow = new RowConstraints();
@@ -71,8 +80,14 @@ public class BoardView implements BoardGameObserver {
 
   private Pane setupInfoSection() {
     VBox infoSection = new VBox();
-
-    infoSection.setPadding(new Insets(10, 10, 10, 10));
+    infoSection.setPadding(new Insets(10));
+    infoSection.setStyle("""
+            -fx-background-color: #eee;
+            -fx-background-radius: 10;
+            -fx-border-radius: 10;
+            -fx-border-color: #ccc;
+            -fx-border-width: 1;
+        """);
 
     HBox infoBox1 = createInfoBox(Color.RED, "go down ladder");
     HBox infoBox2 = createInfoBox(Color.INDIANRED, "bottom of bad ladder");
@@ -80,6 +95,7 @@ public class BoardView implements BoardGameObserver {
     HBox infoBox4 = createInfoBox(Color.LIME, "top of good ladder");
     infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
 
+    infoSection.setEffect(new DropShadow(5, Color.gray(0.3)));
     return infoSection;
   }
 
@@ -160,6 +176,16 @@ public class BoardView implements BoardGameObserver {
     BoardGame game = controller.getGame();
     VBox playerSection = new VBox();
 
+    playerSection.setPadding(new Insets(10));
+    playerSection.setStyle("""
+            -fx-background-color: #eee;
+            -fx-background-radius: 10;
+            -fx-border-radius: 10;
+            -fx-border-color: #ccc;
+            -fx-border-width: 1;
+        """);
+    playerSection.setEffect(new DropShadow(5, Color.gray(0.3)));
+
     playerSection.getChildren().clear();
     playerBoxes.clear(); // Clear the existing player boxes
 
@@ -216,19 +242,26 @@ public class BoardView implements BoardGameObserver {
 
   private Pane setupTopSection() {
     HBox topCenter = new HBox();
-    topCenter.getChildren().add(new Text("The ladder game"));
+    topCenter.setAlignment(Pos.CENTER);
+
+    Text title = new Text("The ladder game");
+    title.setFont(Font.font("System", FontWeight.BOLD, 24));
+
+    topCenter.getChildren().add(title);
     return topCenter;
   }
 
   private Pane setupBottomSection() {
     BoardGame game = controller.getGame();
-    HBox bottomCenter = new HBox();
+    VBox bottomCenter = new VBox();
+    bottomCenter.setAlignment(Pos.CENTER);
 
     // Add dice throw button with active player indicator
     Button btn = new Button("Throw dice for "
         + game.getPlayers().get(game.getActivePlayer()).getName());
     btn.setOnAction(e -> controller.throwDice());
     bottomCenter.getChildren().add(btn);
+    btn.setPrefSize(200, 40);
 
     // Add game status label
     Label statusLabel = new Label("Game in progress");
@@ -247,15 +280,15 @@ public class BoardView implements BoardGameObserver {
     GridPane container = setupLayout();
 
     topSection = setupTopSection();
-    container.add(topSection, 1, 0);
+    container.add(topSection, 2, 0);
     playerSection = setupPlayerSection();
-    container.add(playerSection, 0, 1);
+    container.add(playerSection, 1, 1);
     gameSection = setupGameBoard();
-    container.add(gameSection, 1, 1);
+    container.add(gameSection, 2, 1);
     infoSection = setupInfoSection();
-    container.add(infoSection, 2, 1);
+    container.add(infoSection, 3, 1);
     bottomSection = setupBottomSection();
-    container.add(bottomSection, 1, 2);
+    container.add(bottomSection, 2, 2);
 
     return container;
   }
