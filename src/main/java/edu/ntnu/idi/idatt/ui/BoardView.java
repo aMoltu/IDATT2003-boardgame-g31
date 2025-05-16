@@ -57,7 +57,7 @@ public class BoardView implements BoardGameObserver {
 
   private GridPane setupLayout() {
     GridPane container = new GridPane();
-    container.setGridLinesVisible(true); //temporary
+
     container.setHgap(10);
     container.setVgap(10);
 
@@ -80,23 +80,22 @@ public class BoardView implements BoardGameObserver {
   }
 
   private Pane setupInfoSection() {
-    VBox infoSection = new VBox();
+    VBox infoSection = new VBox(5);
     infoSection.setPadding(new Insets(10));
     infoSection.setStyle("""
             -fx-background-color: #eee;
             -fx-background-radius: 10;
             -fx-border-radius: 10;
-            -fx-border-color: #ccc;
             -fx-border-width: 1;
         """);
+    infoSection.setEffect(new DropShadow(3, Color.gray(0.2)));
 
-    HBox infoBox1 = createInfoBox(Color.RED, "go down ladder");
-    HBox infoBox2 = createInfoBox(Color.INDIANRED, "bottom of bad ladder");
-    HBox infoBox3 = createInfoBox(Color.GREEN, "go up ladder");
-    HBox infoBox4 = createInfoBox(Color.LIME, "top of good ladder");
+    HBox infoBox1 = createInfoBox(Color.RED, "Go down ladder");
+    HBox infoBox2 = createInfoBox(Color.INDIANRED, "Bottom of bad ladder");
+    HBox infoBox3 = createInfoBox(Color.GREEN, "Go up ladder");
+    HBox infoBox4 = createInfoBox(Color.LIME, "Top of good ladder");
     infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
 
-    infoSection.setEffect(new DropShadow(5, Color.gray(0.3)));
     return infoSection;
   }
 
@@ -120,12 +119,6 @@ public class BoardView implements BoardGameObserver {
     Canvas playerCanvas = new ResizableCanvas();
     gameSection.getChildren().addAll(boardCanvas, playerCanvas);
 
-    double relativeCanvasSize = 0.9;
-    boardCanvas.widthProperty().bind(gameSection.widthProperty().multiply(relativeCanvasSize));
-    boardCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
-    playerCanvas.widthProperty().bind(gameSection.widthProperty().multiply(relativeCanvasSize));
-    playerCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
-
     Color[] color = new Color[91];
     ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
 
@@ -134,12 +127,19 @@ public class BoardView implements BoardGameObserver {
     drawGameBoard(boardCanvas, color, ladderStartEnd);
 
     // Make sure canvas size corresponds to window size
+    double relativeCanvasSize = 0.9;
+    boardCanvas.widthProperty().bind(gameSection.widthProperty().multiply(relativeCanvasSize));
+    boardCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
+    playerCanvas.widthProperty().bind(gameSection.widthProperty().multiply(relativeCanvasSize));
+    playerCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
+
     gameSection.widthProperty().addListener(
         (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color, ladderStartEnd,
             playerCanvas, relativeCanvasSize));
     gameSection.heightProperty().addListener(
         (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color, ladderStartEnd,
             playerCanvas, relativeCanvasSize));
+
     return gameSection;
   }
 
@@ -201,10 +201,12 @@ public class BoardView implements BoardGameObserver {
       int x = calculateCornerX(i);
       int y = calculateCornerY(i);
 
-      gc.setFill(color[i]);
-      gc.fillRect(x, y, tileWidth, tileHeight);
       gc.setFill(Color.BLACK);
-      gc.fillText(String.valueOf(i), x, y + tileHeight);
+      gc.fillRect(x, y, tileWidth, tileHeight); // Draw tile border
+      gc.setFill(color[i]);
+      gc.fillRect(x + 0.5, y + 0.5, tileWidth - 1, tileHeight - 1);
+      gc.setFill(Color.BLACK);
+      gc.fillText(String.valueOf(i), x + 1, y + tileHeight - 1);
     }
 
     // Draw ladders
@@ -214,29 +216,28 @@ public class BoardView implements BoardGameObserver {
   }
 
   private Pane setupPlayerSection() {
-    BoardGame game = controller.getGame();
-    VBox playerSection = new VBox();
+    VBox playerSection = new VBox(5);
 
     playerSection.setPadding(new Insets(10));
     playerSection.setStyle("""
             -fx-background-color: #eee;
             -fx-background-radius: 10;
             -fx-border-radius: 10;
-            -fx-border-color: #ccc;
             -fx-border-width: 1;
         """);
-    playerSection.setEffect(new DropShadow(5, Color.gray(0.3)));
+    playerSection.setEffect(new DropShadow(3, Color.gray(0.2)));
 
     playerSection.getChildren().clear();
-    playerBoxes.clear(); // Clear the existing player boxes
+    playerBoxes.clear();
 
+    BoardGame game = controller.getGame();
     for (int i = 0; i < game.getPlayers().size(); i++) {
       Player player = game.getPlayers().get(i);
 
       VBox playerBox = createPlayerBox(player.getName(), player.getShape(), player.getColor(),
           player.getCurrentTile().getTileId());
       playerSection.getChildren().add(playerBox);
-      playerBoxes.add(playerBox); // Store reference to player box
+      playerBoxes.add(playerBox);
     }
     return playerSection;
   }
@@ -410,10 +411,10 @@ public class BoardView implements BoardGameObserver {
     HBox infoBox = new HBox(5, colorRect, nameLabel);
     infoBox.setAlignment(Pos.CENTER_LEFT);
 
-    VBox box = new VBox(5);
+    VBox box = new VBox(2);
     box.getChildren().addAll(infoBox, shapeLabel, positionLabel);
-    box.setStyle("-fx-background-color: #eee; -fx-border-color: #ccc; -fx-padding: 5px;");
-    box.setMinWidth(100);
+    box.setStyle("-fx-background-color: #eee; -fx-padding: 5px;");
+    box.setMinWidth(150);
 
     return box;
   }
@@ -423,11 +424,11 @@ public class BoardView implements BoardGameObserver {
     Text text = new Text(infoText);
     text.setFont(Font.font("System", 12));
 
-    HBox box = new HBox(2);
+    HBox box = new HBox(5);
+    box.setAlignment(Pos.CENTER_LEFT);
     box.getChildren().addAll(rect, text);
-    box.setStyle(
-        "-fx-background-color: #eee; -fx-border-color: #ccc;");
-    box.setMinWidth(100);
+    box.setStyle("-fx-background-color: #eee;");
+    box.setMinWidth(150);
 
     return box;
   }
