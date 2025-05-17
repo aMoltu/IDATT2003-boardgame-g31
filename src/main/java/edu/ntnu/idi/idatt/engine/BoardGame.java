@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * This class is responsible for initiating the game and running through the game logics.
@@ -31,6 +34,7 @@ public class BoardGame {
   private final int tileAmount;
   private ArrayList<BoardGameObserver> observers;
   private int activePlayer;
+  private StringProperty activePlayerProperty;
 
   /**
    * Constructs the game. Creates a Board, and a set of dice Declares the start tile
@@ -42,6 +46,7 @@ public class BoardGame {
     winner = null;
     observers = new ArrayList<>();
     activePlayer = 0;
+    activePlayerProperty = new SimpleStringProperty();
     createBoard();
     createDice();
   }
@@ -157,9 +162,11 @@ public class BoardGame {
 
     if (player.getCurrentTile().getTileId() == tileAmount) {
       winner = player;
+    } else {
+      activePlayer = (activePlayer + 1) % players.size();
+      activePlayerProperty.set(players.get(activePlayer).getName());
     }
-    activePlayer++;
-    activePlayer %= players.size();
+
     notifyObservers();
   }
 
@@ -189,8 +196,8 @@ public class BoardGame {
     return players;
   }
 
-  public int getActivePlayer() {
-    return activePlayer;
+  public ReadOnlyStringProperty getActivePlayerProperty() {
+    return activePlayerProperty;
   }
 
   public void setBoard(String boardName) {

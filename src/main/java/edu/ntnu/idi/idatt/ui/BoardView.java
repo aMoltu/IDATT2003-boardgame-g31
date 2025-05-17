@@ -43,9 +43,9 @@ import javafx.util.Pair;
 public class BoardView implements BoardGameObserver {
 
   private final StackPane root;
+  private final BoardGame game;
   private final BoardController controller;
-  private final ArrayList<VBox> playerBoxes = new ArrayList<>();
-  private final BoardViewModel board;
+  private BoardViewModel board;
   private GridPane mainContainer;
   private int tileWidth = 30;
   private int tileHeight = 30;
@@ -55,11 +55,11 @@ public class BoardView implements BoardGameObserver {
   private Pane infoSection;
   private Pane bottomSection;
 
-  public BoardView(BoardController controller) {
+  public BoardView(BoardGame game, BoardController controller) {
     root = new StackPane();
+    this.game = game;
     this.controller = controller;
-    controller.getGame().addObserver(this);
-    board = controller.getGame().getBoardViewModel(); // assuming board won't change
+    game.addObserver(this);
   }
 
   private GridPane setupLayout() {
@@ -163,8 +163,6 @@ public class BoardView implements BoardGameObserver {
   }
 
   private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
-    BoardGame game = controller.getGame();
-
     for (int i = 1; i <= board.tileAmount(); i++) {
       TileViewModel tile = board.tiles().get(i);
       switch (tile.landActionType()) {
@@ -234,16 +232,10 @@ public class BoardView implements BoardGameObserver {
     playerSection.setEffect(new DropShadow(3, Color.gray(0.2)));
 
     playerSection.getChildren().clear();
-    playerBoxes.clear();
 
-    BoardGame game = controller.getGame();
     List<PlayerViewModel> playerInformation = game.getPlayerViewModels();
 
-    playerInformation.forEach(player -> {
-      VBox playerBox = createPlayerBox(player);
-      playerSection.getChildren().add(playerBox);
-      playerBoxes.add(playerBox);
-    });
+    playerInformation.forEach(player -> playerSection.getChildren().add(createPlayerBox(player)));
     return playerSection;
   }
 
@@ -254,7 +246,6 @@ public class BoardView implements BoardGameObserver {
 
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
-    BoardGame game = controller.getGame();
     game.getPlayerViewModels().forEach(player -> {
       int position = player.getPositionProperty().get();
       int x = calculateCenterX(position);
@@ -302,25 +293,20 @@ public class BoardView implements BoardGameObserver {
   }
 
   private Pane setupBottomSection() {
-    BoardGame game = controller.getGame();
-    VBox bottomCenter = new VBox();
+    VBox bottomCenter = new VBox(10);
     bottomCenter.setAlignment(Pos.CENTER);
 
     // Add dice throw button with active player indicator
-    Button btn = new Button("Throw dice for "
-        + game.getPlayers().get(game.getActivePlayer()).getName());
-    btn.setOnAction(e -> controller.throwDice());
-    bottomCenter.getChildren().add(btn);
-    btn.setPrefSize(200, 40);
+    Button throwDiceButton = new Button();
+    throwDiceButton.setOnAction(e -> controller.throwDice());
+    throwDiceButton.setPrefSize(200, 40);
+    throwDiceButton.textProperty().bind(Bindings.createStringBinding(
+        () -> "Throw dice for " + game.getActivePlayerProperty().get(),
+        game.getActivePlayerProperty()));
 
-    // Add game status label
     Label statusLabel = new Label("Game in progress");
-    if (game.getWinner() != null) {
-      statusLabel.setText("Winner: " + game.getWinner().getName() + "!");
-      statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
-      btn.setDisable(true);
-    }
-    bottomCenter.getChildren().add(statusLabel);
+
+    bottomCenter.getChildren().addAll(throwDiceButton, statusLabel);
 
     return bottomCenter;
   }
@@ -328,6 +314,8 @@ public class BoardView implements BoardGameObserver {
 
   private GridPane initScene() {
     GridPane container = setupLayout();
+
+    board = game.getBoardViewModel();
 
     topSection = setupTopSection();
     container.add(topSection, 2, 0);
@@ -445,8 +433,6 @@ public class BoardView implements BoardGameObserver {
 
   @Override
   public void update() {
-    BoardGame game = controller.getGame();
-
     if (root.getChildren().isEmpty()) {
       mainContainer = initScene();
       root.getChildren().add(mainContainer);
@@ -456,29 +442,20 @@ public class BoardView implements BoardGameObserver {
 
     drawPlayerPieces(playerCanvas);
 
-    updateGameControls(game);
+    if (game.getWinner() != null) {
+      disableGameControls();
+      changeStateLabel();
+    }
   }
 
-  private void updateGameControls(BoardGame game) {
-    // Update button text
-    for (javafx.scene.Node node : bottomSection.getChildren()) {
-      if (node instanceof Button) {
-        Button btn = (Button) node;
-        btn.setText("Throw dice for " + game.getPlayers().get(game.getActivePlayer()).getName());
+  private void disableGameControls() {
+    Button btn = (Button) bottomSection.getChildren().getFirst();
+    btn.setDisable(true);
+  }
 
-        // Disable button if game is over
-        if (game.getWinner() != null) {
-          btn.setDisable(true);
-        }
-      } else if (node instanceof Label) {
-        Label statusLabel = (Label) node;
-        if (game.getWinner() != null) {
-          statusLabel.setText("Winner: " + game.getWinner().getName() + "!");
-          statusLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
-        } else {
-          statusLabel.setText("Game in progress");
-        }
-      }
-    }
+  private void changeStateLabel() {
+    Label lbl = (Label) bottomSection.getChildren().getLast();
+    lbl.setText("Winner: " + game.getActivePlayerProperty().get() + "!");
+    lbl.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
   }
 }

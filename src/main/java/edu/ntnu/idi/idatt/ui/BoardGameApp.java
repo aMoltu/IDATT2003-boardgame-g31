@@ -25,7 +25,7 @@ public class BoardGameApp extends Application {
     GameMenuView gameMenuView = new GameMenuView(gameMenuController);
 
     BoardController boardController = new BoardController(game, sceneController);
-    BoardView boardView = new BoardView(boardController);
+    BoardView boardView = new BoardView(game, boardController);
 
     sceneController.addScene("main", new Scene(gameMenuView.getRoot()));
     sceneController.addScene("game1", new Scene(boardView.getRoot()));
