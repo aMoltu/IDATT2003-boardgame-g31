@@ -211,11 +211,12 @@ public class BoardGame {
 
     String action = "";
     Integer nextId = null;
-    try {
-      action = tile.getLandAction().getClass().toString();
-      nextId = tile.getNextTile().getTileId();
-    } catch (NullPointerException ignored) {
 
+    if (tile.getLandAction() != null) {
+      action = tile.getLandAction().getClass().getSimpleName();
+      if (tile.getLandAction() instanceof LadderAction) {
+        nextId = ((LadderAction) tile.getLandAction()).destinationTile.getTileId();
+      }
     }
     return new TileViewModel(id, tile.getX(), tile.getY(), action, nextId);
   }
