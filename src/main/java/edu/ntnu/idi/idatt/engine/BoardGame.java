@@ -51,13 +51,17 @@ public class BoardGame {
   }
 
   /**
-   * method to add a new player to the game and place them on the start tile.
+   * Method to add a new player to the game. Players get added to the start tile, and the first
+   * player is considered the active player (first to move).
    *
    * @param player the player to be added.
    */
   public void addPlayer(Player player) {
     players.add(player);
     player.placeOnTile(startTile);
+    if (players.size() == 1) {
+      activePlayerProperty.set(player.getName());
+    }
   }
 
   private void createBoard() {
