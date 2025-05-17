@@ -112,7 +112,7 @@ public class BoardGame {
   }
 
   private void createBoard() {
-    board = new Board();
+    board = new Board(10, 9);
     board.addTile(startTile);
 
     for (int i = 2; i <= tileAmount; i++) {
@@ -228,7 +228,6 @@ public class BoardGame {
       tiles.put(id, getTileViewModel(id));
     }
 
-    //TODO remove magic numbers
-    return new BoardViewModel(10, 9, tileAmount, tiles);
+    return new BoardViewModel(board.getWidth(), board.getHeight(), tileAmount, tiles);
   }
 }

@@ -50,7 +50,9 @@ public class BoardFileReaderGson implements BoardFileReader {
     if (rootNode.isJsonObject()) {
       JsonObject details = rootNode.getAsJsonObject();
 
-      Board board = new Board();
+      int width = details.get("width").getAsInt();
+      int height = details.get("height").getAsInt();
+      Board board = new Board(width, height);
       // add tiles to board
       JsonArray tiles = details.getAsJsonArray("tiles");
       for (JsonElement tileElement : tiles) {
