@@ -1,18 +1,23 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Player;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 
 public class GameMenuController {
 
   private final List<String> playerNames = new ArrayList<>();
+  private final List<String> playerShapes = new ArrayList<>();
+  private final List<Color> playerColors = new ArrayList<>();
   private String selectedBoard = "Default";
   private BoardGameObserver observer;
   private BoardGame game;
@@ -39,16 +44,23 @@ public class GameMenuController {
     return game;
   }
 
-  public void addPlayer(TextField playerNameField, ObservableList<String> observablePlayerList) {
+  public void addPlayer(TextField playerNameField, String playerShape, Color playerColor,
+      ObservableList<String> observablePlayerList) {
     String playerName = playerNameField.getText().trim();
-    if (!playerName.isEmpty() && !playerNames.contains(playerName) && playerNames.size() < 4) {
+    if (!playerName.isEmpty() && !playerNames.contains(playerName) && playerNames.size() < 5) {
       playerNames.add(playerName);
+      playerShapes.add(playerShape);
+      playerColors.add(playerColor);
       observablePlayerList.add(playerName);
       playerNameField.clear();
     } else if (playerNames.contains(playerName)) {
       showAlert("Duplicate name", "A player with this name is already added");
-    } else if (playerNames.size() >= 4) {
-      showAlert("Max players", "The player count can not exceed 4");
+    } else if (playerNames.size() >= 5) {
+      showAlert("Max players", "The player count can not exceed 5");
+    } else if (playerName.isEmpty()) {
+      showAlert("Empty name", "PLayer name cannot be empty");
+    } else {
+      showAlert("Unknown error", "Could not add player");
     }
   }
 
@@ -56,8 +68,25 @@ public class GameMenuController {
       ObservableList<String> observablePlayerList) {
     String selectedPlayer = playerListView.getSelectionModel().getSelectedItem();
     if (selectedPlayer != null) {
-      playerNames.remove(selectedPlayer);
-      observablePlayerList.remove(selectedPlayer);
+      int i = playerNames.indexOf(selectedPlayer);
+      playerNames.remove(i);
+      playerShapes.remove(i);
+      playerColors.remove(i);
+      observablePlayerList.remove(i);
+    }
+  }
+
+  public void addPlayers(Path path, ObservableList<String> observablePlayerList) {
+    playerNames.clear();
+    playerShapes.clear();
+    playerColors.clear();
+    observablePlayerList.clear();
+    List<Player> players = PlayerCsvReader.read(path);
+    for (Player player : players) {
+      playerNames.add(player.getName());
+      playerShapes.add(player.getShape());
+      playerColors.add(player.getColor());
+      observablePlayerList.add(player.getName());
     }
   }
 
@@ -75,8 +104,9 @@ public class GameMenuController {
     }
 
     //Add players to the game
-    for (String playerName : playerNames) {
-      game.addPlayer(new Player(playerName, game));
+    for (int i = 0; i < playerNames.size(); i++) {
+      game.addPlayer(
+          new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i), game));
     }
 
     game.notifyObservers();

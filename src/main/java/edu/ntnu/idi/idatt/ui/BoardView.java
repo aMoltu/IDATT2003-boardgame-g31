@@ -162,10 +162,8 @@ public class BoardView implements BoardGameObserver {
 
     for (int i = 0; i < game.getPlayers().size(); i++) {
       Player player = game.getPlayers().get(i);
-      Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
-      String playerShape = PLAYER_SHAPES[i % PLAYER_SHAPES.length];
 
-      VBox playerBox = createPlayerBox(player.getName(), playerShape, playerColor,
+      VBox playerBox = createPlayerBox(player.getName(), player.getShape(), player.getColor(),
           player.getCurrentTile().getTileId());
       playerSection.getChildren().add(playerBox);
       playerBoxes.add(playerBox); // Store reference to player box
@@ -178,33 +176,36 @@ public class BoardView implements BoardGameObserver {
     for (int i = 0; i < game.getPlayers().size(); i++) {
       Player player = game.getPlayers().get(i);
       int position = player.getCurrentTile().getTileId();
-      Color playerColor = PLAYER_COLORS[i % PLAYER_COLORS.length];
 
-      gc.setFill(playerColor);
+      gc.setFill(player.getColor());
       int x = calculateCenterX(position);
       int y = calculateCenterY(position);
 
-      drawPlayerShape(gc, i, x, y);
+      drawPlayerShape(gc, player.getShape(), x, y);
     }
   }
 
-  private void drawPlayerShape(GraphicsContext gc, int playerIndex, int x, int y) {
-    switch (playerIndex % PLAYER_SHAPES.length) {
-      case 0 -> { // Circle
+  private void drawPlayerShape(GraphicsContext gc, String shape, int x, int y) {
+    switch (shape) {
+      case "Circle" -> {
         gc.fillOval(x - 12, y - 12, 25, 25);
       }
-      case 1 -> { //Square
+      case "Square" -> {
         gc.fillRect(x - 10, y - 10, 20, 20);
       }
-      case 2 -> { // Triangle
+      case "Triangle" -> {
         double[] xTriPoints = {x - 10, x, x + 10};
         double[] yTriPoints = {y - 10, y + 10, y - 10};
         gc.fillPolygon(xTriPoints, yTriPoints, 3);
       }
-      case 3 -> { //Diamond
+      case "Diamond" -> {
         double[] xDiaPoints = {x, x - 10, x, x + 10};
         double[] yDiaPoints = {y - 10, y, y + 10, y};
         gc.fillPolygon(xDiaPoints, yDiaPoints, 4);
+      }
+      default -> {
+        System.err.println("Unknown shape: " + shape);
+        gc.fillOval(x - 12, y - 12, 25, 25);
       }
     }
   }

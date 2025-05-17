@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.paint.Color;
 
 /**
  * Class for gathering player information from CSV files.
@@ -24,7 +25,8 @@ public class PlayerCsvReader {
     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()))) {
       String line;
       while ((line = bufferedReader.readLine()) != null) {
-        players.add(new Player(line));
+        String[] parts = line.split(",");
+        players.add(new Player(parts[0], parts[1], Color.web(parts[2])));
       }
     } catch (IOException e) {
       System.err.println(e.getMessage());
