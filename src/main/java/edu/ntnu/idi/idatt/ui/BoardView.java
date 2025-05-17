@@ -249,18 +249,17 @@ public class BoardView implements BoardGameObserver {
     canvas.getGraphicsContext2D()
         .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-    BoardGame game = controller.getGame();
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    for (int i = 0; i < game.getPlayers().size(); i++) {
-      Player player = game.getPlayers().get(i);
-      int position = player.getCurrentTile().getTileId();
 
-      gc.setFill(player.getColor());
+    BoardGame game = controller.getGame();
+    game.getPlayerViewModels().forEach(player -> {
+      int position = player.getPositionProperty().get();
       int x = calculateCenterX(position);
       int y = calculateCenterY(position);
 
+      gc.setFill(player.getColor());
       drawPlayerShape(gc, player.getShape(), x, y);
-    }
+    });
   }
 
   private void drawPlayerShape(GraphicsContext gc, String shape, int x, int y) {
