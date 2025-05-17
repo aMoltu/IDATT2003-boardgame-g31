@@ -11,6 +11,7 @@ import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.PlayerViewModel;
 import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.Tile;
+import edu.ntnu.idi.idatt.model.TileViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
@@ -165,28 +166,27 @@ public class BoardView implements BoardGameObserver {
     BoardGame game = controller.getGame();
 
     for (int i = 1; i <= board.tileAmount(); i++) {
-      Tile tile = game.getBoard().getTile(i);
-      switch (tile.getLandAction()) {
-        case LadderAction a -> {
-          int destinationId = a.destinationTile.getTileId();
-          Color otherColor = color[destinationId];
+      TileViewModel tile = board.tiles().get(i);
+      switch (tile.landActionType()) {
+        case "LadderAction" -> {
+          Color otherColor = color[tile.nextId()];
           boolean shouldChangeOppositeLadderColor =
               otherColor == null || otherColor.equals(Color.WHITE);
-          ladderStartEnd.add(new Pair<>(i, destinationId));
+          ladderStartEnd.add(new Pair<>(i, tile.nextId()));
 
-          if (destinationId > i) {
+          if (tile.nextId() > i) {
             color[i] = Color.GREEN;
             if (shouldChangeOppositeLadderColor) {
-              color[destinationId] = Color.LIME;
+              color[tile.nextId()] = Color.LIME;
             }
           } else {
             color[i] = Color.RED;
             if (shouldChangeOppositeLadderColor) {
-              color[destinationId] = Color.INDIANRED;
+              color[tile.nextId()] = Color.INDIANRED;
             }
           }
         }
-        case RollAgain a -> color[i] = Color.BLUE;
+        case "RollAgain" -> color[i] = Color.BLUE;
         case null, default -> {
           if (color[i] == null) {
             color[i] = Color.WHITE;
