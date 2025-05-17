@@ -1,20 +1,19 @@
 package edu.ntnu.idi.idatt.engine;
 
-import edu.ntnu.idi.idatt.model.BoardViewModel;
+import edu.ntnu.idi.idatt.viewmodel.BoardViewModel;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Board;
-import edu.ntnu.idi.idatt.model.PlayerViewModel;
+import edu.ntnu.idi.idatt.viewmodel.PlayerViewModel;
 import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
 import edu.ntnu.idi.idatt.model.Player;
-import edu.ntnu.idi.idatt.model.TileViewModel;
+import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
 import edu.ntnu.idi.idatt.ui.BoardGameObserver;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;

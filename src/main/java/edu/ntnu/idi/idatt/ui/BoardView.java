@@ -4,28 +4,19 @@ import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
-import edu.ntnu.idi.idatt.model.Board;
-import edu.ntnu.idi.idatt.model.BoardViewModel;
-import edu.ntnu.idi.idatt.model.LadderAction;
-import edu.ntnu.idi.idatt.model.Player;
-import edu.ntnu.idi.idatt.model.PlayerViewModel;
-import edu.ntnu.idi.idatt.model.RollAgain;
-import edu.ntnu.idi.idatt.model.Tile;
-import edu.ntnu.idi.idatt.model.TileViewModel;
+import edu.ntnu.idi.idatt.viewmodel.BoardViewModel;
+import edu.ntnu.idi.idatt.viewmodel.PlayerViewModel;
+import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -247,12 +238,12 @@ public class BoardView implements BoardGameObserver {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
     game.getPlayerViewModels().forEach(player -> {
-      int position = player.getPositionProperty().get();
+      int position = player.positionProperty().get();
       int x = calculateCenterX(position);
       int y = calculateCenterY(position);
 
-      gc.setFill(player.getColor());
-      drawPlayerShape(gc, player.getShape(), x, y);
+      gc.setFill(player.color());
+      drawPlayerShape(gc, player.shape(), x, y);
     });
   }
 
@@ -384,17 +375,17 @@ public class BoardView implements BoardGameObserver {
   // New method to create player boxes with position information
   private VBox createPlayerBox(PlayerViewModel player) {
     // Player color and name
-    Label nameLabel = new Label(player.getName());
+    Label nameLabel = new Label(player.name());
     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-    nameLabel.setTextFill(player.getColor());
+    nameLabel.setTextFill(player.color());
 
-    Rectangle colorRect = new Rectangle(20, 20, player.getColor());
+    Rectangle colorRect = new Rectangle(20, 20, player.color());
 
     HBox infoBox = new HBox(5, colorRect, nameLabel);
     infoBox.setAlignment(Pos.CENTER_LEFT);
 
     // Player shape
-    Label shapeLabel = new Label(player.getShape());
+    Label shapeLabel = new Label(player.shape());
     shapeLabel.setFont(Font.font("System", 12));
     shapeLabel.setTextFill(Color.DARKGRAY);
 
@@ -403,7 +394,7 @@ public class BoardView implements BoardGameObserver {
     positionLabel.setFont(Font.font("System", 12));
     // Using a binding so position gets updated automatically
     positionLabel.textProperty().bind(Bindings.createStringBinding(
-        () -> "Position: " + player.getPositionProperty().get(), player.getPositionProperty()));
+        () -> "Position: " + player.positionProperty().get(), player.positionProperty()));
 
     VBox box = new VBox(2);
     box.getChildren().addAll(infoBox, shapeLabel, positionLabel);
