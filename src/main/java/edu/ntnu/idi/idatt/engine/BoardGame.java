@@ -25,7 +25,6 @@ import javafx.beans.property.StringProperty;
  */
 public class BoardGame {
 
-  private final Scanner scanner = new Scanner(System.in);
   private Board board;
   private ArrayList<Player> players;
   private Dice dice;
@@ -52,62 +51,7 @@ public class BoardGame {
   }
 
   /**
-   * Initialize board game with a custom board imported from json file.
-   */
-  public BoardGame(String boardName) {
-    tileAmount = 90;
-    players = new ArrayList<>();
-    winner = null;
-    BoardFileReaderGson reader = new BoardFileReaderGson();
-    Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
-    board = reader.readBoard(path);
-    observers = new ArrayList<>();
-    startTile = board.getTile(1);
-    createDice();
-  }
-
-  /**
-   * Here the game gets initiated and by temporary text based ui the user adds the players.
-   */
-  public void init() {
-    int playerCount = 1;
-    boolean addMorePlayers = true;
-    while (playerCount < 5 && addMorePlayers) {
-      System.out.print("Type the name of player " + playerCount + ": ");
-      String name = scanner.nextLine();
-      this.addPlayer(new Player(name, this));
-      playerCount++;
-
-      if (playerCount < 5) {
-        String command = "";
-        while (!command.equals("y") && !command.equals("n")) {
-          System.out.print("Do you want to add more players? y/n: ");
-          command = scanner.nextLine();
-        }
-        if (command.equals("n")) {
-          addMorePlayers = false;
-        }
-      }
-    }
-
-    System.out.println("\nAnd the game begins!\n");
-    this.loop();
-  }
-
-  /**
-   * This method runs a new round until a winner is decided and the game is concluded.
-   */
-  public void loop() {
-    while (this.getWinner() == null) {
-      this.play();
-      scanner.nextLine();
-    }
-
-    System.out.println("And the winner is " + this.getWinner().getName());
-  }
-
-  /**
-   * method to add a new player to the game and places them on the start.
+   * method to add a new player to the game and place them on the start tile.
    *
    * @param player the player to be added.
    */
@@ -137,22 +81,6 @@ public class BoardGame {
 
   private void createDice() {
     dice = new Dice(2);
-  }
-
-  /**
-   * This is the game cycle of the game. Here every player in the game does their turn in a round in
-   * this case a turn consists of a player rolling dice and moving that amount of steps
-   */
-  public void play() {
-    for (Player player : players) {
-      int steps = dice.roll();
-      player.move(steps);
-
-      // check if player has won the game
-      if (winner == null && player.getCurrentTile().getTileId() == tileAmount) {
-        winner = player;
-      }
-    }
   }
 
   public void throwDice() {
