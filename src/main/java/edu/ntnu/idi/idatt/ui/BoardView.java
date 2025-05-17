@@ -4,18 +4,28 @@ import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.Tile;
 import java.util.ArrayList;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,12 +39,15 @@ public class BoardView implements BoardGameObserver {
 
   private final StackPane root;
   private final BoardController controller;
-  private final Color[] PLAYER_COLORS = {Color.BLUE, Color.PURPLE, Color.BROWN, Color.ORANGE};
-  private final String[] PLAYER_SHAPES = {"Circle", "Square", "Triangle", "Diamond"};
   private final ArrayList<VBox> playerBoxes = new ArrayList<>();
-  private BorderPane mainContainer;
-  private final int tileWidth = 30;
-  private final int tileHeight = 30;
+  private GridPane mainContainer;
+  private int tileWidth = 30;
+  private int tileHeight = 30;
+  private Pane topSection;
+  private Pane playerSection;
+  private Pane gameSection;
+  private Pane infoSection;
+  private Pane bottomSection;
 
   public BoardView(BoardController controller) {
     root = new StackPane();
@@ -42,59 +55,104 @@ public class BoardView implements BoardGameObserver {
     controller.getGame().addObserver(this);
   }
 
-  private void setupLayout(BorderPane container) {
-    VBox playerSection = new VBox();
-    VBox gameSection = new VBox();
-    VBox infoSection = new VBox();
+  private GridPane setupLayout() {
+    GridPane container = new GridPane();
 
-    container.setLeft(playerSection);
-    container.setCenter(gameSection);
-    container.setRight(infoSection);
+    container.setHgap(10);
+    container.setVgap(10);
 
-    // ensure that left and right sections have the same size
-    playerSection.minWidthProperty().bind(infoSection.widthProperty());
-    infoSection.minWidthProperty().bind(playerSection.widthProperty());
+    ColumnConstraints outsideColumn = new ColumnConstraints();
+    ColumnConstraints sideColumn = new ColumnConstraints();
+    ColumnConstraints middleColumn = new ColumnConstraints();
+    outsideColumn.setPercentWidth(5);
+    sideColumn.setPercentWidth(25);
+    middleColumn.setPercentWidth(40);
+    container.getColumnConstraints()
+        .addAll(outsideColumn, sideColumn, middleColumn, sideColumn, outsideColumn);
 
-    HBox topCenter = new HBox();
-    StackPane canvasContainer = new StackPane();
-    Canvas boardCanvas = new Canvas(300, 300);
-    Canvas playerCanvas = new Canvas(300, 300);
-    canvasContainer.getChildren().addAll(boardCanvas, playerCanvas);
-    HBox bottomCenter = new HBox();
-    gameSection.getChildren().addAll(topCenter, canvasContainer, bottomCenter);
+    RowConstraints outsideRow = new RowConstraints();
+    RowConstraints middleRow = new RowConstraints();
+    outsideRow.setPercentHeight(15);
+    middleRow.setPercentHeight(70);
+    container.getRowConstraints().addAll(outsideRow, middleRow, outsideRow);
 
-    gameSection.alignmentProperty().set(Pos.CENTER);
-    topCenter.alignmentProperty().set(Pos.CENTER);
-    bottomCenter.alignmentProperty().set(Pos.CENTER);
-
-    // ensure that top and bottom sections have the same size
-    topCenter.minHeightProperty().bind(bottomCenter.heightProperty());
-    bottomCenter.minHeightProperty().bind(topCenter.heightProperty());
+    return container;
   }
 
-  private void setupInfoSection(BorderPane container) {
-    VBox infoSection = (VBox) container.getRight();
+  private Pane setupInfoSection() {
+    VBox infoSection = new VBox(5);
+    infoSection.setPadding(new Insets(10));
+    infoSection.setStyle("""
+            -fx-background-color: #eee;
+            -fx-background-radius: 10;
+            -fx-border-radius: 10;
+            -fx-border-width: 1;
+        """);
+    infoSection.setEffect(new DropShadow(3, Color.gray(0.2)));
 
-    HBox infoBox1 = createInfoBox(Color.RED, "go down ladder");
-    HBox infoBox2 = createInfoBox(Color.INDIANRED, "bottom of bad ladder");
-    HBox infoBox3 = createInfoBox(Color.GREEN, "go up ladder");
-    HBox infoBox4 = createInfoBox(Color.LIME, "top of good ladder");
+    HBox infoBox1 = createInfoBox(Color.RED, "Go down ladder");
+    HBox infoBox2 = createInfoBox(Color.INDIANRED, "Bottom of bad ladder");
+    HBox infoBox3 = createInfoBox(Color.GREEN, "Go up ladder");
+    HBox infoBox4 = createInfoBox(Color.LIME, "Top of good ladder");
     infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
+
+    return infoSection;
   }
 
-  private void setupGameBoard(BorderPane container) {
-    VBox gameSection = (VBox) container.getCenter();
-    StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
-    Canvas boardCanvas = (Canvas) canvasContainer.getChildren().getFirst();
+  private class ResizableCanvas extends Canvas {
+
+    @Override
+    public double prefWidth(double height) {
+      return 0;
+    }
+
+    @Override
+    public double prefHeight(double width) {
+      return 0;
+    }
+  }
+
+  private Pane setupGameBoard() {
+    StackPane gameSection = new StackPane();
+
+    Canvas boardCanvas = new ResizableCanvas();
+    Canvas playerCanvas = new ResizableCanvas();
+    gameSection.getChildren().addAll(boardCanvas, playerCanvas);
 
     Color[] color = new Color[91];
     ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
 
-    // Setup tile colors and ladder connections
     setupTileColors(color, ladderStartEnd);
 
-    // Draw the board
     drawGameBoard(boardCanvas, color, ladderStartEnd);
+
+    // Make sure canvas size corresponds to window size
+    double relativeCanvasSize = 0.9;
+    boardCanvas.widthProperty().bind(gameSection.widthProperty().multiply(relativeCanvasSize));
+    boardCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
+    playerCanvas.widthProperty().bind(gameSection.widthProperty().multiply(relativeCanvasSize));
+    playerCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
+
+    gameSection.widthProperty().addListener(
+        (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color, ladderStartEnd,
+            playerCanvas, relativeCanvasSize));
+    gameSection.heightProperty().addListener(
+        (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color, ladderStartEnd,
+            playerCanvas, relativeCanvasSize));
+
+    return gameSection;
+  }
+
+  private void redrawCanvasAfterResize(Canvas boardCanvas, Color[] color,
+      ArrayList<Pair<Integer, Integer>> ladderStartEnd, Canvas playerCanvas,
+      double sizeMultiplier) {
+    // TODO replace magic numbers with horizontal and vertical tile amount
+    double tileSize =
+        Math.min(gameSection.getHeight() / 9, gameSection.getWidth() / 10) * sizeMultiplier;
+    tileWidth = (int) tileSize;
+    tileHeight = (int) tileSize;
+    this.drawGameBoard(boardCanvas, color, ladderStartEnd);
+    this.drawPlayerPieces(playerCanvas);
   }
 
   private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
@@ -136,15 +194,19 @@ public class BoardView implements BoardGameObserver {
       ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
+    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
     // Draw tiles
     for (int i = 1; i <= 90; i++) {
       int x = calculateCornerX(i);
       int y = calculateCornerY(i);
 
-      gc.setFill(color[i]);
-      gc.fillRect(x, y, tileWidth, tileHeight);
       gc.setFill(Color.BLACK);
-      gc.fillText(String.valueOf(i), x, y + tileHeight);
+      gc.fillRect(x, y, tileWidth, tileHeight); // Draw tile border
+      gc.setFill(color[i]);
+      gc.fillRect(x + 0.5, y + 0.5, tileWidth - 1, tileHeight - 1);
+      gc.setFill(Color.BLACK);
+      gc.fillText(String.valueOf(i), x + 1, y + tileHeight - 1);
     }
 
     // Draw ladders
@@ -153,24 +215,38 @@ public class BoardView implements BoardGameObserver {
     }
   }
 
-  private void setupPlayerSection(BorderPane container) {
-    BoardGame game = controller.getGame();
-    VBox playerSection = (VBox) container.getLeft();
+  private Pane setupPlayerSection() {
+    VBox playerSection = new VBox(5);
+
+    playerSection.setPadding(new Insets(10));
+    playerSection.setStyle("""
+            -fx-background-color: #eee;
+            -fx-background-radius: 10;
+            -fx-border-radius: 10;
+            -fx-border-width: 1;
+        """);
+    playerSection.setEffect(new DropShadow(3, Color.gray(0.2)));
 
     playerSection.getChildren().clear();
-    playerBoxes.clear(); // Clear the existing player boxes
+    playerBoxes.clear();
 
+    BoardGame game = controller.getGame();
     for (int i = 0; i < game.getPlayers().size(); i++) {
       Player player = game.getPlayers().get(i);
 
       VBox playerBox = createPlayerBox(player.getName(), player.getShape(), player.getColor(),
           player.getCurrentTile().getTileId());
       playerSection.getChildren().add(playerBox);
-      playerBoxes.add(playerBox); // Store reference to player box
+      playerBoxes.add(playerBox);
     }
+    return playerSection;
   }
 
   private void drawPlayerPieces(Canvas canvas) {
+    //clear the player canvas
+    canvas.getGraphicsContext2D()
+        .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
     BoardGame game = controller.getGame();
     GraphicsContext gc = canvas.getGraphicsContext2D();
     for (int i = 0; i < game.getPlayers().size(); i++) {
@@ -210,19 +286,28 @@ public class BoardView implements BoardGameObserver {
     }
   }
 
-  private void setupGameControls(BorderPane container) {
-    BoardGame game = controller.getGame();
-    VBox gameSection = (VBox) container.getCenter();
-    HBox topCenter = (HBox) gameSection.getChildren().get(0);
-    HBox bottomCenter = (HBox) gameSection.getChildren().get(2);
+  private Pane setupTopSection() {
+    HBox topCenter = new HBox();
+    topCenter.setAlignment(Pos.CENTER);
 
-    topCenter.getChildren().add(new Text("The ladder game"));
+    Text title = new Text("The ladder game");
+    title.setFont(Font.font("System", FontWeight.BOLD, 24));
+
+    topCenter.getChildren().add(title);
+    return topCenter;
+  }
+
+  private Pane setupBottomSection() {
+    BoardGame game = controller.getGame();
+    VBox bottomCenter = new VBox();
+    bottomCenter.setAlignment(Pos.CENTER);
 
     // Add dice throw button with active player indicator
     Button btn = new Button("Throw dice for "
         + game.getPlayers().get(game.getActivePlayer()).getName());
     btn.setOnAction(e -> controller.throwDice());
     bottomCenter.getChildren().add(btn);
+    btn.setPrefSize(200, 40);
 
     // Add game status label
     Label statusLabel = new Label("Game in progress");
@@ -232,42 +317,46 @@ public class BoardView implements BoardGameObserver {
       btn.setDisable(true);
     }
     bottomCenter.getChildren().add(statusLabel);
+
+    return bottomCenter;
   }
 
 
-  private BorderPane initScene() {
-    // set up layout
-    BorderPane container = new BorderPane();
+  private GridPane initScene() {
+    GridPane container = setupLayout();
 
-    setupLayout(container);
-    setupInfoSection(container);
-    setupGameBoard(container);
-    setupPlayerSection(container);
-    setupGameControls(container);
-
-    //initial drawing of player pieces (just in case)
-    VBox gameSection = (VBox) container.getCenter();
-    StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
-    Canvas playerCanvas = (Canvas) canvasContainer.getChildren().get(1);
-    drawPlayerPieces(playerCanvas);
+    topSection = setupTopSection();
+    container.add(topSection, 2, 0);
+    playerSection = setupPlayerSection();
+    container.add(playerSection, 1, 1);
+    gameSection = setupGameBoard();
+    container.add(gameSection, 2, 1);
+    infoSection = setupInfoSection();
+    container.add(infoSection, 3, 1);
+    bottomSection = setupBottomSection();
+    container.add(bottomSection, 2, 2);
 
     return container;
   }
 
   private int calculateCornerX(int i) {
-    return ((i - 1) % 10) * tileWidth;
+    Board board = controller.getGame().getBoard();
+    return board.getTile(i).getX() * tileWidth;
   }
 
   private int calculateCenterX(int i) {
-    return ((i - 1) % 10) * tileWidth + tileWidth / 2;
+    Board board = controller.getGame().getBoard();
+    return board.getTile(i).getX() * tileWidth + tileWidth / 2;
   }
 
   private int calculateCornerY(int i) {
-    return tileHeight * 9 - (((i - 1) / 10) * tileHeight);
+    Board board = controller.getGame().getBoard();
+    return board.getTile(i).getY() * tileHeight;
   }
 
   private int calculateCenterY(int i) {
-    return tileHeight * 9 - (((i - 1) / 10) * tileHeight) + tileHeight / 2;
+    Board board = controller.getGame().getBoard();
+    return board.getTile(i).getY() * tileHeight + tileHeight / 2;
   }
 
   private void drawLadder(GraphicsContext gc, int start, int end) {
@@ -322,9 +411,9 @@ public class BoardView implements BoardGameObserver {
     HBox infoBox = new HBox(5, colorRect, nameLabel);
     infoBox.setAlignment(Pos.CENTER_LEFT);
 
-    VBox box = new VBox(5);
+    VBox box = new VBox(2);
     box.getChildren().addAll(infoBox, shapeLabel, positionLabel);
-    box.setStyle("-fx-background-color: #eee; -fx-border-color: #ccc; -fx-padding: 5px;");
+    box.setStyle("-fx-background-color: #eee; -fx-padding: 5px;");
     box.setMinWidth(150);
 
     return box;
@@ -335,10 +424,10 @@ public class BoardView implements BoardGameObserver {
     Text text = new Text(infoText);
     text.setFont(Font.font("System", 12));
 
-    HBox box = new HBox(2);
+    HBox box = new HBox(5);
+    box.setAlignment(Pos.CENTER_LEFT);
     box.getChildren().addAll(rect, text);
-    box.setStyle(
-        "-fx-background-color: #eee; -fx-border-color: #ccc;");
+    box.setStyle("-fx-background-color: #eee;");
     box.setMinWidth(150);
 
     return box;
@@ -357,13 +446,7 @@ public class BoardView implements BoardGameObserver {
       root.getChildren().add(mainContainer);
     }
 
-    VBox gameSection = (VBox) mainContainer.getCenter();
-    StackPane canvasContainer = (StackPane) gameSection.getChildren().get(1);
-    Canvas playerCanvas = (Canvas) canvasContainer.getChildren().get(1);
-
-    //clear the player canvas
-    playerCanvas.getGraphicsContext2D()
-        .clearRect(0, 0, playerCanvas.getWidth(), playerCanvas.getHeight());
+    Canvas playerCanvas = (Canvas) gameSection.getChildren().get(1);
 
     drawPlayerPieces(playerCanvas);
 
@@ -390,12 +473,8 @@ public class BoardView implements BoardGameObserver {
   }
 
   private void updateGameControls(BoardGame game) {
-    // Update game controls (button text and status)
-    VBox gameSection = (VBox) ((BorderPane) root.getChildren().getFirst()).getCenter();
-    HBox bottomCenter = (HBox) gameSection.getChildren().get(2);
-
     // Update button text
-    for (javafx.scene.Node node : bottomCenter.getChildren()) {
+    for (javafx.scene.Node node : bottomSection.getChildren()) {
       if (node instanceof Button) {
         Button btn = (Button) node;
         btn.setText("Throw dice for " + game.getPlayers().get(game.getActivePlayer()).getName());
