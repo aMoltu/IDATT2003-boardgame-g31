@@ -5,6 +5,7 @@ import static java.lang.Math.sqrt;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.model.BoardViewModel;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.PlayerViewModel;
@@ -43,6 +44,7 @@ public class BoardView implements BoardGameObserver {
   private final StackPane root;
   private final BoardController controller;
   private final ArrayList<VBox> playerBoxes = new ArrayList<>();
+  private final BoardViewModel board;
   private GridPane mainContainer;
   private int tileWidth = 30;
   private int tileHeight = 30;
@@ -56,6 +58,7 @@ public class BoardView implements BoardGameObserver {
     root = new StackPane();
     this.controller = controller;
     controller.getGame().addObserver(this);
+    board = controller.getGame().getBoardViewModel(); // assuming board won't change
   }
 
   private GridPane setupLayout() {
@@ -122,7 +125,7 @@ public class BoardView implements BoardGameObserver {
     Canvas playerCanvas = new ResizableCanvas();
     gameSection.getChildren().addAll(boardCanvas, playerCanvas);
 
-    Color[] color = new Color[91];
+    Color[] color = new Color[board.tileAmount() + 1];
     ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
 
     setupTileColors(color, ladderStartEnd);
@@ -149,9 +152,9 @@ public class BoardView implements BoardGameObserver {
   private void redrawCanvasAfterResize(Canvas boardCanvas, Color[] color,
       ArrayList<Pair<Integer, Integer>> ladderStartEnd, Canvas playerCanvas,
       double sizeMultiplier) {
-    // TODO replace magic numbers with horizontal and vertical tile amount
     double tileSize =
-        Math.min(gameSection.getHeight() / 9, gameSection.getWidth() / 10) * sizeMultiplier;
+        Math.min(gameSection.getWidth() / board.width(), gameSection.getHeight() / board.height())
+            * sizeMultiplier;
     tileWidth = (int) tileSize;
     tileHeight = (int) tileSize;
     this.drawGameBoard(boardCanvas, color, ladderStartEnd);
@@ -161,7 +164,7 @@ public class BoardView implements BoardGameObserver {
   private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
     BoardGame game = controller.getGame();
 
-    for (int i = 1; i <= 90; i++) {
+    for (int i = 1; i <= board.tileAmount(); i++) {
       Tile tile = game.getBoard().getTile(i);
       switch (tile.getLandAction()) {
         case LadderAction a -> {
@@ -200,7 +203,7 @@ public class BoardView implements BoardGameObserver {
     gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
     // Draw tiles
-    for (int i = 1; i <= 90; i++) {
+    for (int i = 1; i <= board.tileAmount(); i++) {
       int x = calculateCornerX(i);
       int y = calculateCornerY(i);
 
@@ -341,23 +344,19 @@ public class BoardView implements BoardGameObserver {
   }
 
   private int calculateCornerX(int i) {
-    Board board = controller.getGame().getBoard();
-    return board.getTile(i).getX() * tileWidth;
+    return board.tiles().get(i).x() * tileWidth;
   }
 
   private int calculateCenterX(int i) {
-    Board board = controller.getGame().getBoard();
-    return board.getTile(i).getX() * tileWidth + tileWidth / 2;
+    return board.tiles().get(i).x() * tileWidth + tileWidth / 2;
   }
 
   private int calculateCornerY(int i) {
-    Board board = controller.getGame().getBoard();
-    return board.getTile(i).getY() * tileHeight;
+    return board.tiles().get(i).y() * tileHeight;
   }
 
   private int calculateCenterY(int i) {
-    Board board = controller.getGame().getBoard();
-    return board.getTile(i).getY() * tileHeight + tileHeight / 2;
+    return board.tiles().get(i).y() * tileHeight + tileHeight / 2;
   }
 
   private void drawLadder(GraphicsContext gc, int start, int end) {

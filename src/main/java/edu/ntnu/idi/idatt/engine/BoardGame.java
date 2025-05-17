@@ -1,15 +1,18 @@
 package edu.ntnu.idi.idatt.engine;
 
+import edu.ntnu.idi.idatt.model.BoardViewModel;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.PlayerViewModel;
 import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
 import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.model.TileViewModel;
 import edu.ntnu.idi.idatt.ui.BoardGameObserver;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -201,5 +204,30 @@ public class BoardGame {
     return players.stream()
         .map(p -> new PlayerViewModel(p.getName(), p.getShape(), p.getColor(), p.getPosition()))
         .collect(Collectors.toList());
+  }
+
+  public TileViewModel getTileViewModel(int id) {
+    Tile tile = board.getTile(id);
+
+    String action = "";
+    Integer nextId = null;
+    try {
+      action = tile.getLandAction().getClass().toString();
+      nextId = tile.getNextTile().getTileId();
+    } catch (NullPointerException ignored) {
+
+    }
+    return new TileViewModel(id, tile.getX(), tile.getY(), action, nextId);
+  }
+
+  public BoardViewModel getBoardViewModel() {
+    HashMap<Integer, TileViewModel> tiles = new HashMap<>();
+
+    for (int id = startTile.getTileId(); board.getTile(id) != null; id++) {
+      tiles.put(id, getTileViewModel(id));
+    }
+
+    //TODO remove magic numbers
+    return new BoardViewModel(10, 9, tileAmount, tiles);
   }
 }
