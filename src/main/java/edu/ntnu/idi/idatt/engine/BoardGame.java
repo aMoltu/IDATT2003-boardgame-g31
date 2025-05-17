@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.engine;
 
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.model.PlayerViewModel;
 import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
 import edu.ntnu.idi.idatt.model.Player;
@@ -9,7 +10,9 @@ import edu.ntnu.idi.idatt.ui.BoardGameObserver;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  * This class is responsible for initiating the game and running through the game logics.
@@ -192,5 +195,11 @@ public class BoardGame {
     Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
     board = reader.readBoard(path);
     startTile = board.getTile(1);
+  }
+
+  public List<PlayerViewModel> getPlayerViewModels() {
+    return players.stream()
+        .map(p -> new PlayerViewModel(p.getName(), p.getShape(), p.getColor(), p.getPosition()))
+        .collect(Collectors.toList());
   }
 }

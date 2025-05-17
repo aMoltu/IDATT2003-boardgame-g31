@@ -7,9 +7,12 @@ import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.model.PlayerViewModel;
 import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.Tile;
 import java.util.ArrayList;
+import java.util.List;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -231,14 +234,13 @@ public class BoardView implements BoardGameObserver {
     playerBoxes.clear();
 
     BoardGame game = controller.getGame();
-    for (int i = 0; i < game.getPlayers().size(); i++) {
-      Player player = game.getPlayers().get(i);
+    List<PlayerViewModel> playerInformation = game.getPlayerViewModels();
 
-      VBox playerBox = createPlayerBox(player.getName(), player.getShape(), player.getColor(),
-          player.getCurrentTile().getTileId());
+    playerInformation.forEach(player -> {
+      VBox playerBox = createPlayerBox(player);
       playerSection.getChildren().add(playerBox);
       playerBoxes.add(playerBox);
-    }
+    });
     return playerSection;
   }
 
@@ -394,22 +396,28 @@ public class BoardView implements BoardGameObserver {
   }
 
   // New method to create player boxes with position information
-  private VBox createPlayerBox(String name, String shape, Color color, int position) {
-    Label nameLabel = new Label(name);
+  private VBox createPlayerBox(PlayerViewModel player) {
+    // Player color and name
+    Label nameLabel = new Label(player.getName());
     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-    nameLabel.setTextFill(color);
+    nameLabel.setTextFill(player.getColor());
 
-    Label shapeLabel = new Label(shape);
-    shapeLabel.setFont(Font.font("System", 12));
-    shapeLabel.setTextFill(Color.DARKGRAY);
-
-    Label positionLabel = new Label("Position: " + position);
-    positionLabel.setFont(Font.font("System", 12));
-
-    Rectangle colorRect = new Rectangle(20, 20, color);
+    Rectangle colorRect = new Rectangle(20, 20, player.getColor());
 
     HBox infoBox = new HBox(5, colorRect, nameLabel);
     infoBox.setAlignment(Pos.CENTER_LEFT);
+
+    // Player shape
+    Label shapeLabel = new Label(player.getShape());
+    shapeLabel.setFont(Font.font("System", 12));
+    shapeLabel.setTextFill(Color.DARKGRAY);
+
+    // Player position
+    Label positionLabel = new Label();
+    positionLabel.setFont(Font.font("System", 12));
+    // Using a binding so position gets updated automatically
+    positionLabel.textProperty().bind(Bindings.createStringBinding(
+        () -> "Position: " + player.getPositionProperty().get(), player.getPositionProperty()));
 
     VBox box = new VBox(2);
     box.getChildren().addAll(infoBox, shapeLabel, positionLabel);
@@ -450,26 +458,7 @@ public class BoardView implements BoardGameObserver {
 
     drawPlayerPieces(playerCanvas);
 
-    updatePlayerBoxes(game);
-
     updateGameControls(game);
-  }
-
-
-  private void updatePlayerBoxes(BoardGame game) {
-    // Update player position information in the player boxes
-    for (int i = 0; i < game.getPlayers().size() && i < playerBoxes.size(); i++) {
-      Player player = game.getPlayers().get(i);
-      VBox playerBox = playerBoxes.get(i);
-
-      // Find and update the position label
-      for (javafx.scene.Node node : playerBox.getChildren()) {
-        if (node instanceof Label && ((Label) node).getText().startsWith("Position:")) {
-          ((Label) node).setText("Position: " + player.getCurrentTile().getTileId());
-          break;
-        }
-      }
-    }
   }
 
   private void updateGameControls(BoardGame game) {
