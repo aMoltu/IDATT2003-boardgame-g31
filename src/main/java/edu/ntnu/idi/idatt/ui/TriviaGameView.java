@@ -57,16 +57,8 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
   }
 
   @Override
-  protected Pane setupTopSection() {
-    HBox topCenter = new HBox();
-    topCenter.setAlignment(Pos.CENTER);
-
-    Text title = new Text("The Trivia Game");
-    title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-    title.setFill(Color.DARKBLUE);
-
-    topCenter.getChildren().add(title);
-    return topCenter;
+  protected String getGameTitle() {
+    return "The Trivia Game";
   }
 
   @Override

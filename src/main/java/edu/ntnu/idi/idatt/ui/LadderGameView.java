@@ -75,15 +75,8 @@ public class LadderGameView extends BoardView {
   }
 
   @Override
-  protected Pane setupTopSection() {
-    HBox topCenter = new HBox();
-    topCenter.setAlignment(Pos.CENTER);
-
-    Text title = new Text("The Ladder Game");
-    title.setFont(Font.font("System", FontWeight.BOLD, 24));
-
-    topCenter.getChildren().add(title);
-    return topCenter;
+  protected String getGameTitle() {
+    return "The Ladder Game";
   }
 
   @Override

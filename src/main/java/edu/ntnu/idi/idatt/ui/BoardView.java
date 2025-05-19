@@ -140,6 +140,24 @@ public abstract class BoardView implements BoardGameObserver {
 
   protected abstract void setupTileColors(Color[] color);
 
+  /**
+   * Returns the title of the game to be displayed in the top section.
+   *
+   * @return the game title
+   */
+  protected abstract String getGameTitle();
+
+  protected Pane setupTopSection() {
+    HBox topCenter = new HBox();
+    topCenter.setAlignment(Pos.CENTER);
+
+    Text title = new Text(getGameTitle());
+    title.setFont(Font.font("System", FontWeight.BOLD, 24));
+
+    topCenter.getChildren().add(title);
+    return topCenter;
+  }
+
   protected void drawGameBoard(Canvas canvas, Color[] color) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -219,8 +237,6 @@ public abstract class BoardView implements BoardGameObserver {
       }
     }
   }
-
-  protected abstract Pane setupTopSection();
 
   protected Pane setupBottomSection() {
     VBox bottomCenter = new VBox(10);
