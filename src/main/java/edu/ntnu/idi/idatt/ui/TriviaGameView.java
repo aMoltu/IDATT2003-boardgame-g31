@@ -26,27 +26,32 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
   }
 
   @Override
-  protected GridPane initScene() {
-    GridPane scene = super.initScene();
-
-    HBox infoBox = createInfoBox(Color.YELLOW, "Question");
-    infoSection.getChildren().addAll(infoBox);
-
-    return scene;
-  }
-
-  @Override
-  protected void setupTileColors(Color[] color) {
-    for (int i = 1; i <= game.getBoardViewModel().tileAmount(); i++) {
-      TileViewModel tile = game.getBoardViewModel().tiles().get(i);
-      if (tile.landActionType().equals("QuestionTileAction")) {
-        color[i] = Color.YELLOW;
-        Tile actualTile = game.getBoard().getTile(i);
-        if (actualTile.getLandAction() instanceof QuestionTileAction) {
-          ((QuestionTileAction) actualTile.getLandAction()).addObserver(this);
+  protected void setupTileColors(Color[] colors) {
+    for (int i = 1; i <= game.getBoard().getTileAmount(); i++) {
+      Tile tile = game.getBoard().getTile(i);
+      if (tile != null && tile.getLandAction() instanceof QuestionTileAction) {
+        QuestionTileAction action = (QuestionTileAction) tile.getLandAction();
+        switch (action.getType()) {
+          case "math":
+            colors[i] = Color.BLUE;
+            break;
+          case "science":
+            colors[i] = Color.GREEN;
+            break;
+          case "geography":
+            colors[i] = Color.ORANGE;
+            break;
+          case "history":
+            colors[i] = Color.PURPLE;
+            break;
+          default:
+            colors[i] = Color.GRAY;
         }
-      } else if (color[i] == null) {
-        color[i] = Color.WHITE;
+        if (action != null) {
+          action.addObserver(this);
+        }
+      } else if (colors[i] == null) {
+        colors[i] = Color.WHITE;
       }
     }
   }
@@ -62,6 +67,20 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
 
     topCenter.getChildren().add(title);
     return topCenter;
+  }
+
+  @Override
+  protected GridPane initScene() {
+    GridPane scene = super.initScene();
+
+    Pane mathBox = createInfoBox(Color.BLUE, "Math Questions");
+    Pane scienceBox = createInfoBox(Color.GREEN, "Science Questions");
+    Pane geographyBox = createInfoBox(Color.ORANGE, "Geography Questions");
+    Pane historyBox = createInfoBox(Color.PURPLE, "History Questions");
+
+    infoSection.getChildren().addAll(mathBox, scienceBox, geographyBox, historyBox);
+
+    return scene;
   }
 
   @Override

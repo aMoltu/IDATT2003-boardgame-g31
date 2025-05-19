@@ -51,4 +51,8 @@ public class QuestionTileAction implements TileAction {
   public String getQuestion() {
     return question;
   }
+
+  public String getType() {
+    return type;
+  }
 }
