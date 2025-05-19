@@ -64,8 +64,10 @@ public class GameMenuView {
     gameSelectionTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
     ComboBox<String> gameSelector = new ComboBox<>();
     gameSelector.getItems().add("Ladder Game");
+    gameSelector.getItems().add("Trivia Game");
     gameSelector.setValue("Ladder Game");
     gameSelector.setMinWidth(200);
+    gameSelector.setOnAction(event -> controller.setSelectedGame(gameSelector.getValue()));
 
     //Board selection section
     Text boardSelectionTitle = new Text("Select a board");

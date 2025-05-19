@@ -7,6 +7,7 @@ import edu.ntnu.idi.idatt.model.Player;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
@@ -19,6 +20,7 @@ public class GameMenuController {
   private final List<String> playerShapes = new ArrayList<>();
   private final List<Color> playerColors = new ArrayList<>();
   private String selectedBoard = "Default";
+  private String selectedGame = "Ladder Game";
   private BoardGameObserver observer;
   private BoardGame game;
   private SceneController sceneController;
@@ -26,6 +28,10 @@ public class GameMenuController {
   public GameMenuController(BoardGame game, SceneController sceneController) {
     this.game = game;
     this.sceneController = sceneController;
+  }
+
+  public void setSelectedGame(String selectedGame) {
+    this.selectedGame = selectedGame;
   }
 
   public void setSelectedBoard(String selectedBoard) {
@@ -110,7 +116,12 @@ public class GameMenuController {
     }
 
     game.notifyObservers();
-    sceneController.setScene("game1");
+
+    if (selectedGame.equals("Ladder Game")) {
+      sceneController.setScene("game1");
+    } else {
+      sceneController.setScene("game2");
+    }
   }
 
   private void showAlert(String title, String message) {

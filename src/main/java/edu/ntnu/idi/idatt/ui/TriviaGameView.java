@@ -1,0 +1,99 @@
+package edu.ntnu.idi.idatt.ui;
+
+import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.model.QuestionTileAction;
+import edu.ntnu.idi.idatt.model.Tile;
+import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+
+/**
+ * A view for the trivia game that extends BoardView.
+ */
+public class TriviaGameView extends BoardView implements QuestionTileObserver {
+
+  public TriviaGameView(BoardGame game, BoardController controller) {
+    super(game, controller);
+  }
+
+  @Override
+  protected GridPane initScene() {
+    GridPane scene = super.initScene();
+
+    HBox infoBox = createInfoBox(Color.YELLOW, "Question");
+    infoSection.getChildren().addAll(infoBox);
+
+    return scene;
+  }
+
+  @Override
+  protected void setupTileColors(Color[] color) {
+    for (int i = 1; i <= game.getBoardViewModel().tileAmount(); i++) {
+      TileViewModel tile = game.getBoardViewModel().tiles().get(i);
+      if (tile.landActionType().equals("QuestionTileAction")) {
+        color[i] = Color.YELLOW;
+        Tile actualTile = game.getBoard().getTile(i);
+        if (actualTile.getLandAction() instanceof QuestionTileAction) {
+          ((QuestionTileAction) actualTile.getLandAction()).addObserver(this);
+        }
+      } else if (color[i] == null) {
+        color[i] = Color.WHITE;
+      }
+    }
+  }
+
+  @Override
+  protected Pane setupTopSection() {
+    HBox topCenter = new HBox();
+    topCenter.setAlignment(Pos.CENTER);
+
+    Text title = new Text("The Trivia Game");
+    title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+    title.setFill(Color.DARKBLUE);
+
+    topCenter.getChildren().add(title);
+    return topCenter;
+  }
+
+  @Override
+  public void onQuestionTile(QuestionTileAction action, Player player) {
+    super.update();
+    handleQuestionTileAction(action, player);
+  }
+
+  private void handleQuestionTileAction(QuestionTileAction action, Player player) {
+    TextInputDialog dialog = new TextInputDialog();
+    dialog.setTitle("Question Tile");
+    dialog.setHeaderText(action.getQuestion());
+    dialog.setContentText("Please enter your answer:");
+
+    dialog.showAndWait().ifPresent(answer -> {
+      if (action.isCorrectAnswer(answer)) {
+        showAlert("Correct!", "You answered correctly! Moving forward...",
+            Alert.AlertType.INFORMATION);
+        action.movePlayer(player);
+        update();
+      } else {
+        showAlert("Incorrect", "Sorry, that's not the correct answer.",
+            Alert.AlertType.INFORMATION);
+      }
+    });
+  }
+
+  private void showAlert(String title, String content, Alert.AlertType type) {
+    Alert alert = new Alert(type);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(content);
+    alert.showAndWait();
+  }
+}

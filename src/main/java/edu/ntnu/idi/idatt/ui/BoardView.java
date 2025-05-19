@@ -1,13 +1,8 @@
 package edu.ntnu.idi.idatt.ui;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.sqrt;
-
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.viewmodel.BoardViewModel;
 import edu.ntnu.idi.idatt.viewmodel.PlayerViewModel;
-import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -29,22 +24,21 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.util.Pair;
 
-public class BoardView implements BoardGameObserver {
+public abstract class BoardView implements BoardGameObserver {
 
-  private final StackPane root;
-  private final BoardGame game;
-  private final BoardController controller;
-  private BoardViewModel board;
-  private GridPane mainContainer;
-  private int tileWidth = 30;
-  private int tileHeight = 30;
-  private Pane topSection;
-  private Pane playerSection;
-  private Pane gameSection;
-  private Pane infoSection;
-  private Pane bottomSection;
+  protected final StackPane root;
+  protected final BoardGame game;
+  protected final BoardController controller;
+  protected BoardViewModel board;
+  protected GridPane mainContainer;
+  protected int tileWidth = 30;
+  protected int tileHeight = 30;
+  protected Pane topSection;
+  protected Pane playerSection;
+  protected Pane gameSection;
+  protected Pane infoSection;
+  protected Pane bottomSection;
 
   public BoardView(BoardGame game, BoardController controller) {
     root = new StackPane();
@@ -53,7 +47,7 @@ public class BoardView implements BoardGameObserver {
     game.addObserver(this);
   }
 
-  private GridPane setupLayout() {
+  protected GridPane setupLayout() {
     GridPane container = new GridPane();
 
     container.setHgap(10);
@@ -77,7 +71,7 @@ public class BoardView implements BoardGameObserver {
     return container;
   }
 
-  private Pane setupInfoSection() {
+  protected Pane setupInfoSection() {
     VBox infoSection = new VBox(5);
     infoSection.setPadding(new Insets(10));
     infoSection.setStyle("""
@@ -88,16 +82,10 @@ public class BoardView implements BoardGameObserver {
         """);
     infoSection.setEffect(new DropShadow(3, Color.gray(0.2)));
 
-    HBox infoBox1 = createInfoBox(Color.RED, "Go down ladder");
-    HBox infoBox2 = createInfoBox(Color.INDIANRED, "Bottom of bad ladder");
-    HBox infoBox3 = createInfoBox(Color.GREEN, "Go up ladder");
-    HBox infoBox4 = createInfoBox(Color.LIME, "Top of good ladder");
-    infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
-
     return infoSection;
   }
 
-  private class ResizableCanvas extends Canvas {
+  protected class ResizableCanvas extends Canvas {
 
     @Override
     public double prefWidth(double height) {
@@ -110,7 +98,7 @@ public class BoardView implements BoardGameObserver {
     }
   }
 
-  private Pane setupGameBoard() {
+  protected Pane setupGameBoard() {
     StackPane gameSection = new StackPane();
 
     Canvas boardCanvas = new ResizableCanvas();
@@ -118,11 +106,9 @@ public class BoardView implements BoardGameObserver {
     gameSection.getChildren().addAll(boardCanvas, playerCanvas);
 
     Color[] color = new Color[board.tileAmount() + 1];
-    ArrayList<Pair<Integer, Integer>> ladderStartEnd = new ArrayList<>();
+    setupTileColors(color);
 
-    setupTileColors(color, ladderStartEnd);
-
-    drawGameBoard(boardCanvas, color, ladderStartEnd);
+    drawGameBoard(boardCanvas, color);
 
     // Make sure canvas size corresponds to window size
     double relativeCanvasSize = 0.9;
@@ -132,61 +118,29 @@ public class BoardView implements BoardGameObserver {
     playerCanvas.heightProperty().bind(gameSection.heightProperty().multiply(relativeCanvasSize));
 
     gameSection.widthProperty().addListener(
-        (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color, ladderStartEnd,
+        (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color,
             playerCanvas, relativeCanvasSize));
     gameSection.heightProperty().addListener(
-        (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color, ladderStartEnd,
+        (obs, oldVal, newVal) -> redrawCanvasAfterResize(boardCanvas, color,
             playerCanvas, relativeCanvasSize));
 
     return gameSection;
   }
 
-  private void redrawCanvasAfterResize(Canvas boardCanvas, Color[] color,
-      ArrayList<Pair<Integer, Integer>> ladderStartEnd, Canvas playerCanvas,
-      double sizeMultiplier) {
+  protected void redrawCanvasAfterResize(Canvas boardCanvas, Color[] color,
+      Canvas playerCanvas, double sizeMultiplier) {
     double tileSize =
         Math.min(gameSection.getWidth() / board.width(), gameSection.getHeight() / board.height())
             * sizeMultiplier;
     tileWidth = (int) tileSize;
     tileHeight = (int) tileSize;
-    this.drawGameBoard(boardCanvas, color, ladderStartEnd);
+    this.drawGameBoard(boardCanvas, color);
     this.drawPlayerPieces(playerCanvas);
   }
 
-  private void setupTileColors(Color[] color, ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
-    for (int i = 1; i <= board.tileAmount(); i++) {
-      TileViewModel tile = board.tiles().get(i);
-      switch (tile.landActionType()) {
-        case "LadderAction" -> {
-          Color otherColor = color[tile.nextId()];
-          boolean shouldChangeOppositeLadderColor =
-              otherColor == null || otherColor.equals(Color.WHITE);
-          ladderStartEnd.add(new Pair<>(i, tile.nextId()));
+  protected abstract void setupTileColors(Color[] color);
 
-          if (tile.nextId() > i) {
-            color[i] = Color.GREEN;
-            if (shouldChangeOppositeLadderColor) {
-              color[tile.nextId()] = Color.LIME;
-            }
-          } else {
-            color[i] = Color.RED;
-            if (shouldChangeOppositeLadderColor) {
-              color[tile.nextId()] = Color.INDIANRED;
-            }
-          }
-        }
-        case "RollAgain" -> color[i] = Color.BLUE;
-        case null, default -> {
-          if (color[i] == null) {
-            color[i] = Color.WHITE;
-          }
-        }
-      }
-    }
-  }
-
-  private void drawGameBoard(Canvas canvas, Color[] color,
-      ArrayList<Pair<Integer, Integer>> ladderStartEnd) {
+  protected void drawGameBoard(Canvas canvas, Color[] color) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
     gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -203,14 +157,9 @@ public class BoardView implements BoardGameObserver {
       gc.setFill(Color.BLACK);
       gc.fillText(String.valueOf(i), x + 1, y + tileHeight - 1);
     }
-
-    // Draw ladders
-    for (Pair<Integer, Integer> startEnd : ladderStartEnd) {
-      drawLadder(gc, startEnd.getKey(), startEnd.getValue());
-    }
   }
 
-  private Pane setupPlayerSection() {
+  protected Pane setupPlayerSection() {
     VBox playerSection = new VBox(5);
 
     playerSection.setPadding(new Insets(10));
@@ -230,8 +179,7 @@ public class BoardView implements BoardGameObserver {
     return playerSection;
   }
 
-  private void drawPlayerPieces(Canvas canvas) {
-    //clear the player canvas
+  protected void drawPlayerPieces(Canvas canvas) {
     canvas.getGraphicsContext2D()
         .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -247,7 +195,7 @@ public class BoardView implements BoardGameObserver {
     });
   }
 
-  private void drawPlayerShape(GraphicsContext gc, String shape, int x, int y) {
+  protected void drawPlayerShape(GraphicsContext gc, String shape, int x, int y) {
     switch (shape) {
       case "Circle" -> {
         gc.fillOval(x - 12, y - 12, 25, 25);
@@ -272,18 +220,9 @@ public class BoardView implements BoardGameObserver {
     }
   }
 
-  private Pane setupTopSection() {
-    HBox topCenter = new HBox();
-    topCenter.setAlignment(Pos.CENTER);
+  protected abstract Pane setupTopSection();
 
-    Text title = new Text("The ladder game");
-    title.setFont(Font.font("System", FontWeight.BOLD, 24));
-
-    topCenter.getChildren().add(title);
-    return topCenter;
-  }
-
-  private Pane setupBottomSection() {
+  protected Pane setupBottomSection() {
     VBox bottomCenter = new VBox(10);
     bottomCenter.setAlignment(Pos.CENTER);
 
@@ -302,8 +241,7 @@ public class BoardView implements BoardGameObserver {
     return bottomCenter;
   }
 
-
-  private GridPane initScene() {
+  protected GridPane initScene() {
     GridPane container = setupLayout();
 
     board = game.getBoardViewModel();
@@ -322,58 +260,23 @@ public class BoardView implements BoardGameObserver {
     return container;
   }
 
-  private int calculateCornerX(int i) {
+  protected int calculateCornerX(int i) {
     return board.tiles().get(i).x() * tileWidth;
   }
 
-  private int calculateCenterX(int i) {
+  protected int calculateCenterX(int i) {
     return board.tiles().get(i).x() * tileWidth + tileWidth / 2;
   }
 
-  private int calculateCornerY(int i) {
+  protected int calculateCornerY(int i) {
     return board.tiles().get(i).y() * tileHeight;
   }
 
-  private int calculateCenterY(int i) {
+  protected int calculateCenterY(int i) {
     return board.tiles().get(i).y() * tileHeight + tileHeight / 2;
   }
 
-  private void drawLadder(GraphicsContext gc, int start, int end) {
-    // find center of startTile (x1, y1) and center of end tile (x2, y2)
-    double x1 = calculateCenterX(start);
-    double y1 = calculateCenterY(start);
-    double x2 = calculateCenterX(end);
-    double y2 = calculateCenterY(end);
-    // calculate the ladder vector (dx, dy)
-    double dx = (x2 - x1);
-    double dy = (y2 - y1);
-    double length = sqrt(dx * dx + dy * dy);
-    // find vector orthogonal to ladder vector and scaled
-    double scaledOrthogonalX = dy / length * tileWidth / 3;
-    double scaledOrthogonalY = (-dx) / length * tileHeight / 3;
-
-    // draw main ladder lines
-    gc.strokeLine(x1 + scaledOrthogonalX, y1 + scaledOrthogonalY, x2 + scaledOrthogonalX,
-        y2 + scaledOrthogonalY);
-    gc.strokeLine(x1 - scaledOrthogonalX, y1 - scaledOrthogonalY, x2 - scaledOrthogonalX,
-        y2 - scaledOrthogonalY);
-
-    // normalize ladder vector using manhattan distance so it becomes symmetrical
-    double manhattanDist = abs(y2 - y1) + abs(x2 - x1);
-    dy = (((y2 - y1) / manhattanDist) * tileWidth) / 2;
-    dx = (((x2 - x1) / manhattanDist) * tileHeight) / 2;
-
-    // draw ladder steps
-    while (abs(y2 - y1 - dy) + abs(x2 - x1 - dx) > 0.1) {
-      x1 += dx;
-      y1 += dy;
-      gc.strokeLine(x1 + scaledOrthogonalX, y1 + scaledOrthogonalY, x1 - scaledOrthogonalX,
-          y1 - scaledOrthogonalY);
-    }
-  }
-
-  // New method to create player boxes with position information
-  private VBox createPlayerBox(PlayerViewModel player) {
+  protected VBox createPlayerBox(PlayerViewModel player) {
     // Player color and name
     Label nameLabel = new Label(player.name());
     nameLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
@@ -404,7 +307,7 @@ public class BoardView implements BoardGameObserver {
     return box;
   }
 
-  private HBox createInfoBox(Color color, String infoText) {
+  protected HBox createInfoBox(Color color, String infoText) {
     Rectangle rect = new Rectangle(50, 50, color);
     Text text = new Text(infoText);
     text.setFont(Font.font("System", 12));
@@ -430,7 +333,6 @@ public class BoardView implements BoardGameObserver {
     }
 
     Canvas playerCanvas = (Canvas) gameSection.getChildren().get(1);
-
     drawPlayerPieces(playerCanvas);
 
     if (game.getWinner() != null) {
@@ -439,12 +341,12 @@ public class BoardView implements BoardGameObserver {
     }
   }
 
-  private void disableGameControls() {
+  protected void disableGameControls() {
     Button btn = (Button) bottomSection.getChildren().getFirst();
     btn.setDisable(true);
   }
 
-  private void changeStateLabel() {
+  protected void changeStateLabel() {
     Label lbl = (Label) bottomSection.getChildren().getLast();
     lbl.setText("Winner: " + game.getActivePlayerProperty().get() + "!");
     lbl.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
