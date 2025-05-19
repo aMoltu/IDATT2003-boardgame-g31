@@ -74,6 +74,7 @@ public class GameMenuView {
     boardSelectionTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
     boardSelector = new ComboBox<>();
     boardSelector.getItems().add("Default");
+    boardSelector.getItems().add("Tornado");
 
     //Add available board files from resources
     Path boardsPath = FileSystems.getDefault().getPath("src", "main", "resources", "boards");

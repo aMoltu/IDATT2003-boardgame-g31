@@ -105,9 +105,7 @@ public class GameMenuController {
   }
 
   private void initializeGame() {
-    if (!selectedBoard.equals("Default")) {
-      game.setBoard(selectedBoard);
-    }
+    game.setBoard(selectedGame, selectedBoard);
 
     //Add players to the game
     for (int i = 0; i < playerNames.size(); i++) {
