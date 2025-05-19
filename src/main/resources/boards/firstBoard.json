@@ -1,6 +1,8 @@
 {
   "name": "Stigespill 90",
   "description": "Et klassisk stigespill med 90 felt og 5 stiger.",
+  "width": 10,
+  "height": 9,
   "tiles": [
     {
       "id": 1,

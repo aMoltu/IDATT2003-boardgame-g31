@@ -9,12 +9,19 @@ import java.util.Map;
 public class Board {
 
   private final Map<Integer, Tile> tiles;
+  private final int width;
+  private final int height;
 
   /**
    * Creates a new Board that will store some tiles.
+   *
+   * @param width  the width of the board, in tiles.
+   * @param height the height of the board, in tiles.
    */
-  public Board() {
+  public Board(int width, int height) {
     tiles = new HashMap<>();
+    this.width = width;
+    this.height = height;
   }
 
   /**
@@ -34,5 +41,23 @@ public class Board {
    */
   public Tile getTile(int tileId) {
     return tiles.get(tileId);
+  }
+
+  /**
+   * Returns the width of the board.
+   *
+   * @return width of the board. the unit is tiles
+   */
+  public int getWidth() {
+    return width;
+  }
+
+  /**
+   * Returns the height of the board.
+   *
+   * @return height of the board. the unit is tiles
+   */
+  public int getHeight() {
+    return height;
   }
 }

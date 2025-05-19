@@ -12,7 +12,7 @@ public class BoardTest {
 
   @Test
   void testAddingTile() {
-    Board board = new Board();
+    Board board = new Board(0, 0);
     Tile tile = new Tile(0);
 
     board.addTile(tile);
@@ -22,7 +22,7 @@ public class BoardTest {
 
   @Test
   void testGetFromEmptyBoard() {
-    Board board = new Board();
+    Board board = new Board(0, 0);
 
     assertNull(board.getTile(12345));
   }

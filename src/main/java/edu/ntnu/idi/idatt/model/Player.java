@@ -1,6 +1,8 @@
 package edu.ntnu.idi.idatt.model;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -13,6 +15,7 @@ public class Player {
   private Color color;
   private Tile currentTile;
   private BoardGame game;
+  private final IntegerProperty currentTileId = new SimpleIntegerProperty();
 
   /**
    * Constructor for the Player class. Assigns name and game.
@@ -54,6 +57,7 @@ public class Player {
    */
   public void placeOnTile(Tile tile) {
     currentTile = tile;
+    currentTileId.set(tile.getTileId());
   }
 
   /**
@@ -66,10 +70,16 @@ public class Player {
       currentTile.leavePlayer(this);
     }
     currentTile.landPlayer(this);
+
+    currentTileId.set(currentTile.getTileId());
   }
 
   public Tile getCurrentTile() {
     return currentTile;
+  }
+
+  public IntegerProperty getPosition() {
+    return currentTileId;
   }
 
   public String getName() {
