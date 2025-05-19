@@ -25,11 +25,13 @@ public class BoardGameApp extends Application {
     GameMenuView gameMenuView = new GameMenuView(gameMenuController);
 
     BoardController boardController = new BoardController(game, sceneController);
-    BoardView boardView = new BoardView(game, boardController);
+    BoardView ladderGameView = new LadderGameView(game, boardController);
+    BoardView triviaGameView = new TriviaGameView(game, boardController);
 
     sceneController.addScene("main", new Scene(gameMenuView.getRoot()));
-    sceneController.addScene("game1", new Scene(boardView.getRoot()));
-    
+    sceneController.addScene("game1", new Scene(ladderGameView.getRoot()));
+    sceneController.addScene("game2", new Scene(triviaGameView.getRoot()));
+
     sceneController.setScene("main");
   }
 }

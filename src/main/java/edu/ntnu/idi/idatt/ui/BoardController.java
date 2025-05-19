@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.model.Player;
 import java.util.List;
 import javafx.util.Pair;
 

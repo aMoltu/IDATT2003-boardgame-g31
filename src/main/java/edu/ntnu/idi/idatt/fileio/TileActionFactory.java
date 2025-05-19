@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.RollAgain;
 import edu.ntnu.idi.idatt.model.TileAction;
 import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.model.QuestionTileAction;
 
 /**
  * Factory class for creating tile actions.
@@ -26,6 +27,12 @@ public class TileActionFactory {
       case "LadderAction" ->
           new LadderAction(board.getTile(actionObject.get("destinationTile").getAsInt()));
       case "RollAgain" -> new RollAgain();
+      case "QuestionTileAction" -> new QuestionTileAction(
+          actionObject.get("question").getAsString(),
+          actionObject.get("answer").getAsString(),
+          actionObject.get("questionType").getAsString(),
+          board.getTile(actionObject.get("destinationTile").getAsInt())
+      );
       default -> throw new UnknownTileActionException("Unknown tile action with name " + type);
     };
   }

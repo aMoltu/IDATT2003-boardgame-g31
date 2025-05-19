@@ -29,7 +29,6 @@ public class BoardGame {
   private Dice dice;
   private Tile startTile;
   private Player winner;
-  private final int tileAmount;
   private ArrayList<BoardGameObserver> observers;
   private int activePlayer;
   private StringProperty activePlayerProperty;
@@ -38,14 +37,11 @@ public class BoardGame {
    * Constructs the game. Creates a Board, and a set of dice Declares the start tile
    */
   public BoardGame() {
-    tileAmount = 90;
-    startTile = new Tile(1, 0, 8);
     players = new ArrayList<>();
     winner = null;
     observers = new ArrayList<>();
     activePlayer = 0;
     activePlayerProperty = new SimpleStringProperty();
-    createBoard();
     createDice();
   }
 
@@ -63,25 +59,6 @@ public class BoardGame {
     }
   }
 
-  private void createBoard() {
-    board = new Board(10, 9);
-    board.addTile(startTile);
-
-    for (int i = 2; i <= tileAmount; i++) {
-      Tile tile = new Tile(i, (i - 1) % 10, (tileAmount - i) / 10);
-      Tile previousTile = board.getTile(i - 1);
-      previousTile.setNextTile(tile);
-      board.addTile(tile);
-    }
-
-    int[] ladderStart = new int[]{5, 9, 39, 60, 29, 80};
-    int[] ladderEnd = new int[]{19, 30, 20, 34, 48, 69};
-    for (int i = 0; i < ladderStart.length; i++) {
-      LadderAction ladderAction = new LadderAction(board.getTile(ladderEnd[i]));
-      board.getTile(ladderStart[i]).setLandAction(ladderAction);
-    }
-  }
-
   private void createDice() {
     dice = new Dice(2);
   }
@@ -91,7 +68,7 @@ public class BoardGame {
     int steps = dice.roll();
     player.move(steps);
 
-    if (player.getCurrentTile().getTileId() == tileAmount) {
+    if (player.getCurrentTile().getTileId() == board.getTileAmount()) {
       winner = player;
     } else {
       activePlayer = (activePlayer + 1) % players.size();
@@ -131,10 +108,26 @@ public class BoardGame {
     return activePlayerProperty;
   }
 
-  public void setBoard(String boardName) {
+  /**
+   * Loads a board from a file.
+   *
+   * @param boardName the name of the board file
+   * @return the loaded board
+   */
+  public Board loadBoardFromFile(String boardName) {
     BoardFileReaderGson reader = new BoardFileReaderGson();
     Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
-    board = reader.readBoard(path);
+    return reader.readBoard(path);
+  }
+
+  /**
+   * Sets the board based on the game type and board name.
+   *
+   * @param gameType  the type of game ("ladder" or "trivia")
+   * @param boardName the name of the board
+   */
+  public void setBoard(String gameType, String boardName) {
+    board = new Board(gameType, boardName);
     startTile = board.getTile(1);
   }
 
@@ -162,10 +155,14 @@ public class BoardGame {
   public BoardViewModel getBoardViewModel() {
     HashMap<Integer, TileViewModel> tiles = new HashMap<>();
 
-    for (int id = startTile.getTileId(); board.getTile(id) != null; id++) {
-      tiles.put(id, getTileViewModel(id));
+    // Get all tiles from the board and create view models for them
+    for (int id = 1; id <= board.getTileAmount(); id++) {
+      Tile tile = board.getTile(id);
+      if (tile != null) {
+        tiles.put(id, getTileViewModel(id));
+      }
     }
 
-    return new BoardViewModel(board.getWidth(), board.getHeight(), tileAmount, tiles);
+    return new BoardViewModel(board.getWidth(), board.getHeight(), board.getTileAmount(), tiles);
   }
 }
