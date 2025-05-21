@@ -131,6 +131,19 @@ public class BoardGame {
     startTile = board.getTile(1);
   }
 
+  /**
+   * Sets a custom board from a file.
+   *
+   * @param filePath the path to the board file
+   */
+  public void setCustomBoard(String filePath) {
+    BoardFileReaderGson reader = new BoardFileReaderGson();
+    board = reader.readBoard(Path.of(filePath));
+    if (board != null) {
+      startTile = board.getTile(1);
+    }
+  }
+
   public List<PlayerViewModel> getPlayerViewModels() {
     return players.stream()
         .map(p -> new PlayerViewModel(p.getName(), p.getShape(), p.getColor(), p.getPosition()))

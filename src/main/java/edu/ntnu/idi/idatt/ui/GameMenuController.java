@@ -105,7 +105,11 @@ public class GameMenuController {
   }
 
   private void initializeGame() {
-    game.setBoard(selectedGame, selectedBoard);
+    if (selectedBoard.endsWith(".json")) {
+      game.setCustomBoard(selectedBoard);
+    } else {
+      game.setBoard(selectedGame, selectedBoard);
+    }
 
     //Add players to the game
     for (int i = 0; i < playerNames.size(); i++) {
