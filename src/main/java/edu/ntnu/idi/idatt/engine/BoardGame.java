@@ -109,18 +109,6 @@ public class BoardGame {
   }
 
   /**
-   * Loads a board from a file.
-   *
-   * @param boardName the name of the board file
-   * @return the loaded board
-   */
-  public Board loadBoardFromFile(String boardName) {
-    BoardFileReaderGson reader = new BoardFileReaderGson();
-    Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
-    return reader.readBoard(path);
-  }
-
-  /**
    * Sets the board based on the game type and board name.
    *
    * @param gameType  the type of game ("ladder" or "trivia")
