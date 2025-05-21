@@ -217,10 +217,25 @@ public class GameMenuView {
       }
     });
 
+    Button exportButton = new Button("Export players to file");
+    exportButton.setOnAction(event -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Save Player File");
+      fileChooser.getExtensionFilters().add(
+          new FileChooser.ExtensionFilter("CSV Files", "*.csv")
+      );
+      fileChooser.setInitialFileName("players.csv");
+
+      File selectedFile = fileChooser.showSaveDialog(root.getScene().getWindow());
+      if (selectedFile != null) {
+        controller.exportPlayers(selectedFile.toPath());
+      }
+    });
+
     VBox playerInputBox = new VBox(10);
     playerInputBox.getChildren()
         .addAll(playerNameField, playerShapeSelector, playerColorPicker, addPlayerButton,
-            separator, importButton);
+            separator, importButton, exportButton);
     playerInputBox.setAlignment(Pos.CENTER);
 
     playerListView.setItems(observablePlayerList);

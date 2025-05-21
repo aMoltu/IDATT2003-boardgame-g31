@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Player;
 import java.nio.file.Path;
@@ -94,6 +95,14 @@ public class GameMenuController {
       playerColors.add(player.getColor());
       observablePlayerList.add(player.getName());
     }
+  }
+
+  public void exportPlayers(Path path) {
+    List<Player> players = new ArrayList<>();
+    for (int i = 0; i < playerNames.size(); i++) {
+      players.add(new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i)));
+    }
+    PlayerCsvWriter.write(path, players);
   }
 
   public void startGame() {
