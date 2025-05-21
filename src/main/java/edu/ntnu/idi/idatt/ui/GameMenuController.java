@@ -1,21 +1,19 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
-import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
-import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
 import edu.ntnu.idi.idatt.fileio.BoardFileWriterGson;
-import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Player;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
 
 public class GameMenuController {
 
@@ -86,11 +84,7 @@ public class GameMenuController {
   }
 
   public void addPlayers(Path path, ObservableList<String> observablePlayerList) {
-    playerNames.clear();
-    playerShapes.clear();
-    playerColors.clear();
-    observablePlayerList.clear();
-    List<Player> players = PlayerCsvReader.read(path);
+    List<Player> players = new PlayerCsvReader().read(path);
     for (Player player : players) {
       playerNames.add(player.getName());
       playerShapes.add(player.getShape());
@@ -104,7 +98,12 @@ public class GameMenuController {
     for (int i = 0; i < playerNames.size(); i++) {
       players.add(new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i)));
     }
-    PlayerCsvWriter.write(path, players);
+    try {
+      new PlayerCsvWriter().write(path, players);
+      showAlert("Success", "Players exported successfully!");
+    } catch (IOException e) {
+      showAlert("Error", "Failed to export players: " + e.getMessage());
+    }
   }
 
   public void exportBoard(Path path) {
@@ -118,7 +117,7 @@ public class GameMenuController {
 
       BoardFileWriterGson writer = new BoardFileWriterGson();
       writer.writeBoard(game.getBoard(), path);
-      
+
       // Show success message
       showAlert("Success", "Board exported successfully!");
     } catch (IOException e) {
