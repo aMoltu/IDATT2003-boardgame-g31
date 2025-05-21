@@ -3,8 +3,10 @@ package edu.ntnu.idi.idatt.ui;
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
 import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
+import edu.ntnu.idi.idatt.fileio.BoardFileWriterGson;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Player;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +105,25 @@ public class GameMenuController {
       players.add(new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i)));
     }
     PlayerCsvWriter.write(path, players);
+  }
+
+  public void exportBoard(Path path) {
+    try {
+      // Initialize the board first
+      if (selectedBoard.endsWith(".json")) {
+        game.setCustomBoard(selectedBoard);
+      } else {
+        game.setBoard(selectedGame, selectedBoard);
+      }
+
+      BoardFileWriterGson writer = new BoardFileWriterGson();
+      writer.writeBoard(game.getBoard(), path);
+      
+      // Show success message
+      showAlert("Success", "Board exported successfully!");
+    } catch (IOException e) {
+      showAlert("Error", "Failed to export board: " + e.getMessage());
+    }
   }
 
   public void startGame() {

@@ -138,6 +138,24 @@ public class GameMenuView {
       }
     });
 
+    Button exportButton = new Button("Export board to file");
+    exportButton.setPrefWidth(200);
+    exportButton.setPrefHeight(40);
+    exportButton.setFont(Font.font("System", FontWeight.BOLD, 14));
+    exportButton.setOnAction(event -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Save Board File");
+      fileChooser.getExtensionFilters().add(
+          new FileChooser.ExtensionFilter("JSON Files", "*.json")
+      );
+      fileChooser.setInitialFileName("board.json");
+
+      File selectedFile = fileChooser.showSaveDialog(root.getScene().getWindow());
+      if (selectedFile != null) {
+        controller.exportBoard(selectedFile.toPath());
+      }
+    });
+
     // Button that goes to player select screen
     Button startGameButton = new Button("Continue");
     startGameButton.setStyle("-fx-background-color: #4caf50;");
@@ -150,7 +168,7 @@ public class GameMenuView {
     //Add all components to the content box
     contentBox.getChildren().addAll(gameSelectionTitle, gameSelector,
         boardSelectionTitle, boardSelector, new Separator(), importTitle, importButton,
-        new Separator(), startGameButton);
+        exportButton, new Separator(), startGameButton);
 
     ret.setTop(titleBox);
     ret.setCenter(contentBox);
