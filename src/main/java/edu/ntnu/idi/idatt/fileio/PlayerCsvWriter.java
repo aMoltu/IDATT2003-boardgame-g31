@@ -21,8 +21,8 @@ public class PlayerCsvWriter {
   public static void write(Path path, List<Player> players) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()))) {
       for (Player player : players) {
-        writer.write(player.getName());
-        writer.write(player.getShape());
+        writer.write(player.getName() + ",");
+        writer.write(player.getShape() + ",");
         writer.write(player.getColor().toString());
         writer.newLine();
       }
