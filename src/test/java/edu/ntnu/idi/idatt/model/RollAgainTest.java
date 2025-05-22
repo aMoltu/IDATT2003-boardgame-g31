@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests for {@link Tile}.
+ * Unit tests for {@link RollAgain}.
  */
 public class RollAgainTest {
 
