@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.controller;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.fileio.BoardFileWriterGson;
@@ -194,7 +194,7 @@ public class GameMenuController {
         "*.json",
         false
     );
-    
+
     if (selectedFile != null) {
       importBoard(selectedFile.toPath());
       // Update the board selector

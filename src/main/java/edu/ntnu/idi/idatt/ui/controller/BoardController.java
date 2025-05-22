@@ -1,9 +1,6 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.controller;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
-import edu.ntnu.idi.idatt.model.Player;
-import java.util.List;
-import javafx.util.Pair;
 
 public class BoardController {
 

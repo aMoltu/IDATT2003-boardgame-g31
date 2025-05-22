@@ -1,20 +1,16 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.view;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.QuestionTileAction;
 import edu.ntnu.idi.idatt.model.Tile;
-import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
-import javafx.geometry.Pos;
+import edu.ntnu.idi.idatt.observer.QuestionTileObserver;
+import edu.ntnu.idi.idatt.ui.controller.BoardController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 /**
  * A view for the trivia game that extends BoardView.

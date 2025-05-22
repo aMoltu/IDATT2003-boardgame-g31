@@ -1,5 +1,6 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.view;
 
+import edu.ntnu.idi.idatt.ui.controller.GameMenuController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

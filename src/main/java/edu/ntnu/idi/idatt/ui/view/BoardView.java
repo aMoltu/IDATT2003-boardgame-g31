@@ -1,6 +1,8 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.view;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.observer.BoardGameObserver;
+import edu.ntnu.idi.idatt.ui.controller.BoardController;
 import edu.ntnu.idi.idatt.viewmodel.BoardViewModel;
 import edu.ntnu.idi.idatt.viewmodel.PlayerViewModel;
 import java.util.List;

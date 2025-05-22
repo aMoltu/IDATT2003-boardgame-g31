@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.observer;
 
 public interface BoardGameObserver {
 
