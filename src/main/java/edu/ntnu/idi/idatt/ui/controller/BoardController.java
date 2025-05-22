@@ -28,14 +28,7 @@ public class BoardController {
   }
 
   /**
-   * Initializes a new game instance.
-   */
-  public void startGame() {
-    game = new BoardGame();
-  }
-
-  /**
-   * Triggers a dice roll if no winner has been determined.
+   * Triggers a dice-roll if no winner has been determined.
    */
   public void throwDice() {
     if (game.getWinner() == null) {

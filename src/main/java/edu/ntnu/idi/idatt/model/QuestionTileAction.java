@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * A tile action that presents a question to the player and moves them forward if answered
- * correctly.
+ * correctly. Implements the observer pattern to notify observers when a player lands on this tile.
  */
 public class QuestionTileAction implements TileAction {
 
@@ -42,14 +42,10 @@ public class QuestionTileAction implements TileAction {
   }
 
   /**
-   * Removes an observer from receiving notifications.
+   * Notifies all registered observers that a player has landed on this tile.
    *
-   * @param observer The observer to remove
+   * @param player The player who landed on the tile
    */
-  public void removeObserver(QuestionTileObserver observer) {
-    observers.remove(observer);
-  }
-
   @Override
   public void perform(Player player) {
     // Notify all observers that a player has landed on this tile
