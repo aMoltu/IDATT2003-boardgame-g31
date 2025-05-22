@@ -1,18 +1,19 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
-import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
-import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.fileio.BoardFileWriterGson;
 import edu.ntnu.idi.idatt.model.Player;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
 
 public class GameMenuController {
 
@@ -83,16 +84,44 @@ public class GameMenuController {
   }
 
   public void addPlayers(Path path, ObservableList<String> observablePlayerList) {
-    playerNames.clear();
-    playerShapes.clear();
-    playerColors.clear();
-    observablePlayerList.clear();
-    List<Player> players = PlayerCsvReader.read(path);
+    List<Player> players = new PlayerCsvReader().read(path);
     for (Player player : players) {
       playerNames.add(player.getName());
       playerShapes.add(player.getShape());
       playerColors.add(player.getColor());
       observablePlayerList.add(player.getName());
+    }
+  }
+
+  public void exportPlayers(Path path) {
+    List<Player> players = new ArrayList<>();
+    for (int i = 0; i < playerNames.size(); i++) {
+      players.add(new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i)));
+    }
+    try {
+      new PlayerCsvWriter().write(path, players);
+      showAlert("Success", "Players exported successfully!");
+    } catch (IOException e) {
+      showAlert("Error", "Failed to export players: " + e.getMessage());
+    }
+  }
+
+  public void exportBoard(Path path) {
+    try {
+      // Initialize the board first
+      if (selectedBoard.endsWith(".json")) {
+        game.setCustomBoard(selectedBoard);
+      } else {
+        game.setBoard(selectedGame, selectedBoard);
+      }
+
+      BoardFileWriterGson writer = new BoardFileWriterGson();
+      writer.writeBoard(game.getBoard(), path);
+
+      // Show success message
+      showAlert("Success", "Board exported successfully!");
+    } catch (IOException e) {
+      showAlert("Error", "Failed to export board: " + e.getMessage());
     }
   }
 
@@ -105,7 +134,11 @@ public class GameMenuController {
   }
 
   private void initializeGame() {
-    game.setBoard(selectedGame, selectedBoard);
+    if (selectedBoard.endsWith(".json")) {
+      game.setCustomBoard(selectedBoard);
+    } else {
+      game.setBoard(selectedGame, selectedBoard);
+    }
 
     //Add players to the game
     for (int i = 0; i < playerNames.size(); i++) {

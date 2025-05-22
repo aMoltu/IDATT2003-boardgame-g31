@@ -10,18 +10,16 @@ import java.util.List;
 import javafx.scene.paint.Color;
 
 /**
- * Class for gathering player information from CSV files.
+ * Implementation of PlayerFileReader that reads player information from CSV files.
  */
-public class PlayerCsvReader {
+public class PlayerCsvReader implements PlayerFileReader {
 
-  /**
-   * Read player information from a file.
-   *
-   * @param path path to the file
-   * @return list of players created from content of CSV file
-   */
-  public static List<Player> read(Path path) {
-    List<Player> players = new ArrayList<Player>();
+  public PlayerCsvReader() {
+  }
+
+  @Override
+  public List<Player> read(Path path) {
+    List<Player> players = new ArrayList<>();
     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()))) {
       String line;
       while ((line = bufferedReader.readLine()) != null) {
@@ -33,4 +31,4 @@ public class PlayerCsvReader {
     }
     return players;
   }
-}
+} 

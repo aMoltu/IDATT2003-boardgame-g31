@@ -38,40 +38,19 @@
       "id": 6,
       "nextTile": 7,
       "x": 5,
-      "y": 8,
-      "action": {
-        "type": "QuestionTileAction",
-        "question": "What is 2 + 2?",
-        "answer": "4",
-        "questionType": "math",
-        "destinationTile": 10
-      }
+      "y": 8
     },
     {
       "id": 7,
       "nextTile": 8,
       "x": 6,
-      "y": 8,
-      "action": {
-        "type": "QuestionTileAction",
-        "question": "What is 2 + 2?",
-        "answer": "4",
-        "questionType": "math",
-        "destinationTile": 11
-      }
+      "y": 8
     },
     {
       "id": 8,
       "nextTile": 9,
       "x": 7,
-      "y": 8,
-      "action": {
-        "type": "QuestionTileAction",
-        "question": "What is 2 + 2?",
-        "answer": "4",
-        "questionType": "math",
-        "destinationTile": 12
-      }
+      "y": 8
     },
     {
       "id": 9,

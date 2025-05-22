@@ -8,26 +8,22 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Class for writing player information to CSV files.
+ * Implementation of PlayerFileWriter that writes player information to CSV files.
  */
-public class PlayerCsvWriter {
+public class PlayerCsvWriter implements PlayerFileWriter {
 
-  /**
-   * Write player names on separate lines.
-   *
-   * @param path    path to the output file
-   * @param players list of players with a name, shape and color
-   */
-  public static void write(Path path, List<Player> players) {
+  public PlayerCsvWriter() {
+  }
+
+  @Override
+  public void write(Path path, List<Player> players) throws IOException {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()))) {
       for (Player player : players) {
-        writer.write(player.getName());
-        writer.write(player.getShape());
+        writer.write(player.getName() + ",");
+        writer.write(player.getShape() + ",");
         writer.write(player.getColor().toString());
         writer.newLine();
       }
-    } catch (IOException e) {
-      System.err.println(e.getMessage());
     }
   }
-}
+} 

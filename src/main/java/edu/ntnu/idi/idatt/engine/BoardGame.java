@@ -109,18 +109,6 @@ public class BoardGame {
   }
 
   /**
-   * Loads a board from a file.
-   *
-   * @param boardName the name of the board file
-   * @return the loaded board
-   */
-  public Board loadBoardFromFile(String boardName) {
-    BoardFileReaderGson reader = new BoardFileReaderGson();
-    Path path = FileSystems.getDefault().getPath("src", "main", "resources", "boards", boardName);
-    return reader.readBoard(path);
-  }
-
-  /**
    * Sets the board based on the game type and board name.
    *
    * @param gameType  the type of game ("ladder" or "trivia")
@@ -129,6 +117,19 @@ public class BoardGame {
   public void setBoard(String gameType, String boardName) {
     board = new Board(gameType, boardName);
     startTile = board.getTile(1);
+  }
+
+  /**
+   * Sets a custom board from a file.
+   *
+   * @param filePath the path to the board file
+   */
+  public void setCustomBoard(String filePath) {
+    BoardFileReaderGson reader = new BoardFileReaderGson();
+    board = reader.readBoard(Path.of(filePath));
+    if (board != null) {
+      startTile = board.getTile(1);
+    }
   }
 
   public List<PlayerViewModel> getPlayerViewModels() {

@@ -55,4 +55,12 @@ public class QuestionTileAction implements TileAction {
   public String getType() {
     return type;
   }
+
+  public String getAnswer() {
+    return answer;
+  }
+
+  public Tile getDestinationTile() {
+    return destinationTile;
+  }
 }
