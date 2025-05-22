@@ -18,6 +18,7 @@ public class BoardGameTest {
   @BeforeEach
   void init() {
     game = new BoardGame();
+    game.setBoard("Default", "Ladder Game");
   }
 
   @Test
