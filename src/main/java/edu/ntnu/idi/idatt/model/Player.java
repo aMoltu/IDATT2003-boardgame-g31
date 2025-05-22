@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.paint.Color;
 
 /**
- * Class representing a player of the game.
+ * Game player with position tracking and movement capabilities.
  */
 public class Player {
 
@@ -18,10 +18,10 @@ public class Player {
   private final IntegerProperty currentTileId = new SimpleIntegerProperty();
 
   /**
-   * Constructor for the Player class. Assigns name and game.
+   * Creates a new player with a name and game reference.
    *
-   * @param name String representing the player's name.
-   * @param game BoardGame
+   * @param name Player's name
+   * @param game Reference to the game instance
    */
   public Player(String name, BoardGame game) {
     this.name = name;
@@ -42,18 +42,18 @@ public class Player {
   }
 
   /**
-   * Simpler constructor for the Player class used for testing. Only assigns name.
+   * Creates a test player with only a name.
    *
-   * @param name String representing the player's name.
+   * @param name Player's name
    */
   public Player(String name) {
     this.name = name;
   }
 
   /**
-   * Places player on a specific tile.
+   * Places the player on a specific tile and updates their position.
    *
-   * @param tile that player gets placed on.
+   * @param tile The tile to place the player on
    */
   public void placeOnTile(Tile tile) {
     currentTile = tile;
@@ -61,9 +61,9 @@ public class Player {
   }
 
   /**
-   * Moves the player a given amount of tiles.
+   * Moves the player forward by the specified number of tiles.
    *
-   * @param steps int number of tiles the player moves.
+   * @param steps Number of tiles to move forward
    */
   public void move(int steps) {
     for (int i = 0; i < steps; i++) {

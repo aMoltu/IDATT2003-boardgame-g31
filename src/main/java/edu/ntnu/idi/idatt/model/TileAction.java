@@ -1,14 +1,14 @@
 package edu.ntnu.idi.idatt.model;
 
 /**
- * Defines some action that should be done to a player when they land on a tile.
+ * Interface for defining player actions triggered by landing on a game tile.
  */
 public interface TileAction {
 
   /**
-   * Performs an action on the given player.
+   * Executes the tile's action on the specified player.
    *
-   * @param player the player which the action will be performed on
+   * @param player The player to perform the action on
    */
   void perform(Player player);
 }

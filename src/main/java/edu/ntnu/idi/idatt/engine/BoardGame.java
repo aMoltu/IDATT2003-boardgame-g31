@@ -19,7 +19,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * This class is responsible for initiating the game and running through the game logics.
+ * Core game controller managing player turns, dice rolls, and game state.
  */
 public class BoardGame {
 
@@ -33,7 +33,7 @@ public class BoardGame {
   private StringProperty activePlayerProperty;
 
   /**
-   * Constructs the game. Creates a Board, and a set of dice Declares the start tile
+   * Initializes a new game with empty player list and observer list.
    */
   public BoardGame() {
     players = new ArrayList<>();
@@ -45,10 +45,10 @@ public class BoardGame {
   }
 
   /**
-   * Method to add a new player to the game. Players get added to the start tile, and the first
-   * player is considered the active player (first to move).
+   * Adds a player to the game and places them on the start tile.
+   * The first player added becomes the active player.
    *
-   * @param player the player to be added.
+   * @param player The player to add to the game
    */
   public void addPlayer(Player player) {
     players.add(player);

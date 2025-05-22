@@ -15,22 +15,22 @@ import java.io.Writer;
 import java.nio.file.Path;
 
 /**
- * File Writer that uses Gson to create a json file from a board.
+ * JSON-based board file writer using Gson for serializing game board configurations.
  */
 public class BoardFileWriterGson implements BoardFileWriter {
 
   /**
-   * Constructor for the Gson writer.
+   * Creates a new Gson-based board file writer.
    */
   public BoardFileWriterGson() {
   }
 
   /**
-   * Create a Json file using Gson from a Board
+   * Serializes a game board to a JSON file.
    *
-   * @param board A board that's to be converted to json file
-   * @param path  desired path + name for the json file
-   * @throws IOException
+   * @param board The game board to serialize
+   * @param path  Output file path for the JSON
+   * @throws IOException if file operations fail
    */
   public void writeBoard(Board board, Path path) throws IOException {
     JsonObject root = new JsonObject();

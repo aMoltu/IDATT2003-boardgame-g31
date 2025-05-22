@@ -3,17 +3,16 @@ package edu.ntnu.idi.idatt.engine;
 import java.util.ArrayList;
 
 /**
- * This is a class representing a set of dice, has methods for rolling them, and counting the number
- * on any die.
+ * A collection of dice with roll and value tracking functionality.
  */
 public class Dice {
 
   private final ArrayList<Die> diceSet;
 
   /**
-   * Constructor of the dice class, adds given amount of die to its set.
+   * Creates a new set of dice with the specified number of dice.
    *
-   * @param numberOfDice an integer given to specify how many dice to have in the set
+   * @param numberOfDice Number of dice in the set
    */
   public Dice(int numberOfDice) {
     diceSet = new ArrayList<>();
@@ -23,9 +22,9 @@ public class Dice {
   }
 
   /**
-   * Method to roll the dice.
+   * Rolls all dice in the set and returns their total value.
    *
-   * @return the total number of eyes on all the dice rolled
+   * @return Sum of all dice values
    */
   public int roll() {
     int result = 0;
@@ -36,10 +35,10 @@ public class Dice {
   }
 
   /**
-   * Looks at a single die in the set and returns it value.
+   * Gets the current value of a specific die in the set.
    *
-   * @param dieNumber the die you want to look at.
-   * @return the value on the die currently.
+   * @param dieNumber Index of the die to check (0-based)
+   * @return Current value of the specified die
    */
   public int getDie(int dieNumber) {
     return diceSet.get(dieNumber).getValue();

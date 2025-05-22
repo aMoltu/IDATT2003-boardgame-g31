@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is a set of Tiles making up a gameboard.
+ * Game board composed of connected tiles with width and height dimensions.
  */
 public class Board {
 
@@ -13,17 +13,17 @@ public class Board {
   private int height;
 
   /**
-   * Creates an empty board. Tiles can be added using the addTile method
+   * Creates an empty game board ready for tile configuration.
    */
   public Board() {
     tiles = new HashMap<>();
   }
 
   /**
-   * Creates a new Board that will store some tiles.
+   * Creates a new game board with specified dimensions.
    *
-   * @param width  the width of the board, in tiles.
-   * @param height the height of the board, in tiles.
+   * @param width  Board width in tiles
+   * @param height Board height in tiles
    */
   public Board(int width, int height) {
     tiles = new HashMap<>();
@@ -56,7 +56,7 @@ public class Board {
   }
 
   /**
-   * Creates a default board for the ladder game.
+   * Creates a standard ladder game board with predefined ladders and special tiles.
    */
   private void createLadderBoard() {
     width = 10;
