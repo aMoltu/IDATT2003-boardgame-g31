@@ -68,6 +68,7 @@ public abstract class BoardView implements BoardGameObserver {
 
     container.setHgap(10);
     container.setVgap(10);
+    container.setPadding(new Insets(10));
 
     ColumnConstraints outsideColumn = new ColumnConstraints();
     ColumnConstraints sideColumn = new ColumnConstraints();
@@ -83,6 +84,17 @@ public abstract class BoardView implements BoardGameObserver {
     outsideRow.setPercentHeight(15);
     middleRow.setPercentHeight(70);
     container.getRowConstraints().addAll(outsideRow, middleRow, outsideRow);
+
+    // Back button
+    Button backButton = new Button("←");
+    backButton.setStyle(
+        "-fx-font-size: 32px; -fx-font-weight: bold; -fx-background-color: transparent;"
+            + " -fx-border-color: transparent; -fx-cursor: hand;");
+    backButton.setOnAction(event -> controller.goBack());
+    backButton.setAlignment(Pos.TOP_LEFT);
+    backButton.setPadding(new Insets(0, 0, 0, 10));
+
+    container.add(backButton, 1, 0);
 
     return container;
   }
@@ -473,13 +485,10 @@ public abstract class BoardView implements BoardGameObserver {
    */
   @Override
   public void update() {
-    if (root.getChildren().isEmpty()) {
-      mainContainer = initScene();
-      root.getChildren().add(mainContainer);
-    }
-
-    Canvas playerCanvas = (Canvas) gameSection.getChildren().get(1);
-    drawPlayerPieces(playerCanvas);
+    // Always reinitialize the scene when the game state changes
+    mainContainer = initScene();
+    root.getChildren().clear();
+    root.getChildren().add(mainContainer);
 
     // Update dice display
     HBox diceAndButton = (HBox) bottomSection.getChildren().getFirst();

@@ -11,8 +11,8 @@ import javafx.scene.control.TextInputDialog;
  */
 public class BoardController {
 
-  private BoardGame game;
-  private SceneController sceneController;
+  private final BoardGame game;
+  private final SceneController sceneController;
 
   /**
    * Creates a board controller with game and scene management.
@@ -78,5 +78,12 @@ public class BoardController {
     alert.setHeaderText(null);
     alert.setContentText(content);
     alert.showAndWait();
+  }
+
+  /**
+   * Ends the game and changes to the main menu scene.
+   */
+  public void goBack() {
+    sceneController.setScene("main");
   }
 }
