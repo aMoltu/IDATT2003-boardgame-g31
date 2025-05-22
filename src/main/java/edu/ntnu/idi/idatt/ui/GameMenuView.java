@@ -180,7 +180,7 @@ public class GameMenuView {
     ret.setStyle("-fx-background-color: #eee;");
 
     //Go back button
-    Button goBackBtn = new Button("go back");
+    Button goBackBtn = new Button("←");
     goBackBtn.setOnAction(event -> root.getChildren().setAll(gameSelectScreen));
     goBackBtn.setAlignment(Pos.TOP_LEFT);
 
@@ -189,9 +189,10 @@ public class GameMenuView {
     title.setFont(Font.font("System", FontWeight.BOLD, 24));
     HBox titleBox = new HBox(title);
     titleBox.setAlignment(Pos.CENTER);
-    titleBox.setPadding(new Insets(20, 0, 30, 0));
+    titleBox.setPadding(new Insets(0, 0, 15, 0));
 
-    VBox topBox = new VBox();
+    VBox topBox = new VBox(5);
+    topBox.setPadding(new Insets(5, 0, 0, 10));
     topBox.getChildren().addAll(goBackBtn, titleBox);
 
     //Main content section
@@ -206,13 +207,14 @@ public class GameMenuView {
     TextField playerNameField = new TextField();
     playerNameField.setPromptText("Enter player Name");
     playerNameField.setMaxWidth(200);
+    playerNameField.requestFocus();
 
     ComboBox<String> playerShapeSelector = new ComboBox<>();
     playerShapeSelector.getItems().addAll("Circle", "Triangle", "Square", "Diamond");
     playerShapeSelector.setValue("Circle");
     playerShapeSelector.setPrefWidth(200);
 
-    ColorPicker playerColorPicker = new ColorPicker();
+    ColorPicker playerColorPicker = new ColorPicker(javafx.scene.paint.Color.BLACK);
     playerColorPicker.setPrefWidth(200);
 
     Button addPlayerButton = new Button("Add Player");
