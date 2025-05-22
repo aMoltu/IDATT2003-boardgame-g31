@@ -23,6 +23,13 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
    */
   public TriviaGameView(BoardGame game, BoardController controller) {
     super(game, controller);
+    // Register as observer for all question tiles
+    for (int i = 1; i <= game.getBoard().getTileAmount(); i++) {
+      Tile tile = game.getBoard().getTile(i);
+      if (tile != null && tile.getLandAction() instanceof QuestionTileAction action) {
+        action.addObserver(this);
+      }
+    }
   }
 
   /**
@@ -51,7 +58,6 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
           default:
             colors[i] = Color.GRAY;
         }
-        action.addObserver(this);
       } else if (colors[i] == null) {
         colors[i] = Color.WHITE;
       }

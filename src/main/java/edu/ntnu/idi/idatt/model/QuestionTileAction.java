@@ -48,8 +48,12 @@ public class QuestionTileAction implements TileAction {
    */
   @Override
   public void perform(Player player) {
+    // Create a copy of the observers list to avoid ConcurrentModificationException
+    List<QuestionTileObserver> observersCopy = new ArrayList<>(observers);
+    // Clear the original observers list
+    observers.clear();
     // Notify all observers that a player has landed on this tile
-    for (QuestionTileObserver observer : observers) {
+    for (QuestionTileObserver observer : observersCopy) {
       observer.onQuestionTile(this, player);
     }
   }
