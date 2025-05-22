@@ -110,7 +110,8 @@ public class LadderGameView extends BoardView {
     HBox infoBox2 = createInfoBox(Color.INDIANRED, "Bottom of bad ladder");
     HBox infoBox3 = createInfoBox(Color.GREEN, "Go up ladder");
     HBox infoBox4 = createInfoBox(Color.LIME, "Top of good ladder");
-    infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4);
+    HBox infoBox5 = createInfoBox(Color.BLUE, "Throw again automatically");
+    infoSection.getChildren().addAll(infoBox1, infoBox2, infoBox3, infoBox4, infoBox5);
 
     return scene;
   }

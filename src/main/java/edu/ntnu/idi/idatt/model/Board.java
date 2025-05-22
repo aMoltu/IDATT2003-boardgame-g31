@@ -71,6 +71,7 @@ public class Board {
 
     if (gameType.equals("Ladder Game")) {
       addLadderActions();
+      addRollAgainTile();
     } else if (gameType.equals("Trivia Game")) {
       addTriviaActions();
     } else {
@@ -114,9 +115,18 @@ public class Board {
     int[] ladderStart = new int[]{5, 9, 39, 60, 29, 80};
     int[] ladderEnd = new int[]{19, 30, 20, 34, 48, 69};
     for (int i = 0; i < ladderStart.length; i++) {
-      LadderAction ladderAction = new LadderAction(this.getTile(ladderEnd[i]));
-      this.getTile(ladderStart[i]).setLandAction(ladderAction);
+      if (ladderStart[i] < tiles.size() && ladderEnd[i] < tiles.size()) {
+        LadderAction ladderAction = new LadderAction(this.getTile(ladderEnd[i]));
+        this.getTile(ladderStart[i]).setLandAction(ladderAction);
+      }
     }
+  }
+
+  /**
+   * Adds a RollAgain land action to the board.
+   */
+  private void addRollAgainTile() {
+    tiles.get(32).setLandAction(new RollAgain());
   }
 
   /**
