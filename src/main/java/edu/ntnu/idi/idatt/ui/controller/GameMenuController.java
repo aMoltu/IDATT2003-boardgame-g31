@@ -1,24 +1,24 @@
 package edu.ntnu.idi.idatt.ui.controller;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
 import edu.ntnu.idi.idatt.fileio.BoardFileWriterGson;
-import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
+import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
 import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.model.Player;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
-import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
-import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
 import javafx.stage.FileChooser;
-import java.io.File;
-import javafx.scene.control.ComboBox;
 
 /**
  * Controller for managing the game menu, including player setup and game configuration.

@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.ntnu.idi.idatt.model.Board;
-import edu.ntnu.idi.idatt.model.Tile;
-import edu.ntnu.idi.idatt.model.TileAction;
 import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.QuestionTileAction;
+import edu.ntnu.idi.idatt.model.Tile;
+import edu.ntnu.idi.idatt.model.TileAction;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -44,8 +44,8 @@ public class BoardFileWriterGson implements BoardFileWriter {
       Tile tile = board.getTile(i);
       JsonObject tileObj = new JsonObject();
       tileObj.addProperty("id", tile.getTileId());
-      tileObj.addProperty("x", tile.getX());
-      tileObj.addProperty("y", tile.getY());
+      tileObj.addProperty("x", tile.getTileX());
+      tileObj.addProperty("y", tile.getTileY());
 
       if (tile.getNextTile() != null) {
         tileObj.addProperty("nextTile", tile.getNextTile().getTileId());
@@ -53,21 +53,7 @@ public class BoardFileWriterGson implements BoardFileWriter {
 
       TileAction action = tile.getLandAction();
       if (action != null) {
-        JsonObject actionObj = new JsonObject();
-        if (action instanceof LadderAction) {
-          actionObj.addProperty("type", "LadderAction");
-          actionObj.addProperty("destinationTile",
-              ((LadderAction) action).destinationTile.getTileId());
-          actionObj.addProperty("description", "Ladder from " + tile.getTileId() + " to "
-              + ((LadderAction) action).destinationTile.getTileId());
-        } else if (action instanceof QuestionTileAction) {
-          QuestionTileAction qAction = (QuestionTileAction) action;
-          actionObj.addProperty("type", "QuestionTileAction");
-          actionObj.addProperty("question", qAction.getQuestion());
-          actionObj.addProperty("answer", qAction.getAnswer());
-          actionObj.addProperty("questionType", qAction.getType());
-          actionObj.addProperty("destinationTile", qAction.getDestinationTile().getTileId());
-        }
+        JsonObject actionObj = getJsonObject(action, tile);
         tileObj.add("action", actionObj);
       }
 
@@ -79,6 +65,24 @@ public class BoardFileWriterGson implements BoardFileWriter {
     try (Writer writer = new FileWriter(path.toFile())) {
       gson.toJson(root, writer);
     }
+  }
+
+  private static JsonObject getJsonObject(TileAction action, Tile tile) {
+    JsonObject actionObj = new JsonObject();
+    if (action instanceof LadderAction) {
+      actionObj.addProperty("type", "LadderAction");
+      actionObj.addProperty("destinationTile",
+          ((LadderAction) action).destinationTile.getTileId());
+      actionObj.addProperty("description", "Ladder from " + tile.getTileId() + " to "
+          + ((LadderAction) action).destinationTile.getTileId());
+    } else if (action instanceof QuestionTileAction questionAction) {
+      actionObj.addProperty("type", "QuestionTileAction");
+      actionObj.addProperty("question", questionAction.getQuestion());
+      actionObj.addProperty("answer", questionAction.getAnswer());
+      actionObj.addProperty("questionType", questionAction.getType());
+      actionObj.addProperty("destinationTile", questionAction.getDestinationTile().getTileId());
+    }
+    return actionObj;
   }
 
 }

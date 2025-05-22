@@ -6,8 +6,6 @@ import edu.ntnu.idi.idatt.model.QuestionTileAction;
 import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.observer.QuestionTileObserver;
 import edu.ntnu.idi.idatt.ui.controller.BoardController;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -36,8 +34,7 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
   protected void setupTileColors(Color[] colors) {
     for (int i = 1; i <= game.getBoard().getTileAmount(); i++) {
       Tile tile = game.getBoard().getTile(i);
-      if (tile != null && tile.getLandAction() instanceof QuestionTileAction) {
-        QuestionTileAction action = (QuestionTileAction) tile.getLandAction();
+      if (tile != null && tile.getLandAction() instanceof QuestionTileAction action) {
         switch (action.getType()) {
           case "math":
             colors[i] = Color.BLUE;
@@ -54,9 +51,7 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
           default:
             colors[i] = Color.GRAY;
         }
-        if (action != null) {
-          action.addObserver(this);
-        }
+        action.addObserver(this);
       } else if (colors[i] == null) {
         colors[i] = Color.WHITE;
       }
@@ -101,46 +96,6 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
   @Override
   public void onQuestionTile(QuestionTileAction action, Player player) {
     super.update();
-    handleQuestionTileAction(action, player);
-  }
-
-  /**
-   * Processes the question tile action and handles player response.
-   *
-   * @param action The question tile action
-   * @param player The player who landed on the tile
-   */
-  private void handleQuestionTileAction(QuestionTileAction action, Player player) {
-    TextInputDialog dialog = new TextInputDialog();
-    dialog.setTitle("Question Tile");
-    dialog.setHeaderText(action.getQuestion());
-    dialog.setContentText("Please enter your answer:");
-
-    dialog.showAndWait().ifPresent(answer -> {
-      if (action.isCorrectAnswer(answer)) {
-        showAlert("Correct!", "You answered correctly! Moving forward...",
-            Alert.AlertType.INFORMATION);
-        action.movePlayer(player);
-        update();
-      } else {
-        showAlert("Incorrect", "Sorry, that's not the correct answer.",
-            Alert.AlertType.INFORMATION);
-      }
-    });
-  }
-
-  /**
-   * Displays an alert dialog with the specified title and content.
-   *
-   * @param title   Alert title
-   * @param content Alert message
-   * @param type    Type of alert to display
-   */
-  private void showAlert(String title, String content, Alert.AlertType type) {
-    Alert alert = new Alert(type);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(content);
-    alert.showAndWait();
+    controller.handleQuestionTileAction(action, player);
   }
 }

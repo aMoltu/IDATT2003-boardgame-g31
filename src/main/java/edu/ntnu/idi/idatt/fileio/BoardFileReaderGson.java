@@ -4,9 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.ntnu.idi.idatt.model.TileAction;
 import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Tile;
+import edu.ntnu.idi.idatt.model.TileAction;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -45,8 +45,7 @@ public class BoardFileReaderGson implements BoardFileReader {
       return null;
     }
 
-    JsonParser parser = new JsonParser();
-    JsonElement rootNode = parser.parse(jsonString.toString());
+    JsonElement rootNode = JsonParser.parseString(jsonString.toString());
     if (rootNode.isJsonObject()) {
       JsonObject details = rootNode.getAsJsonObject();
 

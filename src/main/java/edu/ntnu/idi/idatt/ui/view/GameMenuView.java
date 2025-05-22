@@ -88,6 +88,9 @@ public class GameMenuView {
     boardSelector.setMinWidth(200);
     boardSelector.setOnAction(event -> controller.setSelectedBoard(boardSelector.getValue()));
 
+    contentBox.getChildren().addAll(gameSelectionTitle, gameSelector,
+        boardSelectionTitle, boardSelector);
+
     // Import section
     Text importTitle = new Text("Or");
     importTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
@@ -99,8 +102,11 @@ public class GameMenuView {
 
     Button exportButton = getExportButton(
         "Export board to file",
-        () -> controller.handleBoardExport()
+        controller::handleBoardExport
     );
+
+    contentBox.getChildren().addAll(new Separator(), importTitle, importButton,
+        exportButton, new Separator());
 
     // Button that goes to player select screen
     Button startGameButton = new Button("Continue");
@@ -112,9 +118,7 @@ public class GameMenuView {
     startGameButton.setOnAction(event -> root.getChildren().setAll(playerSelectScreen));
 
     //Add all components to the content box
-    contentBox.getChildren().addAll(gameSelectionTitle, gameSelector,
-        boardSelectionTitle, boardSelector, new Separator(), importTitle, importButton,
-        exportButton, new Separator(), startGameButton);
+    contentBox.getChildren().add(startGameButton);
 
     ret.setTop(titleBox);
     ret.setCenter(contentBox);
@@ -180,7 +184,7 @@ public class GameMenuView {
 
     Button exportButton = getExportButton(
         "Export players to file",
-        () -> controller.handlePlayerExport()
+        controller::handlePlayerExport
     );
 
     VBox playerInputBox = new VBox(10);
