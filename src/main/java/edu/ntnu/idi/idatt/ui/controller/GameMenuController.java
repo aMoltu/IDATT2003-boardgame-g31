@@ -25,11 +25,11 @@ import javafx.stage.FileChooser;
  */
 public class GameMenuController {
 
-  private final List<String> playerNames = new ArrayList<>();
-  private final List<String> playerShapes = new ArrayList<>();
-  private final List<Color> playerColors = new ArrayList<>();
-  private String selectedBoard = "Default";
-  private String selectedGame = "Ladder Game";
+  private final List<String> playerNames;
+  private final List<String> playerShapes;
+  private final List<Color> playerColors;
+  private String selectedBoard;
+  private String selectedGame;
   private BoardGame game;
   private final SceneController sceneController;
 
@@ -42,6 +42,11 @@ public class GameMenuController {
   public GameMenuController(BoardGame game, SceneController sceneController) {
     this.game = game;
     this.sceneController = sceneController;
+    playerNames = new ArrayList<>();
+    playerShapes = new ArrayList<>();
+    playerColors = new ArrayList<>();
+    selectedBoard = "Default";
+    selectedGame = "Ladder Game";
   }
 
   /**
@@ -333,12 +338,13 @@ public class GameMenuController {
   /**
    * Starts the game if at least one player is added.
    */
-  public void startGame() {
+  public boolean startGame() {
     if (playerNames.isEmpty()) {
       showAlert("No players selected", "Add at least one player to start game");
-      return;
+      return false;
     }
     initializeGame();
+    return true;
   }
 
   /**

@@ -218,7 +218,11 @@ public class GameMenuView {
     startGameButton.setPrefHeight(40);
     startGameButton.setFont(Font.font("System", FontWeight.BOLD, 14));
 
-    startGameButton.setOnAction(event -> controller.startGame());
+    startGameButton.setOnAction(event -> {
+      if (controller.startGame()) {
+        root.getChildren().setAll(gameSelectScreen);
+      }
+    });
 
     //Add all components to the content box
     contentBox.getChildren().addAll(playerSectionTitle, playerInputBox, playerListView,
@@ -239,9 +243,7 @@ public class GameMenuView {
    */
   private Button getImportButton(String buttonText, Runnable onAction) {
     Button importButton = new Button(buttonText);
-    importButton.setPrefWidth(200);
-    importButton.setPrefHeight(40);
-    importButton.setFont(Font.font("System", FontWeight.BOLD, 14));
+    applyBasicButtonStyling(importButton);
     importButton.setOnAction(event -> onAction.run());
     return importButton;
   }
@@ -255,11 +257,15 @@ public class GameMenuView {
    */
   private Button getExportButton(String buttonText, Runnable onAction) {
     Button exportButton = new Button(buttonText);
-    exportButton.setPrefWidth(200);
-    exportButton.setPrefHeight(40);
-    exportButton.setFont(Font.font("System", FontWeight.BOLD, 14));
+    applyBasicButtonStyling(exportButton);
     exportButton.setOnAction(event -> onAction.run());
     return exportButton;
+  }
+
+  private void applyBasicButtonStyling(Button button) {
+    button.setPrefWidth(200);
+    button.setPrefHeight(40);
+    button.setFont(Font.font("System", FontWeight.BOLD, 14));
   }
 
   /**
