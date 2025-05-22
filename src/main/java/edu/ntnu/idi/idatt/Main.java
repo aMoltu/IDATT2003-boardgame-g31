@@ -5,14 +5,14 @@ import javafx.application.Application;
 
 
 /**
- * The Main class of the game, here the game gets initiated.
+ * Application entry point that launches the board game.
  */
 public class Main {
 
   /**
-   * initiates the game.
+   * Launches the JavaFX application.
    *
-   * @param args defaults Java for main method.
+   * @param args Command line arguments (unused)
    */
   public static void main(String[] args) {
     Application.launch(BoardGameApp.class, args);

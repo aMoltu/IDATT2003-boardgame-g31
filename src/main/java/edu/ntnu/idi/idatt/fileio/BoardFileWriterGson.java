@@ -15,22 +15,22 @@ import java.io.Writer;
 import java.nio.file.Path;
 
 /**
- * File Writer that uses Gson to create a json file from a board.
+ * JSON-based board file writer using Gson for serializing game board configurations.
  */
 public class BoardFileWriterGson implements BoardFileWriter {
 
   /**
-   * Constructor for the Gson writer.
+   * Creates a new Gson-based board file writer.
    */
   public BoardFileWriterGson() {
   }
 
   /**
-   * Create a Json file using Gson from a Board
+   * Serializes a game board to a JSON file.
    *
-   * @param board A board that's to be converted to json file
-   * @param path  desired path + name for the json file
-   * @throws IOException
+   * @param board The game board to serialize
+   * @param path  Output file path for the JSON
+   * @throws IOException if file operations fail
    */
   public void writeBoard(Board board, Path path) throws IOException {
     JsonObject root = new JsonObject();
@@ -46,7 +46,7 @@ public class BoardFileWriterGson implements BoardFileWriter {
       tileObj.addProperty("id", tile.getTileId());
       tileObj.addProperty("x", tile.getX());
       tileObj.addProperty("y", tile.getY());
-      
+
       if (tile.getNextTile() != null) {
         tileObj.addProperty("nextTile", tile.getNextTile().getTileId());
       }
@@ -56,8 +56,10 @@ public class BoardFileWriterGson implements BoardFileWriter {
         JsonObject actionObj = new JsonObject();
         if (action instanceof LadderAction) {
           actionObj.addProperty("type", "LadderAction");
-          actionObj.addProperty("destinationTile", ((LadderAction) action).destinationTile.getTileId());
-          actionObj.addProperty("description", "Ladder from " + tile.getTileId() + " to " + ((LadderAction) action).destinationTile.getTileId());
+          actionObj.addProperty("destinationTile",
+              ((LadderAction) action).destinationTile.getTileId());
+          actionObj.addProperty("description", "Ladder from " + tile.getTileId() + " to "
+              + ((LadderAction) action).destinationTile.getTileId());
         } else if (action instanceof QuestionTileAction) {
           QuestionTileAction qAction = (QuestionTileAction) action;
           actionObj.addProperty("type", "QuestionTileAction");
@@ -68,7 +70,7 @@ public class BoardFileWriterGson implements BoardFileWriter {
         }
         tileObj.add("action", actionObj);
       }
-      
+
       tiles.add(tileObj);
     }
     root.add("tiles", tiles);

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is a set of Tiles making up a gameboard.
+ * Game board composed of connected tiles with width and height dimensions.
  */
 public class Board {
 
@@ -13,17 +13,17 @@ public class Board {
   private int height;
 
   /**
-   * Creates an empty board. Tiles can be added using the addTile method
+   * Creates an empty game board ready for tile configuration.
    */
   public Board() {
     tiles = new HashMap<>();
   }
 
   /**
-   * Creates a new Board that will store some tiles.
+   * Creates a new game board with specified dimensions.
    *
-   * @param width  the width of the board, in tiles.
-   * @param height the height of the board, in tiles.
+   * @param width  Board width in tiles
+   * @param height Board height in tiles
    */
   public Board(int width, int height) {
     tiles = new HashMap<>();
@@ -31,6 +31,13 @@ public class Board {
     this.height = height;
   }
 
+  /**
+   * Creates a new board based on game type and board name. Supports "Ladder Game" and "Trivia Game"
+   * with "Default" and "Tornado" board layouts.
+   *
+   * @param gameType  Type of game to create board for
+   * @param boardName Name of the board layout to use
+   */
   public Board(String gameType, String boardName) {
     tiles = new HashMap<>();
 
@@ -56,7 +63,7 @@ public class Board {
   }
 
   /**
-   * Creates a default board for the ladder game.
+   * Creates a standard ladder game board with predefined ladders and special tiles.
    */
   private void createLadderBoard() {
     width = 10;
@@ -82,6 +89,10 @@ public class Board {
     }
   }
 
+  /**
+   * Creates a board with a tornado pattern for the ladder game. Features a spiral layout with gaps
+   * and predefined ladders.
+   */
   private void createLadderTornadoBoard() {
     width = 10;
     height = 10;
@@ -128,7 +139,8 @@ public class Board {
   }
 
   /**
-   * Creates a default board for the trivia game.
+   * Creates a standard trivia game board with questions from various categories. Questions are
+   * placed at specific tiles with corresponding destination tiles.
    */
   public void createTriviaBoard() {
     width = 10;
@@ -190,8 +202,8 @@ public class Board {
   }
 
   /**
-   * Creates a board with a tornado pattern, starting from the top-left corner and spiraling inward
-   * with gaps in the middle of each side.
+   * Creates a trivia board with a tornado pattern. Uses the same spiral layout as the ladder
+   * tornado board but with trivia questions.
    */
   private void createTriviaTornadoBoard() {
     width = 10;
