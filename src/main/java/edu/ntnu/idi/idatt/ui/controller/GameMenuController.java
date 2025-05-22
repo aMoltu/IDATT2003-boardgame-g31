@@ -1,8 +1,9 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.controller;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.fileio.BoardFileWriterGson;
 import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.model.Board;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +15,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import edu.ntnu.idi.idatt.fileio.PlayerCsvReader;
 import edu.ntnu.idi.idatt.fileio.PlayerCsvWriter;
+import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
+import javafx.stage.FileChooser;
+import java.io.File;
+import javafx.scene.control.ComboBox;
 
 public class GameMenuController {
 
@@ -22,9 +27,8 @@ public class GameMenuController {
   private final List<Color> playerColors = new ArrayList<>();
   private String selectedBoard = "Default";
   private String selectedGame = "Ladder Game";
-  private BoardGameObserver observer;
   private BoardGame game;
-  private SceneController sceneController;
+  private final SceneController sceneController;
 
   public GameMenuController(BoardGame game, SceneController sceneController) {
     this.game = game;
@@ -37,10 +41,6 @@ public class GameMenuController {
 
   public void setSelectedBoard(String selectedBoard) {
     this.selectedBoard = selectedBoard;
-  }
-
-  public void setObserver(BoardGameObserver observer) {
-    this.observer = observer;
   }
 
   public void setGame(BoardGame game) {
@@ -83,22 +83,12 @@ public class GameMenuController {
     }
   }
 
-  public void addPlayers(Path path, ObservableList<String> observablePlayerList) {
-    List<Player> players = new PlayerCsvReader().read(path);
-    for (Player player : players) {
-      playerNames.add(player.getName());
-      playerShapes.add(player.getShape());
-      playerColors.add(player.getColor());
-      observablePlayerList.add(player.getName());
-    }
-  }
-
   public void exportPlayers(Path path) {
-    List<Player> players = new ArrayList<>();
-    for (int i = 0; i < playerNames.size(); i++) {
-      players.add(new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i)));
-    }
     try {
+      List<Player> players = new ArrayList<>();
+      for (int i = 0; i < playerNames.size(); i++) {
+        players.add(new Player(playerNames.get(i), playerShapes.get(i), playerColors.get(i)));
+      }
       new PlayerCsvWriter().write(path, players);
       showAlert("Success", "Players exported successfully!");
     } catch (IOException e) {
@@ -122,6 +112,40 @@ public class GameMenuController {
       showAlert("Success", "Board exported successfully!");
     } catch (IOException e) {
       showAlert("Error", "Failed to export board: " + e.getMessage());
+    }
+  }
+
+  public void importBoard(Path path) {
+    try {
+      // Read the board file
+      BoardFileReaderGson reader = new BoardFileReaderGson();
+      Board board = reader.readBoard(path);
+
+      if (board != null) {
+        String gameType = "Ladder Game";
+        setSelectedGame(gameType);
+        setSelectedBoard(path.toString());
+        showAlert("Success", "Board imported successfully!");
+      } else {
+        throw new Exception("Failed to read board file");
+      }
+    } catch (Exception e) {
+      showAlert("Error", "Failed to import board: " + e.getMessage());
+    }
+  }
+
+  public void importPlayers(Path path, ObservableList<String> observablePlayerList) {
+    try {
+      List<Player> players = new PlayerCsvReader().read(path);
+      for (Player player : players) {
+        playerNames.add(player.getName());
+        playerShapes.add(player.getShape());
+        playerColors.add(player.getColor());
+        observablePlayerList.add(player.getName());
+      }
+      showAlert("Success", "Players imported successfully!");
+    } catch (Exception e) {
+      showAlert("Error", "Failed to import players: " + e.getMessage());
     }
   }
 
@@ -161,5 +185,83 @@ public class GameMenuController {
     alert.setHeaderText(null);
     alert.setContentText(message);
     alert.showAndWait();
+  }
+
+  public void handleBoardImport(ComboBox<String> boardSelector) {
+    File selectedFile = showFileChooser(
+        "Select Board File",
+        "JSON Files",
+        "*.json",
+        false
+    );
+
+    if (selectedFile != null) {
+      importBoard(selectedFile.toPath());
+      // Update the board selector
+      String boardName = selectedFile.getName();
+      if (!boardSelector.getItems().contains(boardName)) {
+        boardSelector.getItems().add(boardName);
+      }
+      boardSelector.setValue(boardName);
+      // Store the full path for the selected board
+      setSelectedBoard(selectedFile.getAbsolutePath());
+    }
+  }
+
+  public void handleBoardExport() {
+    File selectedFile = showFileChooser(
+        "Save Board File",
+        "JSON Files",
+        "*.json",
+        true
+    );
+
+    if (selectedFile != null) {
+      exportBoard(selectedFile.toPath());
+    }
+  }
+
+  public void handlePlayerImport(ObservableList<String> observablePlayerList) {
+    File selectedFile = showFileChooser(
+        "Select Player File",
+        "CSV Files",
+        "*.csv",
+        false
+    );
+
+    if (selectedFile != null) {
+      importPlayers(selectedFile.toPath(), observablePlayerList);
+    }
+  }
+
+  public void handlePlayerExport() {
+    File selectedFile = showFileChooser(
+        "Save Player File",
+        "CSV Files",
+        "*.csv",
+        true
+    );
+
+    if (selectedFile != null) {
+      exportPlayers(selectedFile.toPath());
+    }
+  }
+
+  private File showFileChooser(String title, String filterDescription, String filterExtension,
+      boolean isSaveDialog) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle(title);
+    fileChooser.getExtensionFilters().add(
+        new FileChooser.ExtensionFilter(filterDescription, filterExtension)
+    );
+
+    if (isSaveDialog) {
+      // Set appropriate default filename based on the file type
+      String defaultName = filterExtension.equals("*.json") ? "board.json" : "players.csv";
+      fileChooser.setInitialFileName(defaultName);
+      return fileChooser.showSaveDialog(null);
+    } else {
+      return fileChooser.showOpenDialog(null);
+    }
   }
 }

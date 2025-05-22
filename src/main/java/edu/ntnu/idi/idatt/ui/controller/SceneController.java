@@ -1,6 +1,5 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

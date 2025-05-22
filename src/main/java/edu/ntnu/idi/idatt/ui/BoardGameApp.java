@@ -1,11 +1,16 @@
 package edu.ntnu.idi.idatt.ui;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
-import edu.ntnu.idi.idatt.model.Player;
+import edu.ntnu.idi.idatt.ui.controller.BoardController;
+import edu.ntnu.idi.idatt.ui.controller.GameMenuController;
+import edu.ntnu.idi.idatt.ui.controller.SceneController;
+import edu.ntnu.idi.idatt.ui.view.BoardView;
+import edu.ntnu.idi.idatt.ui.view.GameMenuView;
+import edu.ntnu.idi.idatt.ui.view.LadderGameView;
+import edu.ntnu.idi.idatt.ui.view.TriviaGameView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 

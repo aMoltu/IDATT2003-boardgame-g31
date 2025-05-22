@@ -1,20 +1,16 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.view;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 import edu.ntnu.idi.idatt.engine.BoardGame;
+import edu.ntnu.idi.idatt.ui.controller.BoardController;
 import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
-import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.util.Pair;
 import java.util.ArrayList;
 

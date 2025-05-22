@@ -1,32 +1,23 @@
-package edu.ntnu.idi.idatt.ui;
+package edu.ntnu.idi.idatt.ui.view;
 
-import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
-import edu.ntnu.idi.idatt.model.Board;
-import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import edu.ntnu.idi.idatt.ui.controller.GameMenuController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 
 public class GameMenuView {
 
@@ -88,73 +79,15 @@ public class GameMenuView {
     Text importTitle = new Text("Or");
     importTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
 
-    Button importButton = new Button("Import from file");
-    importButton.setPrefWidth(200);
-    importButton.setPrefHeight(40);
-    importButton.setFont(Font.font("System", FontWeight.BOLD, 14));
-    importButton.setOnAction(event -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Select Board File");
-      fileChooser.getExtensionFilters().add(
-          new FileChooser.ExtensionFilter("JSON Files", "*.json")
-      );
+    Button importButton = getImportButton(
+        "Import from file",
+        () -> controller.handleBoardImport(boardSelector)
+    );
 
-      File selectedFile = fileChooser.showOpenDialog(root.getScene().getWindow());
-      if (selectedFile != null) {
-        try {
-          // Read the board file
-          BoardFileReaderGson reader = new BoardFileReaderGson();
-          Board board = reader.readBoard(selectedFile.toPath());
-
-          if (board != null) {
-            String gameType = "Ladder Game";
-            gameSelector.setValue(gameType);
-            controller.setSelectedGame(gameType);
-
-            // Add the imported board to the board selector if it's not already there
-            String boardName = selectedFile.getName();
-            if (!boardSelector.getItems().contains(boardName)) {
-              boardSelector.getItems().add(boardName);
-            }
-            boardSelector.setValue(boardName);
-            controller.setSelectedBoard(selectedFile.getAbsolutePath());
-
-            // Show success message
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("Board imported successfully!");
-            alert.showAndWait();
-          } else {
-            throw new Exception("Failed to read board file");
-          }
-        } catch (Exception e) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setTitle("Error");
-          alert.setHeaderText(null);
-          alert.setContentText("Failed to import board: " + e.getMessage());
-          alert.showAndWait();
-        }
-      }
-    });
-
-    Button exportButton = new Button("Export board to file");
-    exportButton.setPrefWidth(200);
-    exportButton.setPrefHeight(40);
-    exportButton.setFont(Font.font("System", FontWeight.BOLD, 14));
-    exportButton.setOnAction(event -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Save Board File");
-      fileChooser.getExtensionFilters().add(
-          new FileChooser.ExtensionFilter("JSON Files", "*.json")
-      );
-      fileChooser.setInitialFileName("board.json");
-
-      File selectedFile = fileChooser.showSaveDialog(root.getScene().getWindow());
-      if (selectedFile != null) {
-        controller.exportBoard(selectedFile.toPath());
-      }
-    });
+    Button exportButton = getExportButton(
+        "Export board to file",
+        () -> controller.handleBoardExport()
+    );
 
     // Button that goes to player select screen
     Button startGameButton = new Button("Continue");
@@ -180,7 +113,7 @@ public class GameMenuView {
     ret.setStyle("-fx-background-color: #eee;");
 
     //Go back button
-    Button goBackBtn = new Button("go back");
+    Button goBackBtn = new Button("←");
     goBackBtn.setOnAction(event -> root.getChildren().setAll(gameSelectScreen));
     goBackBtn.setAlignment(Pos.TOP_LEFT);
 
@@ -189,9 +122,10 @@ public class GameMenuView {
     title.setFont(Font.font("System", FontWeight.BOLD, 24));
     HBox titleBox = new HBox(title);
     titleBox.setAlignment(Pos.CENTER);
-    titleBox.setPadding(new Insets(20, 0, 30, 0));
+    titleBox.setPadding(new Insets(0, 0, 15, 0));
 
-    VBox topBox = new VBox();
+    VBox topBox = new VBox(5);
+    topBox.setPadding(new Insets(5, 0, 0, 10));
     topBox.getChildren().addAll(goBackBtn, titleBox);
 
     //Main content section
@@ -212,7 +146,7 @@ public class GameMenuView {
     playerShapeSelector.setValue("Circle");
     playerShapeSelector.setPrefWidth(200);
 
-    ColorPicker playerColorPicker = new ColorPicker();
+    ColorPicker playerColorPicker = new ColorPicker(javafx.scene.paint.Color.BLACK);
     playerColorPicker.setPrefWidth(200);
 
     Button addPlayerButton = new Button("Add Player");
@@ -221,34 +155,15 @@ public class GameMenuView {
     Text separator = new Text("Or");
     separator.setFont(Font.font("System", FontWeight.BOLD, 16));
 
-    Button importButton = new Button("Import players from file");
-    importButton.setOnAction(event -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Select Player File");
-      fileChooser.getExtensionFilters().add(
-          new FileChooser.ExtensionFilter("CSV Files", "*.csv")
-      );
+    Button importButton = getImportButton(
+        "Import players from file",
+        () -> controller.handlePlayerImport(observablePlayerList)
+    );
 
-      File selectedFile = fileChooser.showOpenDialog(root.getScene().getWindow());
-      if (selectedFile != null) {
-        controller.addPlayers(selectedFile.toPath(), observablePlayerList);
-      }
-    });
-
-    Button exportButton = new Button("Export players to file");
-    exportButton.setOnAction(event -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Save Player File");
-      fileChooser.getExtensionFilters().add(
-          new FileChooser.ExtensionFilter("CSV Files", "*.csv")
-      );
-      fileChooser.setInitialFileName("players.csv");
-
-      File selectedFile = fileChooser.showSaveDialog(root.getScene().getWindow());
-      if (selectedFile != null) {
-        controller.exportPlayers(selectedFile.toPath());
-      }
-    });
+    Button exportButton = getExportButton(
+        "Export players to file",
+        () -> controller.handlePlayerExport()
+    );
 
     VBox playerInputBox = new VBox(10);
     playerInputBox.getChildren()
@@ -291,6 +206,24 @@ public class GameMenuView {
     ret.setCenter(contentBox);
 
     return ret;
+  }
+
+  private Button getImportButton(String buttonText, Runnable onAction) {
+    Button importButton = new Button(buttonText);
+    importButton.setPrefWidth(200);
+    importButton.setPrefHeight(40);
+    importButton.setFont(Font.font("System", FontWeight.BOLD, 14));
+    importButton.setOnAction(event -> onAction.run());
+    return importButton;
+  }
+
+  private Button getExportButton(String buttonText, Runnable onAction) {
+    Button exportButton = new Button(buttonText);
+    exportButton.setPrefWidth(200);
+    exportButton.setPrefHeight(40);
+    exportButton.setFont(Font.font("System", FontWeight.BOLD, 14));
+    exportButton.setOnAction(event -> onAction.run());
+    return exportButton;
   }
 
   public StackPane getRoot() {

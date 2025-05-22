@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model;
 
-import edu.ntnu.idi.idatt.ui.QuestionTileObserver;
+import edu.ntnu.idi.idatt.observer.QuestionTileObserver;
 import java.util.ArrayList;
 import java.util.List;
 
