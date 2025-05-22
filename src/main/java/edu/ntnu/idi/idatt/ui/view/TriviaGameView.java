@@ -13,14 +13,25 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
- * A view for the trivia game that extends BoardView.
+ * View for the trivia game that extends BoardView and implements question tile observation.
  */
 public class TriviaGameView extends BoardView implements QuestionTileObserver {
 
+  /**
+   * Creates a new trivia game view.
+   *
+   * @param game       The game instance to display
+   * @param controller Controller for board interactions
+   */
   public TriviaGameView(BoardGame game, BoardController controller) {
     super(game, controller);
   }
 
+  /**
+   * Sets up tile colors based on question categories.
+   *
+   * @param colors Array to store tile colors
+   */
   @Override
   protected void setupTileColors(Color[] colors) {
     for (int i = 1; i <= game.getBoard().getTileAmount(); i++) {
@@ -52,11 +63,21 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
     }
   }
 
+  /**
+   * Returns the title of the trivia game.
+   *
+   * @return The game title
+   */
   @Override
   protected String getGameTitle() {
     return "The Trivia Game";
   }
 
+  /**
+   * Initializes the game scene with all components and question category legend.
+   *
+   * @return Grid pane containing the complete game layout
+   */
   @Override
   protected GridPane initScene() {
     GridPane scene = super.initScene();
@@ -71,12 +92,24 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
     return scene;
   }
 
+  /**
+   * Handles player landing on a question tile.
+   *
+   * @param action The question tile action
+   * @param player The player who landed on the tile
+   */
   @Override
   public void onQuestionTile(QuestionTileAction action, Player player) {
     super.update();
     handleQuestionTileAction(action, player);
   }
 
+  /**
+   * Processes the question tile action and handles player response.
+   *
+   * @param action The question tile action
+   * @param player The player who landed on the tile
+   */
   private void handleQuestionTileAction(QuestionTileAction action, Player player) {
     TextInputDialog dialog = new TextInputDialog();
     dialog.setTitle("Question Tile");
@@ -96,6 +129,13 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
     });
   }
 
+  /**
+   * Displays an alert dialog with the specified title and content.
+   *
+   * @param title   Alert title
+   * @param content Alert message
+   * @param type    Type of alert to display
+   */
   private void showAlert(String title, String content, Alert.AlertType type) {
     Alert alert = new Alert(type);
     alert.setTitle(title);

@@ -19,6 +19,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+/**
+ * View for the game menu, handling player setup and game configuration.
+ */
 public class GameMenuView {
 
   private final StackPane root;
@@ -29,6 +32,11 @@ public class GameMenuView {
   private final ObservableList<String> observablePlayerList = FXCollections.observableArrayList();
   private ComboBox<String> boardSelector;
 
+  /**
+   * Creates a new game menu view with the specified controller.
+   *
+   * @param controller Controller for menu interactions
+   */
   public GameMenuView(GameMenuController controller) {
     this.controller = controller;
     gameSelectScreen = generateGameSelectScreen();
@@ -38,6 +46,11 @@ public class GameMenuView {
     root.getChildren().setAll(gameSelectScreen);
   }
 
+  /**
+   * Generates the game selection screen with game and board options.
+   *
+   * @return BorderPane containing game selection UI
+   */
   private BorderPane generateGameSelectScreen() {
     BorderPane ret = new BorderPane();
     ret.setStyle("-fx-background-color: #eee;");
@@ -108,6 +121,11 @@ public class GameMenuView {
     return ret;
   }
 
+  /**
+   * Generates the player selection screen with player setup options.
+   *
+   * @return BorderPane containing player selection UI
+   */
   private BorderPane generatePlayerSelectScreen() {
     BorderPane ret = new BorderPane();
     ret.setStyle("-fx-background-color: #eee;");
@@ -208,6 +226,13 @@ public class GameMenuView {
     return ret;
   }
 
+  /**
+   * Creates an import button with specified text and action.
+   *
+   * @param buttonText Text to display on button
+   * @param onAction   Action to perform when clicked
+   * @return Configured import button
+   */
   private Button getImportButton(String buttonText, Runnable onAction) {
     Button importButton = new Button(buttonText);
     importButton.setPrefWidth(200);
@@ -217,6 +242,13 @@ public class GameMenuView {
     return importButton;
   }
 
+  /**
+   * Creates an export button with specified text and action.
+   *
+   * @param buttonText Text to display on button
+   * @param onAction   Action to perform when clicked
+   * @return Configured export button
+   */
   private Button getExportButton(String buttonText, Runnable onAction) {
     Button exportButton = new Button(buttonText);
     exportButton.setPrefWidth(200);
@@ -226,6 +258,11 @@ public class GameMenuView {
     return exportButton;
   }
 
+  /**
+   * Gets the root pane of the view.
+   *
+   * @return Root stack pane
+   */
   public StackPane getRoot() {
     return root;
   }

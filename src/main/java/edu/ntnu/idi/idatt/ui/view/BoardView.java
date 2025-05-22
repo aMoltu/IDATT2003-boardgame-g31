@@ -27,6 +27,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+/**
+ * Abstract base class for game board views implementing common board display functionality.
+ */
 public abstract class BoardView implements BoardGameObserver {
 
   protected final StackPane root;
@@ -42,6 +45,12 @@ public abstract class BoardView implements BoardGameObserver {
   protected Pane infoSection;
   protected Pane bottomSection;
 
+  /**
+   * Creates a new board view with game and controller.
+   *
+   * @param game       The game instance to display
+   * @param controller Controller for board interactions
+   */
   public BoardView(BoardGame game, BoardController controller) {
     root = new StackPane();
     this.game = game;
@@ -49,6 +58,11 @@ public abstract class BoardView implements BoardGameObserver {
     game.addObserver(this);
   }
 
+  /**
+   * Sets up the main layout grid with column and row constraints.
+   *
+   * @return Configured grid pane for the board layout
+   */
   protected GridPane setupLayout() {
     GridPane container = new GridPane();
 
@@ -73,6 +87,11 @@ public abstract class BoardView implements BoardGameObserver {
     return container;
   }
 
+  /**
+   * Sets up the information section with styling.
+   *
+   * @return Styled pane for displaying game information
+   */
   protected Pane setupInfoSection() {
     VBox infoSection = new VBox(5);
     infoSection.setPadding(new Insets(10));
@@ -87,6 +106,9 @@ public abstract class BoardView implements BoardGameObserver {
     return infoSection;
   }
 
+  /**
+   * Resizable canvas that adapts to container dimensions.
+   */
   protected class ResizableCanvas extends Canvas {
 
     @Override
@@ -100,6 +122,11 @@ public abstract class BoardView implements BoardGameObserver {
     }
   }
 
+  /**
+   * Sets up the game board with tiles and player pieces.
+   *
+   * @return Pane containing the game board
+   */
   protected Pane setupGameBoard() {
     StackPane gameSection = new StackPane();
 
@@ -129,6 +156,14 @@ public abstract class BoardView implements BoardGameObserver {
     return gameSection;
   }
 
+  /**
+   * Redraws the canvas after window resize.
+   *
+   * @param boardCanvas    Canvas for drawing the board
+   * @param color          Array of colors for each tile
+   * @param playerCanvas   Canvas for drawing player pieces
+   * @param sizeMultiplier Size multiplier for the canvas
+   */
   protected void redrawCanvasAfterResize(Canvas boardCanvas, Color[] color,
       Canvas playerCanvas, double sizeMultiplier) {
     double tileSize =
@@ -140,15 +175,25 @@ public abstract class BoardView implements BoardGameObserver {
     this.drawPlayerPieces(playerCanvas);
   }
 
+  /**
+   * Sets up tile colors based on their types.
+   *
+   * @param color Array to store tile colors
+   */
   protected abstract void setupTileColors(Color[] color);
 
   /**
    * Returns the title of the game to be displayed in the top section.
    *
-   * @return the game title
+   * @return The game title
    */
   protected abstract String getGameTitle();
 
+  /**
+   * Sets up the top section with the game title.
+   *
+   * @return Pane containing the game title
+   */
   protected Pane setupTopSection() {
     HBox topCenter = new HBox();
     topCenter.setAlignment(Pos.CENTER);
@@ -160,6 +205,12 @@ public abstract class BoardView implements BoardGameObserver {
     return topCenter;
   }
 
+  /**
+   * Draws the game board with tiles and their colors.
+   *
+   * @param canvas Canvas to draw on
+   * @param color  Array of colors for each tile
+   */
   protected void drawGameBoard(Canvas canvas, Color[] color) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -179,6 +230,11 @@ public abstract class BoardView implements BoardGameObserver {
     }
   }
 
+  /**
+   * Sets up the player section with player information.
+   *
+   * @return Pane containing player information
+   */
   protected Pane setupPlayerSection() {
     VBox playerSection = new VBox(5);
 
@@ -199,6 +255,11 @@ public abstract class BoardView implements BoardGameObserver {
     return playerSection;
   }
 
+  /**
+   * Draws player pieces on the board.
+   *
+   * @param canvas Canvas to draw on
+   */
   protected void drawPlayerPieces(Canvas canvas) {
     canvas.getGraphicsContext2D()
         .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -215,6 +276,14 @@ public abstract class BoardView implements BoardGameObserver {
     });
   }
 
+  /**
+   * Draws a player shape at the specified coordinates.
+   *
+   * @param gc    Graphics context for drawing
+   * @param shape Shape identifier to draw
+   * @param x     X-coordinate
+   * @param y     Y-coordinate
+   */
   protected void drawPlayerShape(GraphicsContext gc, String shape, int x, int y) {
     switch (shape) {
       case "Circle" -> {
@@ -240,6 +309,11 @@ public abstract class BoardView implements BoardGameObserver {
     }
   }
 
+  /**
+   * Sets up the bottom section with dice and controls.
+   *
+   * @return Pane containing game controls
+   */
   protected Pane setupBottomSection() {
     VBox bottomCenter = new VBox(10);
     bottomCenter.setAlignment(Pos.CENTER);
@@ -267,6 +341,11 @@ public abstract class BoardView implements BoardGameObserver {
     return bottomCenter;
   }
 
+  /**
+   * Initializes the game scene with all components.
+   *
+   * @return Grid pane containing the complete game layout
+   */
   protected GridPane initScene() {
     GridPane container = setupLayout();
 
@@ -286,22 +365,52 @@ public abstract class BoardView implements BoardGameObserver {
     return container;
   }
 
+  /**
+   * Calculates the X-coordinate for a tile's corner.
+   *
+   * @param i Tile number
+   * @return X-coordinate
+   */
   protected int calculateCornerX(int i) {
     return board.tiles().get(i).x() * tileWidth;
   }
 
+  /**
+   * Calculates the X-coordinate for a tile's center.
+   *
+   * @param i Tile number
+   * @return X-coordinate
+   */
   protected int calculateCenterX(int i) {
     return board.tiles().get(i).x() * tileWidth + tileWidth / 2;
   }
 
+  /**
+   * Calculates the Y-coordinate for a tile's corner.
+   *
+   * @param i Tile number
+   * @return Y-coordinate
+   */
   protected int calculateCornerY(int i) {
     return board.tiles().get(i).y() * tileHeight;
   }
 
+  /**
+   * Calculates the Y-coordinate for a tile's center.
+   *
+   * @param i Tile number
+   * @return Y-coordinate
+   */
   protected int calculateCenterY(int i) {
     return board.tiles().get(i).y() * tileHeight + tileHeight / 2;
   }
 
+  /**
+   * Creates a box displaying player information.
+   *
+   * @param player Player view model
+   * @return VBox containing player information
+   */
   protected VBox createPlayerBox(PlayerViewModel player) {
     // Player color and name
     Label nameLabel = new Label(player.name());
@@ -333,6 +442,13 @@ public abstract class BoardView implements BoardGameObserver {
     return box;
   }
 
+  /**
+   * Creates a box displaying information with color.
+   *
+   * @param color    Color for the box
+   * @param infoText Text to display
+   * @return HBox containing the information
+   */
   protected HBox createInfoBox(Color color, String infoText) {
     Rectangle rect = new Rectangle(50, 50, color);
     Text text = new Text(infoText);
@@ -347,10 +463,18 @@ public abstract class BoardView implements BoardGameObserver {
     return box;
   }
 
+  /**
+   * Gets the root pane of the view.
+   *
+   * @return Root stack pane
+   */
   public StackPane getRoot() {
     return root;
   }
 
+  /**
+   * Updates the view when game state changes.
+   */
   @Override
   public void update() {
     if (root.getChildren().isEmpty()) {
@@ -374,18 +498,33 @@ public abstract class BoardView implements BoardGameObserver {
     }
   }
 
+  /**
+   * Disables game controls when game ends.
+   */
   protected void disableGameControls() {
     HBox diceAndButton = (HBox) bottomSection.getChildren().getFirst();
     Button btn = (Button) diceAndButton.getChildren().get(1);
     btn.setDisable(true);
   }
 
+  /**
+   * Updates the state label when game ends.
+   */
   protected void changeStateLabel() {
     Label lbl = (Label) bottomSection.getChildren().getLast();
     lbl.setText("Winner: " + game.getActivePlayerProperty().get() + "!");
     lbl.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
   }
 
+  /**
+   * Draws a die with the specified value.
+   *
+   * @param gc    Graphics context for drawing
+   * @param x     X-coordinate
+   * @param y     Y-coordinate
+   * @param size  Size of the die
+   * @param value Value to display
+   */
   private void drawDie(GraphicsContext gc, int x, int y, int size, int value) {
     // Draw die background
     gc.setFill(Color.WHITE);
@@ -435,6 +574,14 @@ public abstract class BoardView implements BoardGameObserver {
     }
   }
 
+  /**
+   * Draws a dot on the die.
+   *
+   * @param gc   Graphics context for drawing
+   * @param x    X-coordinate
+   * @param y    Y-coordinate
+   * @param size Size of the dot
+   */
   private void drawDot(GraphicsContext gc, int x, int y, int size) {
     gc.fillOval(x - size / 2, y - size / 2, size, size);
   }

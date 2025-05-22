@@ -45,8 +45,8 @@ public class BoardGame {
   }
 
   /**
-   * Adds a player to the game and places them on the start tile.
-   * The first player added becomes the active player.
+   * Adds a player to the game and places them on the start tile. The first player added becomes the
+   * active player.
    *
    * @param player The player to add to the game
    */
@@ -58,10 +58,17 @@ public class BoardGame {
     }
   }
 
+  /**
+   * Creates a set of two dice for the game.
+   */
   private void createDice() {
     dice = new Dice(2);
   }
 
+  /**
+   * Processes a dice roll for the active player. Moves the player and checks for win condition or
+   * switches to next player.
+   */
   public void throwDice() {
     Player player = players.get(activePlayer);
     int steps = dice.roll();
@@ -77,32 +84,65 @@ public class BoardGame {
     notifyObservers();
   }
 
+  /**
+   * Registers a new observer to receive game state updates.
+   *
+   * @param observer The observer to register
+   */
   public void addObserver(BoardGameObserver observer) {
     observers.add(observer);
   }
 
+  /**
+   * Removes an observer from receiving game state updates.
+   *
+   * @param observer The observer to remove
+   */
   public void removeObserver(BoardGameObserver observer) {
     observers.remove(observer);
   }
 
+  /**
+   * Notifies all registered observers of game state changes.
+   */
   public void notifyObservers() {
     for (BoardGameObserver observer : observers) {
       observer.update();
     }
   }
 
+  /**
+   * Gets the current winner of the game.
+   *
+   * @return The winning player, or null if no winner yet
+   */
   public Player getWinner() {
     return winner;
   }
 
+  /**
+   * Gets the current game board.
+   *
+   * @return The active game board
+   */
   public Board getBoard() {
     return board;
   }
 
+  /**
+   * Gets the list of players in the game.
+   *
+   * @return List of all players
+   */
   public ArrayList<Player> getPlayers() {
     return players;
   }
 
+  /**
+   * Gets the read-only property containing the active player's name.
+   *
+   * @return String property with active player name
+   */
   public ReadOnlyStringProperty getActivePlayerProperty() {
     return activePlayerProperty;
   }
@@ -131,12 +171,23 @@ public class BoardGame {
     }
   }
 
+  /**
+   * Converts all players to view models for UI display.
+   *
+   * @return List of player view models
+   */
   public List<PlayerViewModel> getPlayerViewModels() {
     return players.stream()
         .map(p -> new PlayerViewModel(p.getName(), p.getShape(), p.getColor(), p.getPosition()))
         .collect(Collectors.toList());
   }
 
+  /**
+   * Creates a view model for a specific tile.
+   *
+   * @param id Tile ID to create view model for
+   * @return View model containing tile display information
+   */
   public TileViewModel getTileViewModel(int id) {
     Tile tile = board.getTile(id);
 
@@ -152,6 +203,11 @@ public class BoardGame {
     return new TileViewModel(id, tile.getX(), tile.getY(), action, nextId);
   }
 
+  /**
+   * Creates a view model for the entire board.
+   *
+   * @return View model containing board layout and tile information
+   */
   public BoardViewModel getBoardViewModel() {
     HashMap<Integer, TileViewModel> tiles = new HashMap<>();
 
@@ -166,6 +222,12 @@ public class BoardGame {
     return new BoardViewModel(board.getWidth(), board.getHeight(), board.getTileAmount(), tiles);
   }
 
+  /**
+   * Gets the current value of a specific die.
+   *
+   * @param i Index of the die (0 or 1)
+   * @return Current value of the specified die
+   */
   public int getDie(int i) {
     return dice.getDie(i);
   }

@@ -28,6 +28,14 @@ public class Player {
     this.game = game;
   }
 
+  /**
+   * Creates a new player with name, shape, color and game reference.
+   *
+   * @param name  Player's name
+   * @param shape Player's shape identifier
+   * @param color Player's color
+   * @param game  Reference to the game instance
+   */
   public Player(String name, String shape, Color color, BoardGame game) {
     this.name = name;
     this.shape = shape;
@@ -35,6 +43,13 @@ public class Player {
     this.game = game;
   }
 
+  /**
+   * Creates a new player with name, shape and color.
+   *
+   * @param name  Player's name
+   * @param shape Player's shape identifier
+   * @param color Player's color
+   */
   public Player(String name, String shape, Color color) {
     this.name = name;
     this.shape = shape;
@@ -74,26 +89,56 @@ public class Player {
     currentTileId.set(currentTile.getTileId());
   }
 
+  /**
+   * Gets the player's current tile.
+   *
+   * @return The tile the player is currently on
+   */
   public Tile getCurrentTile() {
     return currentTile;
   }
 
+  /**
+   * Gets the player's current position as a JavaFX property.
+   *
+   * @return Integer property containing current tile ID
+   */
   public IntegerProperty getPosition() {
     return currentTileId;
   }
 
+  /**
+   * Gets the player's name.
+   *
+   * @return Player's name
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Gets the player's shape identifier.
+   *
+   * @return Player's shape
+   */
   public String getShape() {
     return shape;
   }
 
+  /**
+   * Gets the player's color.
+   *
+   * @return Player's color
+   */
   public Color getColor() {
     return color;
   }
 
+  /**
+   * Gets the game instance this player belongs to.
+   *
+   * @return Reference to the game
+   */
   public BoardGame getGame() {
     return game;
   }

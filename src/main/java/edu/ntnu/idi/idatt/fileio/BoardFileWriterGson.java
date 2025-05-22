@@ -46,7 +46,7 @@ public class BoardFileWriterGson implements BoardFileWriter {
       tileObj.addProperty("id", tile.getTileId());
       tileObj.addProperty("x", tile.getX());
       tileObj.addProperty("y", tile.getY());
-      
+
       if (tile.getNextTile() != null) {
         tileObj.addProperty("nextTile", tile.getNextTile().getTileId());
       }
@@ -56,8 +56,10 @@ public class BoardFileWriterGson implements BoardFileWriter {
         JsonObject actionObj = new JsonObject();
         if (action instanceof LadderAction) {
           actionObj.addProperty("type", "LadderAction");
-          actionObj.addProperty("destinationTile", ((LadderAction) action).destinationTile.getTileId());
-          actionObj.addProperty("description", "Ladder from " + tile.getTileId() + " to " + ((LadderAction) action).destinationTile.getTileId());
+          actionObj.addProperty("destinationTile",
+              ((LadderAction) action).destinationTile.getTileId());
+          actionObj.addProperty("description", "Ladder from " + tile.getTileId() + " to "
+              + ((LadderAction) action).destinationTile.getTileId());
         } else if (action instanceof QuestionTileAction) {
           QuestionTileAction qAction = (QuestionTileAction) action;
           actionObj.addProperty("type", "QuestionTileAction");
@@ -68,7 +70,7 @@ public class BoardFileWriterGson implements BoardFileWriter {
         }
         tileObj.add("action", actionObj);
       }
-      
+
       tiles.add(tileObj);
     }
     root.add("tiles", tiles);

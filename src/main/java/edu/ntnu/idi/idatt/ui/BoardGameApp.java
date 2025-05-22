@@ -13,9 +13,16 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
+/**
+ * Main application class for the board game that initializes the JavaFX UI and game components.
+ */
 public class BoardGameApp extends Application {
 
+  /**
+   * Initializes and starts the application, setting up the game window and scenes.
+   *
+   * @param primaryStage The primary stage for the application
+   */
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Board Game");

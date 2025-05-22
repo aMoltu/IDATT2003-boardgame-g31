@@ -31,6 +31,13 @@ public class Board {
     this.height = height;
   }
 
+  /**
+   * Creates a new board based on game type and board name. Supports "Ladder Game" and "Trivia Game"
+   * with "Default" and "Tornado" board layouts.
+   *
+   * @param gameType  Type of game to create board for
+   * @param boardName Name of the board layout to use
+   */
   public Board(String gameType, String boardName) {
     tiles = new HashMap<>();
 
@@ -82,6 +89,10 @@ public class Board {
     }
   }
 
+  /**
+   * Creates a board with a tornado pattern for the ladder game. Features a spiral layout with gaps
+   * and predefined ladders.
+   */
   private void createLadderTornadoBoard() {
     width = 10;
     height = 10;
@@ -128,7 +139,8 @@ public class Board {
   }
 
   /**
-   * Creates a default board for the trivia game.
+   * Creates a standard trivia game board with questions from various categories. Questions are
+   * placed at specific tiles with corresponding destination tiles.
    */
   public void createTriviaBoard() {
     width = 10;
@@ -190,8 +202,8 @@ public class Board {
   }
 
   /**
-   * Creates a board with a tornado pattern, starting from the top-left corner and spiraling inward
-   * with gaps in the middle of each side.
+   * Creates a trivia board with a tornado pattern. Uses the same spiral layout as the ladder
+   * tornado board but with trivia questions.
    */
   private void createTriviaTornadoBoard() {
     width = 10;

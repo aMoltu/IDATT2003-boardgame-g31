@@ -6,26 +6,37 @@ import static java.lang.Math.sqrt;
 import edu.ntnu.idi.idatt.engine.BoardGame;
 import edu.ntnu.idi.idatt.ui.controller.BoardController;
 import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
+import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import java.util.ArrayList;
 
 /**
- * A view for the ladder game that extends BoardView.
+ * View for the ladder game that extends BoardView.
  */
 public class LadderGameView extends BoardView {
 
   private final ArrayList<Pair<Integer, Integer>> ladderStartEnd;
 
+  /**
+   * Creates a new ladder game view.
+   *
+   * @param game       The game instance to display
+   * @param controller Controller for board interactions
+   */
   public LadderGameView(BoardGame game, BoardController controller) {
     super(game, controller);
     this.ladderStartEnd = new ArrayList<>();
   }
 
+  /**
+   * Sets up tile colors based on their action types.
+   *
+   * @param color Array to store tile colors
+   */
   @Override
   protected void setupTileColors(Color[] color) {
     for (int i = 1; i <= board.tileAmount(); i++) {
@@ -59,6 +70,12 @@ public class LadderGameView extends BoardView {
     }
   }
 
+  /**
+   * Draws the game board with tiles and ladders.
+   *
+   * @param canvas Canvas to draw on
+   * @param color  Array of colors for each tile
+   */
   @Override
   protected void drawGameBoard(Canvas canvas, Color[] color) {
     super.drawGameBoard(canvas, color);
@@ -70,11 +87,21 @@ public class LadderGameView extends BoardView {
     }
   }
 
+  /**
+   * Returns the title of the ladder game.
+   *
+   * @return The game title
+   */
   @Override
   protected String getGameTitle() {
     return "The Ladder Game";
   }
 
+  /**
+   * Initializes the game scene with all components and legend.
+   *
+   * @return Grid pane containing the complete game layout
+   */
   @Override
   protected GridPane initScene() {
     GridPane scene = super.initScene();
@@ -88,6 +115,13 @@ public class LadderGameView extends BoardView {
     return scene;
   }
 
+  /**
+   * Draws a ladder between two tiles.
+   *
+   * @param gc    Graphics context for drawing
+   * @param start ID of the starting tile
+   * @param end   ID of the ending tile
+   */
   private void drawLadder(GraphicsContext gc, int start, int end) {
     // find center of startTile (x1, y1) and center of end tile (x2, y2)
     double x1 = calculateCenterX(start);

@@ -20,6 +20,11 @@ public class Die {
     return lastRolledValue;
   }
 
+  /**
+   * Gets the last rolled value of the die.
+   *
+   * @return The current value of the die
+   */
   public int getValue() {
     return lastRolledValue;
   }
