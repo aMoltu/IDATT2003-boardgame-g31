@@ -1,14 +1,14 @@
 package edu.ntnu.idi.idatt.engine;
 
-import edu.ntnu.idi.idatt.viewmodel.BoardViewModel;
-import edu.ntnu.idi.idatt.model.LadderAction;
-import edu.ntnu.idi.idatt.model.Board;
-import edu.ntnu.idi.idatt.viewmodel.PlayerViewModel;
-import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.fileio.BoardFileReaderGson;
+import edu.ntnu.idi.idatt.model.Board;
+import edu.ntnu.idi.idatt.model.LadderAction;
 import edu.ntnu.idi.idatt.model.Player;
-import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
+import edu.ntnu.idi.idatt.model.Tile;
 import edu.ntnu.idi.idatt.observer.BoardGameObserver;
+import edu.ntnu.idi.idatt.viewmodel.BoardViewModel;
+import edu.ntnu.idi.idatt.viewmodel.PlayerViewModel;
+import edu.ntnu.idi.idatt.viewmodel.TileViewModel;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,13 +24,13 @@ import javafx.beans.property.StringProperty;
 public class BoardGame {
 
   private Board board;
-  private ArrayList<Player> players;
+  private final ArrayList<Player> players;
   private Dice dice;
   private Tile startTile;
   private Player winner;
-  private ArrayList<BoardGameObserver> observers;
+  private final ArrayList<BoardGameObserver> observers;
   private int activePlayer;
-  private StringProperty activePlayerProperty;
+  private final StringProperty activePlayerProperty;
 
   /**
    * Initializes a new game with empty player list and observer list.
@@ -66,7 +66,7 @@ public class BoardGame {
   }
 
   /**
-   * Processes a dice roll for the active player. Moves the player and checks for win condition or
+   * Processes a dice-roll for the active player. Moves the player and checks for win condition or
    * switches to next player.
    */
   public void throwDice() {
@@ -91,15 +91,6 @@ public class BoardGame {
    */
   public void addObserver(BoardGameObserver observer) {
     observers.add(observer);
-  }
-
-  /**
-   * Removes an observer from receiving game state updates.
-   *
-   * @param observer The observer to remove
-   */
-  public void removeObserver(BoardGameObserver observer) {
-    observers.remove(observer);
   }
 
   /**
@@ -200,7 +191,7 @@ public class BoardGame {
         nextId = ((LadderAction) tile.getLandAction()).destinationTile.getTileId();
       }
     }
-    return new TileViewModel(id, tile.getX(), tile.getY(), action, nextId);
+    return new TileViewModel(id, tile.getTileX(), tile.getTileY(), action, nextId);
   }
 
   /**

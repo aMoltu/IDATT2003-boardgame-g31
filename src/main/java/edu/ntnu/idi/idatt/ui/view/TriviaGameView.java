@@ -36,8 +36,7 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
   protected void setupTileColors(Color[] colors) {
     for (int i = 1; i <= game.getBoard().getTileAmount(); i++) {
       Tile tile = game.getBoard().getTile(i);
-      if (tile != null && tile.getLandAction() instanceof QuestionTileAction) {
-        QuestionTileAction action = (QuestionTileAction) tile.getLandAction();
+      if (tile != null && tile.getLandAction() instanceof QuestionTileAction action) {
         switch (action.getType()) {
           case "math":
             colors[i] = Color.BLUE;
@@ -54,9 +53,7 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
           default:
             colors[i] = Color.GRAY;
         }
-        if (action != null) {
-          action.addObserver(this);
-        }
+        action.addObserver(this);
       } else if (colors[i] == null) {
         colors[i] = Color.WHITE;
       }
@@ -118,13 +115,13 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
 
     dialog.showAndWait().ifPresent(answer -> {
       if (action.isCorrectAnswer(answer)) {
-        showAlert("Correct!", "You answered correctly! Moving forward...",
-            Alert.AlertType.INFORMATION);
+        showAlert("Correct!", "You answered correctly! Moving forward..."
+        );
         action.movePlayer(player);
         update();
       } else {
-        showAlert("Incorrect", "Sorry, that's not the correct answer.",
-            Alert.AlertType.INFORMATION);
+        showAlert("Incorrect", "Sorry, that's not the correct answer."
+        );
       }
     });
   }
@@ -134,10 +131,9 @@ public class TriviaGameView extends BoardView implements QuestionTileObserver {
    *
    * @param title   Alert title
    * @param content Alert message
-   * @param type    Type of alert to display
    */
-  private void showAlert(String title, String content, Alert.AlertType type) {
-    Alert alert = new Alert(type);
+  private void showAlert(String title, String content) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle(title);
     alert.setHeaderText(null);
     alert.setContentText(content);

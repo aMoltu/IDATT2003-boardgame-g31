@@ -109,7 +109,7 @@ public abstract class BoardView implements BoardGameObserver {
   /**
    * Resizable canvas that adapts to container dimensions.
    */
-  protected class ResizableCanvas extends Canvas {
+  protected static class ResizableCanvas extends Canvas {
 
     @Override
     public double prefWidth(double height) {
@@ -286,21 +286,17 @@ public abstract class BoardView implements BoardGameObserver {
    */
   protected void drawPlayerShape(GraphicsContext gc, String shape, int x, int y) {
     switch (shape) {
-      case "Circle" -> {
-        gc.fillOval(x - 12, y - 12, 25, 25);
-      }
-      case "Square" -> {
-        gc.fillRect(x - 10, y - 10, 20, 20);
-      }
+      case "Circle" -> gc.fillOval(x - 12, y - 12, 25, 25);
+      case "Square" -> gc.fillRect(x - 10, y - 10, 20, 20);
       case "Triangle" -> {
-        double[] xTriPoints = {x - 10, x, x + 10};
-        double[] yTriPoints = {y - 10, y + 10, y - 10};
-        gc.fillPolygon(xTriPoints, yTriPoints, 3);
+        double[] triPointsX = {x - 10, x, x + 10};
+        double[] triPointsY = {y - 10, y + 10, y - 10};
+        gc.fillPolygon(triPointsX, triPointsY, 3);
       }
       case "Diamond" -> {
-        double[] xDiaPoints = {x, x - 10, x, x + 10};
-        double[] yDiaPoints = {y - 10, y, y + 10, y};
-        gc.fillPolygon(xDiaPoints, yDiaPoints, 4);
+        double[] diaPointsX = {x, x - 10, x, x + 10};
+        double[] diaPointsY = {y - 10, y, y + 10, y};
+        gc.fillPolygon(diaPointsX, diaPointsY, 4);
       }
       default -> {
         System.err.println("Unknown shape: " + shape);
@@ -321,9 +317,6 @@ public abstract class BoardView implements BoardGameObserver {
     HBox diceAndButton = new HBox(20);
     diceAndButton.setAlignment(Pos.CENTER);
 
-    Canvas leftDie = new Canvas(40, 40);
-    Canvas rightDie = new Canvas(40, 40);
-
     // Add dice throw button with active player indicator
     Button throwDiceButton = new Button();
     throwDiceButton.setOnAction(e -> controller.throwDice());
@@ -331,6 +324,9 @@ public abstract class BoardView implements BoardGameObserver {
     throwDiceButton.textProperty().bind(Bindings.createStringBinding(
         () -> "Throw dice for " + game.getActivePlayerProperty().get(),
         game.getActivePlayerProperty()));
+
+    Canvas leftDie = new Canvas(40, 40);
+    Canvas rightDie = new Canvas(40, 40);
 
     diceAndButton.getChildren().addAll(leftDie, throwDiceButton, rightDie);
 
@@ -486,11 +482,11 @@ public abstract class BoardView implements BoardGameObserver {
     drawPlayerPieces(playerCanvas);
 
     // Update dice display
-    HBox diceAndButton = (HBox) ((VBox) bottomSection).getChildren().getFirst();
+    HBox diceAndButton = (HBox) bottomSection.getChildren().getFirst();
     Canvas leftDie = (Canvas) diceAndButton.getChildren().get(0);
     Canvas rightDie = (Canvas) diceAndButton.getChildren().get(2);
-    drawDie(leftDie.getGraphicsContext2D(), 5, 5, 30, game.getDie(0));
-    drawDie(rightDie.getGraphicsContext2D(), 5, 5, 30, game.getDie(1));
+    drawDie(leftDie.getGraphicsContext2D(), game.getDie(0));
+    drawDie(rightDie.getGraphicsContext2D(), game.getDie(1));
 
     if (game.getWinner() != null) {
       disableGameControls();
@@ -520,56 +516,53 @@ public abstract class BoardView implements BoardGameObserver {
    * Draws a die with the specified value.
    *
    * @param gc    Graphics context for drawing
-   * @param x     X-coordinate
-   * @param y     Y-coordinate
-   * @param size  Size of the die
    * @param value Value to display
    */
-  private void drawDie(GraphicsContext gc, int x, int y, int size, int value) {
+  private void drawDie(GraphicsContext gc, int value) {
     // Draw die background
     gc.setFill(Color.WHITE);
     gc.setStroke(Color.BLACK);
-    gc.fillRect(x, y, size, size);
-    gc.strokeRect(x, y, size, size);
+    gc.fillRect(5, 5, 30, 30);
+    gc.strokeRect(5, 5, 30, 30);
 
     // Draw dots based on value
     gc.setFill(Color.BLACK);
-    int dotSize = size / 6;
-    int padding = size / 4;
+    int dotSize = 30 / 6;
+    int padding = 30 / 4;
 
     switch (value) {
-      case 1 -> {
-        drawDot(gc, x + size / 2, y + size / 2, dotSize);
-      }
+      case 1 -> drawDot(gc, 5 + 30 / 2, 5 + 30 / 2, dotSize);
       case 2 -> {
-        drawDot(gc, x + padding, y + padding, dotSize);
-        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + 30 - padding, dotSize);
       }
       case 3 -> {
-        drawDot(gc, x + padding, y + padding, dotSize);
-        drawDot(gc, x + size / 2, y + size / 2, dotSize);
-        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + 30 / 2, 5 + 30 / 2, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + 30 - padding, dotSize);
       }
       case 4 -> {
-        drawDot(gc, x + padding, y + padding, dotSize);
-        drawDot(gc, x + size - padding, y + padding, dotSize);
-        drawDot(gc, x + padding, y + size - padding, dotSize);
-        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + 30 - padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + 30 - padding, dotSize);
       }
       case 5 -> {
-        drawDot(gc, x + padding, y + padding, dotSize);
-        drawDot(gc, x + size - padding, y + padding, dotSize);
-        drawDot(gc, x + size / 2, y + size / 2, dotSize);
-        drawDot(gc, x + padding, y + size - padding, dotSize);
-        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + 30 / 2, 5 + 30 / 2, dotSize);
+        drawDot(gc, 5 + padding, 5 + 30 - padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + 30 - padding, dotSize);
       }
       case 6 -> {
-        drawDot(gc, x + padding, y + padding, dotSize);
-        drawDot(gc, x + padding, y + size / 2, dotSize);
-        drawDot(gc, x + padding, y + size - padding, dotSize);
-        drawDot(gc, x + size - padding, y + padding, dotSize);
-        drawDot(gc, x + size - padding, y + size / 2, dotSize);
-        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + padding, 5 + 30 / 2, dotSize);
+        drawDot(gc, 5 + padding, 5 + 30 - padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + padding, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + 30 / 2, dotSize);
+        drawDot(gc, 5 + 30 - padding, 5 + 30 - padding, dotSize);
+      }
+      default -> {
       }
     }
   }
@@ -583,6 +576,6 @@ public abstract class BoardView implements BoardGameObserver {
    * @param size Size of the dot
    */
   private void drawDot(GraphicsContext gc, int x, int y, int size) {
-    gc.fillOval(x - size / 2, y - size / 2, size, size);
+    gc.fillOval(x - (double) size / 2, y - (double) size / 2, size, size);
   }
 }

@@ -14,8 +14,8 @@ public class Tile {
   private Tile nextTile;
   private final int tileId;
   private TileAction landAction;
-  private int x;
-  private int y;
+  private int tileX;
+  private int tileY;
 
   /**
    * Constructor for Tile. Used for testing where x and y position does not matter.
@@ -37,8 +37,8 @@ public class Tile {
    */
   public Tile(int tileId, int x, int y) {
     this.tileId = tileId;
-    this.x = x;
-    this.y = y;
+    this.tileX = x;
+    this.tileY = y;
   }
 
   public void setLandAction(TileAction landAction) {
@@ -86,11 +86,11 @@ public class Tile {
     return nextTile;
   }
 
-  public int getX() {
-    return x;
+  public int getTileX() {
+    return tileX;
   }
 
-  public int getY() {
-    return y;
+  public int getTileY() {
+    return tileY;
   }
 }
