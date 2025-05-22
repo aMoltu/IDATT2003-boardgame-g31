@@ -242,6 +242,12 @@ public abstract class BoardView implements BoardGameObserver {
     VBox bottomCenter = new VBox(10);
     bottomCenter.setAlignment(Pos.CENTER);
 
+    HBox diceAndButton = new HBox(20);
+    diceAndButton.setAlignment(Pos.CENTER);
+
+    Canvas leftDie = new Canvas(40, 40);
+    Canvas rightDie = new Canvas(40, 40);
+
     // Add dice throw button with active player indicator
     Button throwDiceButton = new Button();
     throwDiceButton.setOnAction(e -> controller.throwDice());
@@ -250,9 +256,11 @@ public abstract class BoardView implements BoardGameObserver {
         () -> "Throw dice for " + game.getActivePlayerProperty().get(),
         game.getActivePlayerProperty()));
 
+    diceAndButton.getChildren().addAll(leftDie, throwDiceButton, rightDie);
+
     Label statusLabel = new Label("Game in progress");
 
-    bottomCenter.getChildren().addAll(throwDiceButton, statusLabel);
+    bottomCenter.getChildren().addAll(diceAndButton, statusLabel);
 
     return bottomCenter;
   }
@@ -351,6 +359,13 @@ public abstract class BoardView implements BoardGameObserver {
     Canvas playerCanvas = (Canvas) gameSection.getChildren().get(1);
     drawPlayerPieces(playerCanvas);
 
+    // Update dice display
+    HBox diceAndButton = (HBox) ((VBox) bottomSection).getChildren().getFirst();
+    Canvas leftDie = (Canvas) diceAndButton.getChildren().get(0);
+    Canvas rightDie = (Canvas) diceAndButton.getChildren().get(2);
+    drawDie(leftDie.getGraphicsContext2D(), 5, 5, 30, game.getDie(0));
+    drawDie(rightDie.getGraphicsContext2D(), 5, 5, 30, game.getDie(1));
+
     if (game.getWinner() != null) {
       disableGameControls();
       changeStateLabel();
@@ -358,7 +373,8 @@ public abstract class BoardView implements BoardGameObserver {
   }
 
   protected void disableGameControls() {
-    Button btn = (Button) bottomSection.getChildren().getFirst();
+    HBox diceAndButton = (HBox) bottomSection.getChildren().getFirst();
+    Button btn = (Button) diceAndButton.getChildren().get(1);
     btn.setDisable(true);
   }
 
@@ -366,5 +382,58 @@ public abstract class BoardView implements BoardGameObserver {
     Label lbl = (Label) bottomSection.getChildren().getLast();
     lbl.setText("Winner: " + game.getActivePlayerProperty().get() + "!");
     lbl.setStyle("-fx-font-weight: bold; -fx-text-fill: green;");
+  }
+
+  private void drawDie(GraphicsContext gc, int x, int y, int size, int value) {
+    // Draw die background
+    gc.setFill(Color.WHITE);
+    gc.setStroke(Color.BLACK);
+    gc.fillRect(x, y, size, size);
+    gc.strokeRect(x, y, size, size);
+
+    // Draw dots based on value
+    gc.setFill(Color.BLACK);
+    int dotSize = size / 6;
+    int padding = size / 4;
+
+    switch (value) {
+      case 1 -> {
+        drawDot(gc, x + size / 2, y + size / 2, dotSize);
+      }
+      case 2 -> {
+        drawDot(gc, x + padding, y + padding, dotSize);
+        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+      }
+      case 3 -> {
+        drawDot(gc, x + padding, y + padding, dotSize);
+        drawDot(gc, x + size / 2, y + size / 2, dotSize);
+        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+      }
+      case 4 -> {
+        drawDot(gc, x + padding, y + padding, dotSize);
+        drawDot(gc, x + size - padding, y + padding, dotSize);
+        drawDot(gc, x + padding, y + size - padding, dotSize);
+        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+      }
+      case 5 -> {
+        drawDot(gc, x + padding, y + padding, dotSize);
+        drawDot(gc, x + size - padding, y + padding, dotSize);
+        drawDot(gc, x + size / 2, y + size / 2, dotSize);
+        drawDot(gc, x + padding, y + size - padding, dotSize);
+        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+      }
+      case 6 -> {
+        drawDot(gc, x + padding, y + padding, dotSize);
+        drawDot(gc, x + padding, y + size / 2, dotSize);
+        drawDot(gc, x + padding, y + size - padding, dotSize);
+        drawDot(gc, x + size - padding, y + padding, dotSize);
+        drawDot(gc, x + size - padding, y + size / 2, dotSize);
+        drawDot(gc, x + size - padding, y + size - padding, dotSize);
+      }
+    }
+  }
+
+  private void drawDot(GraphicsContext gc, int x, int y, int size) {
+    gc.fillOval(x - size / 2, y - size / 2, size, size);
   }
 }

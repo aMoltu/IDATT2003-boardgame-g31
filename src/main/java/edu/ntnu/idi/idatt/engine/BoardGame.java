@@ -166,4 +166,8 @@ public class BoardGame {
 
     return new BoardViewModel(board.getWidth(), board.getHeight(), board.getTileAmount(), tiles);
   }
+
+  public int getDie(int i) {
+    return dice.getDie(i);
+  }
 }
