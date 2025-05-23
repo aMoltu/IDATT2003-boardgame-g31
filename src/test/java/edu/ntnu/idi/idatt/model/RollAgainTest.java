@@ -13,12 +13,25 @@ public class RollAgainTest {
   void testPerformAction() {
     Player player = new Player("name");
     Tile startTile = new Tile(0);
-    player.placeOnTile(startTile);
     Tile endTile = new Tile(1);
     startTile.setNextTile(endTile);
+    player.placeOnTile(startTile);
+
     RollAgain action = new RollAgain();
     action.perform(player);
 
-    assertEquals(player.getCurrentTile(), endTile);
+    assertEquals(endTile, player.getCurrentTile());
+  }
+
+  @Test
+  void testPerformActionWithNoNextTile() {
+    Player player = new Player("name");
+    Tile startTile = new Tile(0);
+    player.placeOnTile(startTile);
+
+    RollAgain action = new RollAgain();
+    action.perform(player);
+
+    assertEquals(startTile, player.getCurrentTile());
   }
 }

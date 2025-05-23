@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests for {@link Player}.
+ * Unit tests for {@link BoardGame}.
  */
 public class BoardGameTest {
 
@@ -22,7 +22,8 @@ public class BoardGameTest {
   }
 
   @Test
-  void testConstructor() {
+  void testConstructorAndBoardInitialization() {
+    assertNotNull(game.getBoard());
     assertNotNull(game.getBoard().getTile(5));
   }
 
@@ -30,12 +31,11 @@ public class BoardGameTest {
   void testAddingPlayers() {
     Player p1 = new Player("P1");
     Player p2 = new Player("P2");
+
     game.addPlayer(p1);
     game.addPlayer(p2);
 
     ArrayList<Player> players = game.getPlayers();
-
-    assertNotNull(players);
     assertEquals(2, players.size());
     assertEquals(p1, players.get(0));
     assertEquals(p2, players.get(1));

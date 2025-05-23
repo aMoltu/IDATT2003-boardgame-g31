@@ -11,19 +11,16 @@ import org.junit.jupiter.api.Test;
 public class BoardTest {
 
   @Test
-  void testAddingTile() {
+  void testAddAndGetTile() {
     Board board = new Board(0, 0);
     Tile tile = new Tile(0);
-
     board.addTile(tile);
-
     assertEquals(tile, board.getTile(0));
   }
 
   @Test
-  void testGetFromEmptyBoard() {
+  void testGetNonExistentTile() {
     Board board = new Board(0, 0);
-
     assertNull(board.getTile(12345));
   }
 }

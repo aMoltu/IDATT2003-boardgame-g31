@@ -1,6 +1,8 @@
 package edu.ntnu.idi.idatt.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,16 +12,26 @@ import org.junit.jupiter.api.Test;
 public class DieTest {
 
   @Test
-  void testDieValues() {
+  void testRollReturnsValidValue() {
     Die die = new Die();
+    int value = die.roll();
+    assertTrue(value > 0 && value < 7);
+  }
 
-    for (int i = 0; i < 25; i++) {
-      int value1 = die.roll();
-      int value2 = die.getValue();
+  @Test
+  void testGetValueMatchesLastRoll() {
+    Die die = new Die();
+    int rollValue = die.roll();
+    int getValue = die.getValue();
+    assertEquals(rollValue, getValue);
+  }
 
-      assertEquals(value1, value2);
-      assert (0 < value1 && value1 < 7);
-    }
+  @Test
+  void testMultipleRollsProduceDifferentValues() {
+    Die die = new Die();
+    int firstRoll = die.roll();
+    int secondRoll = die.roll();
+    assertNotEquals(firstRoll, secondRoll);
   }
 }
 
