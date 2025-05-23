@@ -68,8 +68,6 @@ public class Tile {
    * @param player The player who landed on the tile
    */
   public void landPlayer(Player player) {
-    System.out.println(
-        "player " + player.getName() + " moves to " + player.getCurrentTile().getTileId());
     if (landAction != null) {
       landAction.perform(player);
     }
